@@ -1,0 +1,10 @@
+# Firebase
+.firebase/
+
+# Local backup assets (served from Firebase Storage)
+vs-template-5/
+music/
+
+# opencode config
+.opencode/
+opencode.json

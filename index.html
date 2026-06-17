@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trong Vu & Hong Nhung - Wedding</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&amp;family=Dancing+Script:wght@400;500;600;700&amp;family=Great+Vibes&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&amp;family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&amp;family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&amp;family=Sacramento&amp;family=Alex+Brush&amp;family=Allura&amp;family=Pinyon+Script&amp;family=Italianno&amp;display=swap" rel="stylesheet">
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+      <!-- Firebase SDK -->
+      <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <!-- WOW.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <script>
+      new WOW().init();
+    </script>
+     <style>
+      /* Custom Font Classes */
+      .font-dancing {
+        font-family: 'Dancing Script', cursive;
+      }
+      .font-playfair {
+        font-family: 'Lora', serif;
+      }
+      .font-great-vibes {
+        font-family: 'Great Vibes', cursive;
+      }
+      .font-cormorant {
+        font-family: 'Cormorant Garamond', serif;
+      }
+      .font-crimson {
+        font-family: 'Crimson Text', serif;
+      }
+      .font-libre {
+        font-family: 'Libre Baskerville', serif;
+      }
+      .font-sacramento {
+        font-family: 'Sacramento', cursive;
+      }
+      .font-alex {
+        font-family: 'Alex Brush', cursive;
+      }
+      .font-allura {
+        font-family: 'Allura', cursive;
+      }
+      .font-pinyon {
+        font-family: 'Pinyon Script', cursive;
+      }
+      .font-italianno {
+        font-family: 'Italianno', cursive;
+      }
+
+      /* Custom Color Classes */
+      .text-wedding-red {
+        color: #7f0505;
+      }
+      .bg-wedding-red {
+        background-color: #7f0505;
+      }
+      .border-wedding-red {
+        border-color: #7f0505;
+      }
+      .hover\:bg-red-700:hover {
+        background-color: #b91c1c;
+      }
+      .focus\:ring-wedding-red:focus {
+        --tw-ring-color: #7f0505;
+      }
+
+      /* ===== Tailwind CSS (inlined) ===== */
+      .vs-hide { opacity: 0.4; }
+      #vs-toast {
+        position: fixed; z-index: 9999; left: 50%; bottom: 30px;
+        width: 85%; max-width: 340px; text-align: center;
+        padding: 20px 24px 16px;
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        border: 1px solid rgba(0,0,0,0.04);
+        transform: translateX(-50%); opacity: 0;
+      }
+      #vs-toast .vs-toast-quote { font-size: 32px; line-height: 1; color: #d4a0a0; font-family: Georgia,'Times New Roman',serif; margin-bottom: 4px; }
+      #vs-toast .vs-toast-msg { font-size: 14px; line-height: 1.6; color: #444; font-style: italic; word-break: break-word; margin-bottom: 8px; }
+      #vs-toast .vs-toast-from { font-size: 11px; letter-spacing: 0.12em; color: #555; text-transform: uppercase; font-weight: 600; }
+      #vs-toast.vs-toast-show {
+        animation: vs-toast-in 0.6s cubic-bezier(0.16,1,0.3,1) forwards,
+                   vs-toast-out 0.6s cubic-bezier(0.4,0,1,1) 6.4s forwards;
+      }
+      #vs-music-play-btn {
+        position: fixed; cursor: pointer; z-index: 9999;
+        top: 15px; right: 15px;
+        width: 48px; height: 48px;
+        background: rgba(255,255,255,0.9);
+        backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+        border-radius: 50%;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        background-image: url('https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimage-play.png?alt=media&token=6dd5ecd4-a24e-4b5f-b604-6a0a4516af5c');
+        background-size: 24px; background-repeat: no-repeat;
+        background-position: center;
+        transition: background 0.3s, transform 0.3s, opacity 0.25s;
+      }
+      #vs-music-play-btn:hover { opacity: 0.2; }
+      #vs-music-tooltip {
+        position: fixed; z-index: 10000;
+        top: 15px; right: 15px;
+        width: 48px; height: 48px;
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+        border-radius: 50%;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        background-image: url('https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimage-play.png?alt=media&token=6dd5ecd4-a24e-4b5f-b604-6a0a4516af5c');
+        background-size: 28px; background-repeat: no-repeat;
+        background-position: center;
+        opacity: 0;
+        scale: 0.85;
+        pointer-events: none;
+        transition: opacity 0.25s, scale 0.25s;
+      }
+      #vs-music-play-btn:hover + #vs-music-tooltip {
+        opacity: 1;
+        scale: 1;
+      }
+      #vs-music-play-btn.music-playing,
+      #vs-music-tooltip.music-playing {
+        background-image: url('https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimage-playing.png?alt=media&token=8555ca2b-bff5-4a78-abd0-a09133813f5e');
+        animation: rotate 2s linear infinite;
+      }
+      #vs-music-play-btn.music-paused,
+      #vs-music-tooltip.music-paused { animation-play-state: paused; }
+      @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes vs-toast-in {
+        0% { opacity: 0; transform: translateX(-50%) translateY(24px) scale(0.95); }
+        100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+      }
+      @keyframes vs-toast-out {
+        0% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+        100% { opacity: 0; transform: translateX(-50%) translateY(-12px) scale(0.97); }
+      }
+
+      #nav-bar {
+        position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998;
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(0,0,0,0.06);
+        display: flex; justify-content: space-around;
+        padding: 8px 0 10px; max-width: 640px; margin: 0 auto;
+        transition: transform 0.35s ease;
+      }
+      #nav-bar.nav-hidden { transform: translateY(100%); }
+      #nav-bar a {
+        display: flex; flex-direction: column; align-items: center;
+        text-decoration: none; color: #999; font-size: 10px;
+        transition: color 0.3s; gap: 3px;
+        font-family: 'Cormorant Garamond', serif;
+        letter-spacing: 0.05em; font-weight: 600;
+      }
+      #nav-bar a:hover, #nav-bar a.active { color: #7f0505; }
+      #nav-bar a svg { width: 22px; height: 22px; }
+      .has-nav { padding-bottom: 80px; }
+
+      /* ===== Slow animation variants ===== */
+      .animate__fadeInUpSlow { animation-name: fadeInUp; animation-duration: 1.5s; }
+      .animate__fadeInDownSlow { animation-name: fadeInDown; animation-duration: 1.5s; }
+      .animate__fadeInLeftSlow { animation-name: fadeInLeft; animation-duration: 1.5s; }
+      .animate__fadeInRightSlow { animation-name: fadeInRight; animation-duration: 1.5s; }
+
+      /* ===== Guestbook styles ===== */
+      #guestbook-list { max-height: 500px; overflow-y: auto; }
+      #guestbook-list::-webkit-scrollbar { width: 4px; }
+      #guestbook-list::-webkit-scrollbar-thumb { background: #d4a0a0; border-radius: 4px; }
+      .guestbook-item {
+        background: rgba(255,255,255,0.55);
+        border-radius: 12px;
+        padding: 14px 18px;
+        border: 1px solid rgba(0,0,0,0.04);
+        transition: background 0.2s;
+      }
+      .guestbook-item:hover { background: rgba(255,255,255,0.8); }
+      .guestbook-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 6px;
+      }
+      .guestbook-name { font-weight: 600; color: #7f0505; font-size: 15px; font-family: 'Cormorant Garamond', serif; }
+      .guestbook-date { font-size: 11px; color: #999; font-family: 'Cormorant Garamond', serif; }
+      .guestbook-message { font-size: 14px; color: #444; line-height: 1.6; font-family: 'Cormorant Garamond', serif; font-style: italic; word-break: break-word; }
+
+      /* ===== TWO-FLAP FULLSCREEN OVERLAY ===== */
+      html, body { background: #2c1810; min-height: 100vh; }
+      #card-opening-overlay {
+        position: fixed; inset: 0; z-index: 10002;
+        pointer-events: auto;
+      }
+      #card-opening-overlay.closed { pointer-events: none; }
+
+      .cf-flap {
+        position: fixed; top: 0;
+        width: 50vw; height: 100vh;
+        overflow: hidden;
+        transition: transform 4s cubic-bezier(0.77, 0, 0.18, 1);
+      }
+      .cf-flap-left {
+        left: 0;
+        background: #f4f2ea;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        padding: 36px 20px; text-align: center;
+      }
+      .cf-flap-right {
+        left: 50vw;
+        background: linear-gradient(135deg, #7f0505 0%, #9a0a0a 100%);
+        display: flex; align-items: center; justify-content: center;
+      }
+      #card-opening-overlay.closed .cf-flap-left  { transform: translateX(-100%); }
+      #card-opening-overlay.closed .cf-flap-right { transform: translateX(100%); }
+
+      .cf-flap-right::before {
+        content: ''; position: absolute; inset: 0;
+        background: repeating-linear-gradient(-45deg,
+          transparent, transparent 3.5%,
+          rgba(255,255,255,0.04) 3.5%, rgba(255,255,255,0.04) 7%);
+      }
+      .cf-flap-right::after {
+        content: '囍'; position: absolute;
+        font-size: clamp(90px, 16vw, 140px);
+        color: rgba(255,255,255,0.06);
+        line-height: 1; font-weight: 300;
+        top: 50%; left: 50%; transform: translate(-50%, -50%);
+      }
+      .cf-flap-left::before {
+        content: ''; position: absolute; inset: 0;
+        background: repeating-linear-gradient(-45deg,
+          transparent, transparent 3.5%,
+          rgba(127,5,5,0.015) 3.5%, rgba(127,5,5,0.015) 7%);
+        pointer-events: none;
+      }
+
+      /* ===== CHOICE DIALOG ===== */
+      .cf-choice {
+        position: fixed; inset: 0; z-index: 10004;
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(0,0,0,0.55);
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .cf-choice.active { opacity: 1; pointer-events: auto; }
+      .cf-choice-box {
+        background: #faf8f3; width: 92%; max-width: 400px;
+        border-radius: 24px; padding: 40px 24px 32px;
+        text-align: center; box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+        transform: translateY(12px); transition: transform 0.3s ease;
+      }
+      .cf-choice.active .cf-choice-box { transform: translateY(0); }
+      .cf-choice-question {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 20px; font-weight: 600;
+        color: #444141; margin-bottom: 28px; letter-spacing: 0.02em;
+      }
+      .cf-choice-options { display: flex; flex-direction: row; gap: 16px; justify-content: center; }
+      .cf-choice-btn {
+        display: flex; flex-direction: column; align-items: center;
+        padding: 24px 12px 20px; border-radius: 16px; border: none;
+        cursor: pointer; font-family: 'Cormorant Garamond', serif;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        background: #fff; width: 46%;
+      }
+      .cf-choice-btn:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+      .cf-choice-btn[data-guest="groom"] { border: 2px solid #7f0505; }
+      .cf-choice-btn[data-guest="bride"] { border: 2px solid #b0852b; }
+      .cf-choice-avatar {
+        width: 80px; height: 80px; border-radius: 50%;
+        background-size: cover; background-position: center;
+        margin-bottom: 8px; border: 3px solid #f4f2ea;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      .cf-choice-avatar.groom {
+        background-image: url('https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-4-1.webp?alt=media&token=2007bea5-4904-428a-9092-e427e3ee8f50');
+      }
+      .cf-choice-avatar.bride {
+        background-image: url('https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-4-3.webp?alt=media&token=9f3a3354-0d33-421b-8d61-40419cecc7e3');
+      }
+      .cf-choice-label {
+        font-size: 18px; font-weight: 700;
+        color: #444141; letter-spacing: 0.04em;
+      }
+      .cf-choice-name {
+        font-family: 'Great Vibes', cursive;
+        font-size: 16px; color: #7f0505; margin-top: 2px;
+      }
+
+      .cf-lock {
+        position: fixed; top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10003; width: 68px; height: 68px;
+        border-radius: 50%;
+        background: #5a0303;
+        border: 3px solid #b0852b;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 30px; color: #b0852b;
+        line-height: 1;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.35), inset 0 1px 2px rgba(255,255,255,0.1);
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+      }
+      .cf-lock::after {
+        content: ''; position: absolute; inset: -6px;
+        border-radius: 50%;
+        border: 1px solid rgba(176,133,43,0.2);
+      }
+      #card-opening-overlay.closed .cf-lock { opacity: 0; }
+
+      .cf-save-date {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 12px; letter-spacing: 0.25em;
+        text-transform: uppercase; color: #b0852b; margin-bottom: 18px;
+      }
+      .cf-names {
+        display: flex; flex-direction: column;
+        align-items: center; gap: 3px; margin-bottom: 12px;
+      }
+      .cf-names .name {
+        font-family: 'Great Vibes', cursive;
+        font-size: clamp(26px, 6vw, 36px);
+        color: #7f0505; line-height: 1.1;
+      }
+      .cf-names .and {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 17px; color: #b0852b; font-style: italic;
+      }
+      .cf-divider {
+        width: 44px; height: 1px;
+        background: linear-gradient(90deg, transparent, #7f0505, transparent);
+        margin: 0 auto 12px; opacity: 0.3;
+      }
+      .cf-seal {
+        font-size: 30px; line-height: 1;
+        margin-bottom: 10px; color: #7f0505; opacity: 0.45;
+      }
+      .cf-invite {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 14px; font-style: italic;
+        color: #7f0505; letter-spacing: 0.05em;
+      }
+</style>
+  </head><body>
+            <audio id="weddingMusic" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/music%2Fwedding-song.mp3?alt=media&token=0c103153-84be-49f0-9a8b-431bfbe919f0" loop preload="auto"></audio>
+            <div id="vs-music-play-btn" class="music-paused" onclick="toggleMusic()" title="Bật nhạc"></div>
+            <div id="vs-music-tooltip" class="music-paused"></div>
+            <div id="card-opening-overlay">
+              <div id="cf-choice" class="cf-choice">
+                <div class="cf-choice-box">
+                  <p class="cf-choice-question">Bạn là khách mời của...?</p>
+                  <div class="cf-choice-options">
+                    <button class="cf-choice-btn" data-guest="groom">
+                      <div class="cf-choice-avatar groom"></div>
+                      <span class="cf-choice-label">Chú Rể</span>
+                      <span class="cf-choice-name">Trọng Vũ</span>
+                    </button>
+                    <button class="cf-choice-btn" data-guest="bride">
+                      <div class="cf-choice-avatar bride"></div>
+                      <span class="cf-choice-label">Cô Dâu</span>
+                      <span class="cf-choice-name">Hồng Nhung</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="cf-flap cf-flap-left">
+                <div class="cf-save-date">Save the date</div>
+                <div class="cf-names">
+                  <span class="name">Trọng Vũ</span>
+                  <span class="and">&amp;</span>
+                  <span class="name">Hồng Nhung</span>
+                </div>
+                <div class="cf-divider"></div>
+                <div class="cf-seal">囍</div>
+                <div class="cf-invite">Trân trọng kính mời!</div>
+              </div>
+              <div class="cf-flap cf-flap-right"></div>
+              <div class="cf-lock">囍</div>
+            </div>
+
+            <div data-uuid="69e042ce3f67e" class="max-w-[640px] pb-24 mx-auto vs-no-vh bg-[#f4f2ea] text-[#444141] has-nav">
+
+  <header id="home" data-v2-uuid="6b969766-b2ac-4d1a-a448-f36917fc022f" data-uuid="69e042ce3f689" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true" class="w-full text-center wow animate__fadeInDownSlow">
+    <div data-uuid="69e042ce3f68d" class="container mx-auto relative">
+      <img data-v2-uuid="75e7d855-b798-4f4f-aede-3da825600876" data-uuid="69e042ce3f68f" data-editable="true" class="" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fheader-background.webp?alt=media&token=2dd7b275-bafa-4bce-9958-a2ef53dce30b">
+      <p data-v2-uuid="8ca12713-cea1-4fac-9d9c-de037a54ab86" data-uuid="69e042ce3f693" class="font-cormorant text-lg md:text-xl text-white italic absolute top-5 left-1/2 transform -translate-x-1/2" data-editable="true">
+        Chúng mình cưới!
+      </p>
+      <h1 data-v2-uuid="2dcfc94a-a4ea-4daa-b900-ee3594d31ef3" data-uuid="69e042ce3f696" class="font-cormorant text-lg md:text-xl text-white italic absolute top-10 left-1/2 mt-2 transform -translate-x-1/2" data-editable="true">
+        WEDDING INVATION
+      </h1>
+    </div>
+  </header>
+
+
+  <main data-v2-uuid="d1dcf239-c39a-4fc9-80c8-95b88017c742" data-uuid="69e042ce3f699" class="container mx-auto py-8">
+
+    <section id="invitation" data-v2-uuid="98eee4a8-7adb-45bd-8f2a-800f6e72cb8e" data-uuid="69e042ce3f69c" class="content-item-1 w-[80%] mx-auto wow animate__fadeInUpSlow" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true">
+      <h2 data-v2-uuid="9b989ee8-a8d9-4222-881a-6b5120d54c2e" data-uuid="69e042ce3f69f" class="font-playfair text-[16px] text-center mb-4" data-editable="true">
+        Một hành trình mới sắp bắt đầu,<br data-uuid="69e042ce3f6a2">
+          và chúng mình muốn những người thân thương nhất có mặt để chứng kiến
+          giây phút ấy.<br data-uuid="69e042ce3f6a5">
+          Không chỉ là một buổi lễ,<br data-uuid="69e042ce3f6a8">
+          mà là dịp để bạn bè lâu ngày gặp lại,<br data-uuid="69e042ce3f6ab">
+          nâng ly, cười vang, kể nhau nghe những câu chuyện chưa kịp nói.<br data-uuid="69e042ce3f6ad">
+          Mong được nhìn thấy bạn trong ngày hạnh phúc của chúng mình.
+      </h2>
+      <img data-v2-uuid="1613c6ae-e613-4386-b584-4f6ad55040e4" data-uuid="69e042ce3f6b0" data-editable="true" class="w-[70%] mx-auto py-12 wow animate__zoomIn" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-1-1.webp?alt=media&token=cdb23f72-7c46-44a3-83d1-fbe048502dec">
+      <h2 data-v2-uuid="b5a1e36f-5cf3-4169-bcfc-e00803adaaff" data-uuid="69e042ce3f6b4" class="font-italianno text-4xl text-center text-rose-500 mb-4 wow animate__fadeInUpSlow" data-wow-delay="0.3s" data-editable="true">
+        <span data-v2-uuid="36238c1c-000b-457c-810c-e2aef4a4fe86" data-uuid="69e042ce3f6b7" class="font-italianno text-2xl"><span data-v2-uuid="230c3f2e-8564-4914-86c7-a0c30be7cba9" style="font-size: 36px;">Trọng Vũ&nbsp;</span>&amp;</span>&nbsp;Hồng
+        Nhung</h2>
+    </section>
+
+    <section id="family" data-v2-uuid="bdd7f10c-b8d2-4280-9791-e66e655736eb" data-uuid="69e042ce3f6bb" class="family w-[90%] mx-auto py-6 wow animate__fadeInUpSlow" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true">
+      <div data-uuid="69e042ce3f6be" class="grid grid-cols-2 gap-8 mb-8">
+
+        <div data-uuid="69e042ce3f6c1" class="text-center">
+          <h2 data-v2-uuid="9aa133eb-9dbd-484d-9557-47fd19f04402" data-uuid="69e042ce3f6c4" class="font-cormorant text-xl text-wedding-red font-bold mb-4 uppercase" data-editable="true">
+            Nhà Trai
+          </h2>
+          <p style="transform: translate(0px, 0px);" data-v2-uuid="5a7cecce-db68-4db3-a312-180047633afc" data-uuid="69e042ce3f6c7" class="font-cormorant text-[16px] mb-2" data-editable="true">
+            Ông: Nguyễn Trọng Văn</p>
+          <p data-v2-uuid="f3bacfbb-b484-4e4b-b81d-8dc870a1cd25" data-uuid="69e042ce3f6ca" class="font-cormorant text-[16px]" data-editable="true">
+            Bà: Nguyễn Thị Thu</p>
+        </div>
+
+
+        <div data-uuid="69e042ce3f6ce" class="text-center">
+          <h2 data-v2-uuid="ae72d699-47f6-4009-a55d-33409a9d3455" data-uuid="69e042ce3f6d1" class="font-cormorant text-xl text-wedding-red font-bold mb-4 uppercase" data-editable="true">
+            Nhà Gái
+          </h2>
+          <p data-v2-uuid="ffc9d796-e563-40b9-a8eb-2fd8af75cc84" data-uuid="69e042ce3f6d4" class="font-cormorant text-[16px] mb-2" data-editable="true">
+            Ông: Nguyễn Trọng Văn</p>
+          <p data-v2-uuid="325d1415-cfc4-40aa-a027-5130f37127c7" data-uuid="69e042ce3f6d8" class="font-cormorant text-[16px]" data-editable="true">
+            Bà: Nguyễn Thị Thu</p>
+        </div>
+      </div>
+
+
+      <h1 data-v2-uuid="f07cdaf4-a4e3-46dd-b38a-0129b2bc245a" data-uuid="69e042ce3f6dc" class="font-cormorant text-2xl md:text-3xl font-bold text-center text-wedding-red mb-6 uppercase" data-editable="true">
+        Trân trọng kính mời
+      </h1>
+
+
+      <div data-uuid="69e042ce3f6df" class="text-center mb-6">
+        <p data-v2-uuid="e55adab7-938a-4ff8-a688-3e2c5c7eda14" data-uuid="69e042ce3f6e2" class="font-cormorant text-[16px] font-semibold mb-2 vs-attendance-name-text" data-editable="true">
+          Bạn cùng gia đình
+        </p>
+        <p data-v2-uuid="a3129052-9fda-4d8a-99db-1cf9b2add3b0" data-uuid="69e042ce3f6e6" class="font-cormorant text-[16px] italic" data-editable="true">
+          (Tới dự Lễ Thành Hôn của hai con chúng tôi)
+        </p>
+      </div>
+
+
+      <div data-v2-uuid="21d8f66d-e77b-4496-ab6d-63a476f737ff" data-uuid="69e042ce3f6ea" class="flex items-center justify-center gap-4 mb-8">
+        <div data-uuid="69e042ce3f6ed" class="text-center">
+          <p style="font-family: &quot;Great Vibes&quot;, cursive;" data-v2-uuid="8fe5277f-1a4e-467e-9321-5c36a58034cb" data-uuid="69e042ce3f6f1" class="font-sacramento text-3xl text-wedding-red" data-editable="true">Nguyễn</p>
+          <p style="font-family: &quot;Great Vibes&quot;, cursive;" data-v2-uuid="33d28056-bcf1-4018-be83-597dcb3f2da7" data-uuid="69e042ce3f6f5" class="font-sacramento text-3xl text-wedding-red" data-editable="true">Trọng Vũ
+          </p>
+        </div>
+        <div data-uuid="69e042ce3f6f9" class="text-wedding-red">
+          <svg data-uuid="69e042ce3f6fd" viewBox="0 0 20 20" fill="currentColor" class="w-8 h-8">
+            <path data-uuid="69e042ce3f701" clip-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" fill-rule="evenodd"></path>
+          </svg>
+        </div>
+        <div data-uuid="69e042ce3f705" class="text-center">
+          <p style="font-family: &quot;Great Vibes&quot;, cursive;" data-v2-uuid="dc449785-90ab-4cb0-b83b-e5be179c0bfc" data-uuid="69e042ce3f709" class="font-sacramento text-3xl text-wedding-red" data-editable="true">Đỗ</p>
+          <p style="font-family: &quot;Great Vibes&quot;, cursive;" data-v2-uuid="edb29c1f-3a34-4018-a08c-95ce0470c848" data-uuid="69e042ce3f70d" class="font-sacramento text-3xl text-wedding-red" data-editable="true">Hồng Nhung
+          </p>
+        </div>
+      </div>
+
+
+      <div data-v2-uuid="d475d3ef-039e-41b0-be89-6b613bbc6db2" data-uuid="69e042ce3f711" class="text-center mb-6">
+        <p data-v2-uuid="6e4b8b0e-3b77-4d7b-a588-c028d5dc1dac" data-uuid="69e042ce3f716" class="font-cormorant text-lg font-semibold mb-2" data-editable="true">
+          Tổ chức vào lúc 09 giờ 00
+        </p>
+        <p data-v2-uuid="bd8a7ea0-ced0-4376-96e7-77aafcee029f" data-uuid="69e042ce3f71a" class="font-cormorant text-[16px] font-semibold mb-2" data-editable="true">
+          Thứ Tư, ngày 09 tháng 06 năm 2023
+        </p>
+        <p data-v2-uuid="9b1cf083-4d98-4fa4-80e3-65af0eccd974" data-uuid="69e042ce3f71d" class="font-cormorant text-[16px] italic" data-editable="true">
+          (Tức ngày 12 tháng 05 năm 2023 Quý Mão)
+        </p>
+      </div>
+
+
+      <div data-uuid="69e042ce3f722" class="text-center mb-6">
+        <p data-v2-uuid="30a64ca3-784a-4f5c-8a53-d05f8c1ae8ab" data-uuid="69e042ce3f726" class="font-cormorant text-[16px] font-semibold mb-2" data-editable="true">
+          Tại gia đình Nhà Trai:
+        </p>
+        <p data-v2-uuid="6a046410-dd08-4acb-8d39-7b5d6e7ce865" data-uuid="69e042ce3f737" class="font-cormorant text-[16px]" data-editable="true">
+          Vietnam
+        </p>
+      </div>
+
+
+      <p data-v2-uuid="d2873024-15c2-4813-99b3-4b87b4b6c760" data-uuid="69e042ce3f73c" class="font-cormorant text-[16px] text-center italic" data-editable="true">
+        Sự hiện diện của Quý khách là niềm vinh hạnh của gia đình chúng tôi!
+      </p>
+    </section>
+
+    <section id="story" data-v2-uuid="83d1c924-e4e9-419a-b4ba-a028a65403e7" data-uuid="69e042ce3f73f" class="content-item-2 w-[80%] mx-auto py-6 wow animate__fadeInUpSlow" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true">
+      <img data-v2-uuid="856cb5c7-1650-4eba-883f-8ca7f94f0f26" data-uuid="69e042ce3f744" data-editable="true" class="w-full wow animate__fadeIn" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-2-1.webp?alt=media&token=26d4d65f-9c96-4c1f-9e5c-3b8e0c321cc1">
+      <img data-v2-uuid="ff1ad356-d112-44ba-99f2-e3d4694f018d" data-uuid="69e042ce3f748" data-editable="true" class="w-1/2 mx-auto py-8 wow animate__fadeInUp" data-wow-delay="0.2s" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-2-2.webp?alt=media&token=048b4432-b4b6-40b7-9ab2-e66f7266c398">
+      <h2 data-v2-uuid="e9af219b-6689-4f9b-8ad8-ad083f7148db" data-uuid="69e042ce3f74b" class="font-allura text-2xl text-center mb-4 wow animate__fadeInUp" data-wow-delay="0.4s" data-editable="true">
+        Em là món quà bất ngờ, là điều kỳ diệu đẹp nhất trong đời anh.
+      </h2>
+    </section>
+
+    <section id="story-2" data-v2-uuid="959e3e43-eed4-46d0-8b83-f33a4953af33" data-uuid="69e042ce3f74f" class="content-item-3 w-[90%] mx-auto py-6 wow animate__fadeInRightSlow" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true">
+      <div data-uuid="69e042ce3f754" class="relative mb-12">
+        <img data-v2-uuid="f15e05ee-db9d-441f-9ea3-669a6850b304" data-uuid="69e042ce3f757" data-editable="true" class="w-[85%] wow animate__fadeIn" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-3-1.webp?alt=media&token=04034642-aab1-448c-a745-f3dbc7488638">
+        <img data-v2-uuid="cc9d10fe-47af-4c6f-9051-1ae2664a4b3d" data-uuid="69e042ce3f75b" data-editable="true" class="w-1/3 absolute bottom-[-10%] right-0 wow animate__fadeInUp" data-wow-delay="0.3s" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-3-2.webp?alt=media&token=a87e3391-fb53-4e66-9526-f8e71e43ef97">
+      </div>
+      <p data-v2-uuid="e835c2ba-a004-4541-9ce8-c81afffb5a4a" data-uuid="69e042ce3f760" class="font-playfair text-sm w-2/3 ml-auto mr-8 tracking-wide leading-relaxed text-right" data-editable="true">
+        Giữa làn gió hè dịu nhẹ và ánh hoàng hôn rực rỡ,
+        <br data-uuid="69e042ce3f764">
+          từ khoảnh khắc rung động ban đầu đến lời hẹn ước tương lai,
+        <br data-uuid="69e042ce3f768">
+          chúng mình đã chọn viết nên trang đầu tiên của câu chuyện tình yêu.
+        <br data-uuid="69e042ce3f76c">
+          Gặp ngày lành tháng đẹp, <br data-uuid="69e042ce3f770">
+          mong được cùng bạn chung vui.
+      </p>
+      <p data-v2-uuid="8a9b1234-a567-8901-b234-c567d890e123" class="font-playfair text-sm w-2/3 ml-auto mr-8 tracking-wide leading-relaxed text-right wow animate__fadeInUp" data-wow-delay="0.5s" data-editable="true">
+        Hãy đến và cùng chúng tôi viết tiếp những kỷ niệm đẹp.
+      </p>
+    </section>
+
+    <section id="couple" data-v2-uuid="94d062ce-3f65-4362-a7a7-098159fcdc5a" data-uuid="69e042ce3f773" class="content-item-4 w-[90%] mx-auto py-6 wow animate__fadeInUpSlow" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true">
+      <div data-v2-uuid="8248e9f8-d830-4a60-bdf7-46d1c846cec6" data-uuid="69e042ce3f778" class="groom flex gap-4 justify-center items-center py-8">
+        <div data-uuid="69e042ce3f77c" class="img-groom">
+          <img data-v2-uuid="c21870fa-f779-4f6a-9543-7bf471d46395" data-uuid="69e042ce3f781" data-editable="true" class="w-full wow animate__rotateInDownLeft" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-4-1.webp?alt=media&token=2007bea5-4904-428a-9092-e427e3ee8f50">
+        </div>
+        <div data-uuid="69e042ce3f785" class="name-groom wow animate__rotateInDownRight" data-wow-delay="0.2s">
+          <img data-v2-uuid="d8e42c7d-441c-4c2c-ae00-68ef55ebc04b" data-uuid="69e042ce3f789" data-editable="true" class="w-[70%]" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-4-2.webp?alt=media&token=a7d555ab-aec6-4aa8-acc5-ddb928921280">
+          <p data-v2-uuid="a62377c0-fd1f-4ac3-a7ff-e5a646618393" data-uuid="69e042ce3f78e" class="font-cormorant text-lg py-4 pl-4" data-editable="true">
+            Chú Rể/
+          </p>
+          <p data-v2-uuid="be23f071-dbde-4ffd-a0f0-eec6268d1f09" data-uuid="69e042ce3f793" class="font-cormorant text-lg text-center" data-editable="true">Trọng Vũ</p>
+        </div>
+      </div>
+      <div data-v2-uuid="dd2c3591-6cad-4931-99e7-01f85ae3190b" data-uuid="69e042ce3f797" class="bride flex gap-4 justify-center items-center py-8">
+        <div data-uuid="69e042ce3f79b" class="img-bride">
+          <img data-v2-uuid="dd814550-5ea7-4260-ae5e-f0f8ec861474" data-uuid="69e042ce3f7a0" data-editable="true" class="w-full wow animate__rotateInDownRight" data-wow-delay="0.3s" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-4-3.webp?alt=media&token=9f3a3354-0d33-421b-8d61-40419cecc7e3">
+        </div>
+        <div data-uuid="69e042ce3f7a5" class="name-bride wow animate__rotateInDownLeft" data-wow-delay="0.3s">
+          <img data-v2-uuid="f216cba8-49ca-49bf-bfcd-31d59dc1f8f3" data-uuid="69e042ce3f7a9" data-editable="true" class="w-[70%]" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-4-4.webp?alt=media&token=3040c20c-87a1-40c2-b016-57f1d68d9486">
+          <p data-v2-uuid="458f0852-f373-4994-ad53-604f3f4defb6" data-uuid="69e042ce3f7af" class="font-cormorant text-lg py-4 pl-4" data-editable="true">
+            Cô Dâu/
+          </p>
+          <p data-v2-uuid="866b690e-a3c4-417d-8f70-af59d7f7c5db" data-uuid="69e042ce3f7b3" class="font-cormorant text-lg text-center" data-editable="true">Hồng Nhung</p>
+        </div>
+      </div>
+      <p data-v2-uuid="bd61e21b-0599-429d-8fc5-4d31d4cb2fc8" data-uuid="69e042ce3f7b8" class="font-playfair text-sm tracking-wide leading-relaxed w-2/3 wow animate__fadeInUp" data-wow-delay="0.5s" data-editable="true">
+        Hóa ra lời hứa sâu đậm nhất <br data-uuid="69e042ce3f7bc">không nằm
+          nơi trời cao biển rộng, <br data-uuid="69e042ce3f7c1">mà trong hơi
+          ấm từ bàn tay nhau, <br data-uuid="69e042ce3f7c6">những ngày thường
+          ta cùng nắm tay đi qua.
+      </p>
+    </section>
+
+    <section id="gallery" data-v2-uuid="67fcedc1-e1e8-47ad-8f51-b2a1fa7554a7" data-uuid="69e042ce3f7ca" class="content-item-5 w-full mx-auto py-6 wow animate__fadeInUpSlow" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true">
+      <div data-uuid="69e042ce3f7cf" class="w-[90%] mx-auto relative">
+        <div data-uuid="69e042ce3f7d4" class="flex items-center">
+          <div data-uuid="69e042ce3f7d9" class="flex flex-col items-center">
+            <img data-v2-uuid="74b62bc5-42a1-418a-9ef7-1de01279d9c7" data-uuid="69e042ce3f7de" data-editable="true" class="w-full pb-6 wow animate__zoomIn" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-5-1.webp?alt=media&token=e8eefe4a-0b31-46f6-a836-53227202745c">
+            <img data-v2-uuid="bf91a486-3547-4458-ae4b-7fed65116c52" data-uuid="69e042ce3f7e3" data-editable="true" class="w-full wow animate__zoomIn" data-wow-delay="0.2s" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-5-2.webp?alt=media&token=c055df13-157d-4f5c-898b-961597c7d801">
+          </div>
+          <img data-v2-uuid="4ed16279-14c7-48ec-a730-e808cd72e0bf" data-uuid="69e042ce3f7e8" data-editable="true" class="w-[70%] wow animate__zoomIn" data-wow-delay="0.4s" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-5-4.webp?alt=media&token=45fec21e-0b24-4362-9bdc-3316476a4ddd">
+        </div>
+        <div data-uuid="69e042ce3f7ed" class="absolute bottom-[-65%] left-0 flex items-center gap-4">
+          <img data-v2-uuid="d3379896-369a-495d-9a24-1dd929166ae9" data-uuid="69e042ce3f7f2" data-editable="true" class="w-[60%] border-[8px] border-[#f4f2ea] wow animate__fadeInUp" data-wow-delay="0.2s" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-5-5.webp?alt=media&token=afaaeb26-9381-4643-9a83-cbd70175d0f5">
+          <p data-v2-uuid="ebab0d44-4397-4420-9d24-0bb018149964" data-uuid="69e042ce3f7f7" class="font-playfair text-center text-sm leading-relaxed wow animate__fadeInUp" data-wow-delay="0.4s" data-editable="true">
+            Hạnh phúc không phải là đích đến, mà là hành trình chúng ta cùng
+            nhau trải qua.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="countdown" data-v2-uuid="bb1ec68c-353b-4683-a770-5f540667e82c" data-uuid="69e042ce3f7fd" class="content-item-6 w-full mx-auto py-6 mt-[60%] wow animate__fadeInUpSlow" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true">
+      <div data-uuid="69e042ce3f802" class="content-title">
+        <img data-v2-uuid="1a990769-b7cb-41c8-8d3c-5bc67d779970" data-uuid="69e042ce3f807" class="w-2/3 mx-auto wow animate__fadeIn" alt="" data-editable="true" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-6-1.webp?alt=media&token=2135bb63-40fe-4b2c-a5a6-7e93d38590f8">
+        <h1 data-v2-uuid="e2243b85-d07c-45be-b47e-c7755349ecd3" data-uuid="69e042ce3f80c" class="font-cormorant py-4 w-1/2 mx-auto text-center text-[18px] leading-relaxed wow animate__fadeInUp" data-wow-delay="0.3s" data-editable="true">
+          WEDDING INVITATION
+        </h1>
+      </div>
+      <div data-uuid="69e042ce3f812" class="flex gap-2 justify-center w-[90%] mx-auto">
+        <img data-v2-uuid="b527983b-d19a-4a4d-8cd8-eac71823add5" data-uuid="69e042ce3f817" data-editable="true" class="w-1/2 wow animate__fadeInLeft" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-6-2.webp?alt=media&token=56c01475-13df-4963-9eef-43b9fab8bdde">
+        <img data-v2-uuid="080c0649-3dee-42d8-a481-c9b365c7b086" data-uuid="69e042ce3f81d" data-editable="true" class="w-1/2 wow animate__fadeInRight" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-6-3.webp?alt=media&token=7b26f10c-6081-4bb9-a109-62d741221e78">
+      </div>
+      <div data-hidable="true" data-uuid="69e042ce3f822" class="count-down py-8">
+        <h2 data-v2-uuid="4966f217-1673-4367-a031-d10c01484791" data-uuid="69e042ce3f828" class="font-cormorant text-2xl text-center mb-4 font-semibold" data-editable="true">
+          Đếm ngược đến ngày trọng đại
+        </h2>
+        <div data-uuid="69e042ce3f82d" class="flex justify-center gap-8 w-[90%] mx-auto">
+          <div data-uuid="69e042ce3f832" class="text-center">
+            <p data-uuid="69e042ce3f838" class="font-crimson vs-time-days text-5xl md:text-6xl font-normal text-[#8B4513] mb-1" id="days">
+              00
+            </p>
+            <p data-v2-uuid="f5c5411a-7619-4f9f-8b50-f01c007347d7" data-uuid="69e042ce3f83e" class="font-cormorant text-sm text-[#8B4513]" data-editable="true">
+              Ngày
+            </p>
+          </div>
+          <div data-uuid="69e042ce3f843" class="text-center">
+            <p data-uuid="69e042ce3f848" class="font-crimson vs-time-hours text-5xl md:text-6xl font-normal text-[#8B4513] mb-1" id="hours">
+              00
+            </p>
+            <p data-v2-uuid="dbdcf137-2808-410d-8b8c-d09a46e24500" data-uuid="69e042ce3f84e" class="font-cormorant text-sm text-[#8B4513]" data-editable="true">
+              Giờ
+            </p>
+          </div>
+          <div data-uuid="69e042ce3f854" class="text-center">
+            <p data-uuid="69e042ce3f85a" class="font-crimson vs-time-minutes text-5xl md:text-6xl font-normal text-[#8B4513] mb-1" id="minutes">
+              00
+            </p>
+            <p data-v2-uuid="24cabdd2-487b-474b-815a-54ce68eea921" data-uuid="69e042ce3f860" class="font-cormorant text-sm text-[#8B4513]" data-editable="true">
+              Phút
+            </p>
+          </div>
+          <div data-uuid="69e042ce3f865" class="text-center">
+            <p data-uuid="69e042ce3f86b" class="font-crimson vs-time-seconds text-5xl md:text-6xl font-normal text-[#8B4513] mb-1" id="seconds">
+              00
+            </p>
+            <p data-v2-uuid="fb9303dc-00eb-4294-b8bf-40844ca59b23" data-uuid="69e042ce3f871" class="font-cormorant text-sm text-[#8B4513]" data-editable="true">
+              Giây
+            </p>
+
+          </div>
+        </div>
+      </div>
+      <p data-v2-uuid="ebef3593-5b0f-4804-9a40-a0bc923a8782" data-uuid="69e042ce3f877" class="font-playfair text-sm w-1/2 mx-auto text-center text-[16px] leading-relaxed" data-editable="true">
+        Khi thời khắc đẹp nhất đã đến, <br data-uuid="69e042ce3f87d">Chúng
+          tôi trân trọng mong bạn đến như lời hẹn ước.
+        <br data-uuid="69e042ce3f883">Gửi đến gia đình và những người bạn
+          thân quý — <br data-uuid="69e042ce3f889">Lễ cưới tuy ngắn ngủi,
+        <br data-uuid="69e042ce3f88f">Nhưng tình thân và yêu thương sẽ còn
+          mãi vẹn nguyên.
+      </p>
+      <p data-v2-uuid="8f7020a0-a3f7-4ba6-828f-f86cb99d13b4" data-uuid="69e042ce3f895" class="py-8 w-1/2 mx-auto text-wedding-red text-center text-[24px] leading-relaxed" data-editable="true">
+        - 囍 -
+      </p>
+    </section>
+
+    <section id="timeline" data-v2-uuid="13d2d722-64aa-4528-ad24-96a17bfa9762" data-uuid="69e042ce3f89b" class="content-item-7 w-[90%] mx-auto py-8 wow animate__fadeInUpSlow" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true">
+
+      <div data-uuid="69e042ce3f8a1" class="text-center mb-12">
+        <p data-v2-uuid="284798de-78d2-41fc-80f2-edbe8782e097" data-uuid="69e042ce3f8a8" class="font-cormorant text-wedding-red text-lg mb-2" data-editable="true">
+          Ngày 20 tháng 5 năm 2050 - Thứ Bảy
+        </p>
+        <p data-v2-uuid="45404a83-b026-407f-a18f-4f5daafbf76f" data-uuid="69e042ce3f8ae" class="font-cormorant text-wedding-red text-lg" data-editable="true">
+          Âm lịch ngày 22 tháng 4 - 12:00 PM
+        </p>
+      </div>
+
+
+      <div data-hidable="true" data-uuid="69e042ce3f8b4" class="relative mb-12">
+
+        <div data-uuid="69e042ce3f8ba" class="absolute top-1/2 left-0 right-0 h-0.5 bg-wedding-red transform -translate-y-1/2"></div>
+
+
+        <div data-uuid="69e042ce3f8c0" class="grid grid-cols-3 gap-4 relative">
+
+          <div data-uuid="69e042ce3f8c6" class="text-center">
+            <div data-uuid="69e042ce3f8cd" class="mb-4">
+              <img data-v2-uuid="16b92497-e1e7-489b-a5ae-8c4e9323ff1f" data-uuid="69e042ce3f8d3" data-editable="true" class="w-16 h-16 mx-auto wow animate__zoomIn" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-7-1.webp?alt=media&token=16764e29-2913-46fe-8015-5a57ff068b35">
+            </div>
+            <div data-uuid="69e042ce3f8da" class="w-3 h-3 bg-wedding-red rounded-full mx-auto mb-2"></div>
+            <p data-v2-uuid="6a5787b8-bc9e-403b-8512-ae739df522bb" data-uuid="69e042ce3f8e0" class="font-cormorant text-wedding-red font-semibold text-lg" data-editable="true">
+              11: 30
+            </p>
+            <p data-v2-uuid="ef67f673-7402-4a78-908e-393c614470ea" data-uuid="69e042ce3f8e7" class="font-cormorant text-sm" data-editable="true">
+              Khách đến
+            </p>
+          </div>
+
+
+          <div data-uuid="69e042ce3f8ed" class="text-center">
+            <div data-uuid="69e042ce3f8f4" class="mb-4">
+              <img data-v2-uuid="d9ae9f37-1cdc-43b2-9df3-6f696fb9cbb2" data-uuid="69e042ce3f8fa" data-editable="true" class="w-16 h-16 mx-auto wow animate__zoomIn" data-wow-delay="0.2s" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-7-2.webp?alt=media&token=4f6a63f3-c978-416a-97f1-d52ed113aca7">
+            </div>
+            <div data-uuid="69e042ce3f901" class="w-3 h-3 bg-wedding-red rounded-full mx-auto mb-2"></div>
+            <p data-v2-uuid="8d81ab26-a4d8-4f24-9095-5dc7141517df" data-uuid="69e042ce3f908" class="font-cormorant text-wedding-red font-semibold text-lg" data-editable="true">
+              12: 30
+            </p>
+            <p data-v2-uuid="12d09995-5a1f-4486-b220-71c3c4895a93" data-uuid="69e042ce3f90f" class="font-cormorant text-sm" data-editable="true">
+              Lễ cưới
+            </p>
+          </div>
+
+
+          <div data-uuid="69e042ce3f916" class="text-center">
+            <div data-uuid="69e042ce3f91c" class="mb-4">
+              <img data-v2-uuid="49d1baba-546a-4510-80fc-be95b5f46a3d" data-uuid="69e042ce3f923" data-editable="true" class="w-16 h-16 mx-auto wow animate__zoomIn" data-wow-delay="0.4s" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-7-3.webp?alt=media&token=c63fe905-ac5b-43b4-b6ff-d3c517960b4f">
+            </div>
+            <div data-uuid="69e042ce3f92a" class="w-3 h-3 bg-wedding-red rounded-full mx-auto mb-2"></div>
+            <p data-v2-uuid="b241175f-7e3f-4ddb-9776-4dbef3e5957d" data-uuid="69e042ce3f931" class="font-cormorant text-wedding-red font-semibold text-lg" data-editable="true">
+              13: 30
+            </p>
+            <p data-v2-uuid="08bd7cd2-b0e2-4cbe-abf2-c9064388c9ec" data-uuid="69e042ce3f938" class="font-cormorant text-sm" data-editable="true">
+              Tiệc cưới
+            </p>
+          </div>
+        </div>
+      </div>
+
+
+      <div data-uuid="69e042ce3f93f" class="text-center mb-8">
+        <img data-v2-uuid="ad9aa226-9548-4dd8-ba41-306f866bb07c" data-uuid="69e042ce3f946" data-editable="true" class="w-1/2 mx-auto wow animate__fadeIn" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-7-4.webp?alt=media&token=1a490a64-231b-4c14-b746-a20d45872d27">
+        <p data-v2-uuid="bc0039b6-ecf2-411b-b9ba-0c5228c8d76b" data-uuid="69e042ce3f94e" class="font-cormorant text-lg font-semibold mb-2 wow animate__fadeInUp" data-wow-delay="0.3s" data-editable="true">
+          Địa điểm tổ chức:
+        </p>
+        <p id="venue-address" data-v2-uuid="413b4f3b-953c-4fda-b433-061f803b001e" data-uuid="69e042ce3f955" class="font-cormorant text-[16px]" data-editable="true">
+          Nhà hàng: ABC Sảnh: 123 Đường XYZ, Quận 1, TP. HCM
+        </p>
+      </div>
+
+      <div data-uuid="69e042ce3f95c" class="text-center mt-4">
+        <a id="gmaps-link" data-v2-uuid="0d7ab1f4-81b1-46de-8594-6500d4a05c9b" data-uuid="69e042ce3f963" class="inline-block vs-popup-gmaps bg-wedding-red text-white font-cormorant font-semibold px-6 py-3 rounded-full hover:bg-red-700 transition-colors duration-300 shadow-md" href="https://www.google.com/maps/place/Qu%E1%BA%ADn+1,+Th%C3%A0nh+ph%E1%BB%91+H%E1%BB%93+Ch%C3%AD+Minh,+Vi%E1%BB%87t+Nam/@10.7768899,106.6965973,17z">
+          <svg data-uuid="69e042ce3f96a" viewBox="0 0 20 20" fill="currentColor" class="inline-block w-5 h-5 mr-2 -mt-1">
+            <path data-uuid="69e042ce3f972" clip-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" fill-rule="evenodd"></path>
+          </svg>
+          Mở trong Google Map
+        </a>
+      </div>
+    </section>
+
+
+    <section id="dresscode" data-v2-uuid="3c9f906d-1c4c-4fc5-94ad-1b8e0d739ef5" data-uuid="69e042ce3f979" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true" class="dress-code-section w-[90%] mx-auto py-6 wow animate__fadeInUpSlow">
+      <h2 data-v2-uuid="398fab1d-8ec4-4b4b-a2a4-b0ca1645c640" data-uuid="69e042ce3f981" data-editable="true" class="font-cormorant text-2xl font-bold text-center text-wedding-red mb-4">
+        Dress Code
+      </h2>
+      <p data-v2-uuid="6c347984-5c49-42cb-aa80-8a0348d9fe72" data-uuid="69e042ce3f988" data-editable="true" class="font-cormorant text-center text-[#444141] mb-6 text-[16px]">
+        Quý khách vui lòng tham khảo gợi ý trang phục
+      </p>
+      <div data-uuid="69e042ce3f98f" data-wow-delay="0.2s" class="flex justify-center gap-6 flex-wrap wow animate__fadeInUp">
+        <div data-uuid="69e042ce3f997" class="text-center">
+          <div data-uuid="69e042ce3f99e" style="background-color: #8B4513;" class="w-16 h-16 rounded-full mx-auto shadow-md border-2 border-white"></div>
+          <p data-v2-uuid="a342a5d6-fed3-428d-a535-7f957de90ae6" data-uuid="69e042ce3f9a5" data-editable="true" class="font-cormorant text-sm mt-2 text-[#444141]">Nâu đất</p>
+        </div>
+        <div data-uuid="69e042ce3f9ad" class="text-center">
+          <div data-uuid="69e042ce3f9b4" class="w-16 h-16 rounded-full bg-rose-500 mx-auto shadow-md border-2 border-white"></div>
+          <p data-v2-uuid="9f95d9ee-693d-4282-92b8-1913bc3a0a1b" data-uuid="69e042ce3f9bc" data-editable="true" class="font-cormorant text-sm mt-2 text-[#444141]">Hồng đào</p>
+        </div>
+        <div data-uuid="69e042ce3f9c3" class="text-center">
+          <div data-uuid="69e042ce3f9cb" style="background-color: #f4f2ea;" class="w-16 h-16 rounded-full mx-auto shadow-md border-2 border-white"></div>
+          <p data-v2-uuid="5dc5e297-0968-492d-9a94-ba7204db101e" data-uuid="69e042ce3f9d3" data-editable="true" class="font-cormorant text-sm mt-2 text-[#444141]">Kem nhạt</p>
+        </div>
+        <div data-uuid="69e042ce3f9da" class="text-center">
+          <div data-uuid="69e042ce3f9e2" style="background-color: #D4A373;" class="w-16 h-16 rounded-full mx-auto shadow-md border-2 border-white"></div>
+          <p data-v2-uuid="a65c9608-b433-4dec-b4f3-6f20ca67854f" data-uuid="69e042ce3f9ea" data-editable="true" class="font-cormorant text-sm mt-2 text-[#444141]">Vàng nâu</p>
+        </div>
+      </div>
+    </section>
+    <section id="rsvp" data-v2-uuid="7aa420a8-9b2a-44c5-95a4-b8d287898379" data-uuid="69e042ce3f9f2" class="content-item-8 w-[80%] mx-auto py-8 wow animate__fadeInUpSlow" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true">
+        <img data-v2-uuid="66f5e5ce-2315-4636-b6cd-4759d3a7b0d3" data-uuid="69e042ce3f9fa" data-editable="true" class="wow animate__fadeIn" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-8-1.webp?alt=media&token=5a7f3222-1df6-4efc-819f-69759589eba5">
+      <h2 data-v2-uuid="0649de83-8863-4bc3-8223-54b0f16e9044" data-uuid="69e042ce3fa02" class="font-cormorant w-1/2 mx-auto text-center text-[16px] leading-relaxed py-8 wow animate__fadeInUp" data-wow-delay="0.3s" data-editable="true">
+        Cảm ơn bạn đã dành thời gian quý báu
+        <br data-uuid="69e042ce3fa09">để tham dự ngày trọng đại của chúng
+          mình. <br data-uuid="69e042ce3fa11">
+          Sự hiện diện của bạn <br data-uuid="69e042ce3fa19">là món quà vô giá
+          đối với chúng mình.
+      </h2>
+
+
+      <div data-hidable="true" data-uuid="69e042ce3fa22" class="confirm p-8 max-w-md mx-auto my-8">
+        <h3 data-v2-uuid="18410506-ae92-4483-b50b-2c839155d64f" data-uuid="69e042ce3fa29" class="font-cormorant text-2xl font-bold text-center text-wedding-red mb-6 wow animate__fadeInUp" data-wow-delay="0.5s" data-editable="true">
+          Xác Nhận Tham Dự
+        </h3>
+        <form data-uuid="69e042ce3fa32" class="space-y-4 vs-attendance-form" id="confirmForm">
+          <div data-uuid="69e042ce3fa3a">
+            <label data-v2-uuid="1966d4e9-8095-452a-bb94-cf07739b133b" data-uuid="69e042ce3fa42" class="font-cormorant text-sm font-semibold block mb-2" data-editable="true">Họ và tên *</label>
+            <input data-v2-uuid="a2e89b6d-7092-4eb0-ba2c-9d5e722bb79e" data-uuid="69e042ce3fa4a" placeholder="Nhập họ tên của bạn" class="w-full vs-attendance-name px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-wedding-red font-cormorant" required="" type="text">
+          </div>
+
+          <div data-uuid="69e042ce3fa52">
+            <label data-v2-uuid="15ad00f1-ef43-44d8-9eb8-f057465131e4" data-uuid="69e042ce3fa5a" class="font-cormorant text-sm font-semibold block mb-2" data-editable="true">Bạn sẽ tham dự? *</label>
+            <div data-uuid="69e042ce3fa62" class="space-y-2">
+              <label data-uuid="69e042ce3fa6a" class="flex items-center font-cormorant">
+                  <input data-v2-uuid="5af5df70-3b0b-4902-9ba9-777c616164f5" data-uuid="69e042ce3fa73" class="mr-2" required="" value="yes" name="decision" type="radio">
+                  <span data-v2-uuid="6b5041e9-7ce7-4403-bae0-e54211105825" data-uuid="69e042ce3fa7b" data-editable="true">Có, tôi sẽ đến</span>
+                </label>
+              <label data-uuid="69e042ce3fa84" class="flex items-center font-cormorant">
+                  <input data-v2-uuid="38442ce0-b2a7-44db-8df6-66fd4c441a74" data-uuid="69e042ce3fa8c" class="mr-2" value="no" name="decision" type="radio">
+                  <span data-v2-uuid="be0dae65-0497-47f5-b4af-aedcd0900c85" data-uuid="69e042ce3fa95" data-editable="true">Rất tiếc, tôi không thể tham dự</span>
+                </label>
+            </div>
+          </div>
+
+          <div data-uuid="69e042ce3fa9e">
+            <label data-v2-uuid="11f86fd8-14f3-4285-af64-4f3852477a56" data-uuid="69e042ce3faa6" class="font-cormorant text-sm font-semibold block mb-2" data-editable="true">Bạn là khách của? *</label>
+            <div data-uuid="69e042ce3faaf" class="space-y-2">
+              <label data-uuid="69e042ce3fab7" class="flex items-center font-cormorant">
+                  <input data-v2-uuid="ec8f6606-ccc9-4482-bced-937d72764499" data-uuid="69e042ce3fac0" class="mr-2" required="" value="bride" name="guest_of" type="radio">
+                  <span data-v2-uuid="77e7adef-345e-412f-b688-d783a56da25b" data-uuid="69e042ce3fac8" data-editable="true">Cô dâu</span>
+                </label>
+              <label data-uuid="69e042ce3fad2" class="flex items-center font-cormorant">
+                  <input data-v2-uuid="097b30f3-62a8-4e10-912b-71278cb3739c" data-uuid="69e042ce3fadb" class="mr-2" value="groom" name="guest_of" type="radio">
+                  <span data-v2-uuid="c5bf1ab9-b390-4603-9c21-d5a172f421e0" data-uuid="69e042ce3fae3" data-editable="true">Chú rể</span>
+                </label>
+            </div>
+          </div>
+
+          <div data-uuid="69e042ce3faec">
+            <label data-v2-uuid="06acfe4c-34b6-4dbb-a7fd-d41a47fa9b17" data-uuid="69e042ce3faf5" class="font-cormorant text-sm font-semibold block mb-2" data-editable="true">Số người đi cùng (bao gồm bạn)</label>
+            <select data-v2-uuid="0d7551ac-6c89-4446-887c-d4a07b25fbfb" data-uuid="69e042ce3fafd" class="vs-number-of-guests w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-wedding-red font-cormorant" name="number_of_guests">
+                <option data-uuid="69e042ce3fb07" value="1">1 người</option>
+                <option data-uuid="69e042ce3fb10" value="2">2 người</option>
+                <option data-uuid="69e042ce3fb20" value="3">3 người</option>
+                <option data-uuid="69e042ce3fb29" value="4">4 người</option>
+                <option data-uuid="69e042ce3fb32" value="5">5 người</option>
+                <option data-uuid="69e042ce3fb3b" value="5">
+                  Trên 5 người
+                </option>
+              </select>
+          </div>
+
+          <div data-uuid="69e042ce3fb44">
+            <label data-v2-uuid="1060c43a-c840-4ee3-a2da-7da01b7bb21f" data-uuid="69e042ce3fb4d" class="font-cormorant text-sm font-semibold block mb-2" data-editable="true">Lời nhắn</label>
+            <textarea data-v2-uuid="b5925ba0-1983-45d7-b451-7778e6bbe278" data-uuid="69e042ce3fb57" placeholder="Gửi lời chúc đến cô dâu chú rể..." class="vs-attendance-message w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-wedding-red font-cormorant" rows="3" name="message"></textarea>
+          </div>
+
+          <button data-v2-uuid="b225e149-6b7e-4633-81da-6389d7e9857d" data-uuid="69e042ce3fb60" class="w-full bg-wedding-red text-white font-cormorant font-semibold py-3 rounded-full hover:bg-red-700 transition-colors duration-300 shadow-md" data-editable="true" type="submit">
+              Gửi Xác Nhận
+            </button>
+        </form>
+
+        <p data-v2-uuid="08a111bc-2a76-4635-ad9e-f38da1ea4742" data-uuid="69e042ce3fb69" class="font-cormorant text-center text-green-600 mt-4 hidden" data-editable="true" id="confirmMessage">
+          Cảm ơn bạn đã xác nhận! Chúng mình rất mong được gặp bạn.
+        </p>
+      </div>
+
+<img data-v2-uuid="81c9e154-60ea-4eea-ad5c-f5f6e5fb31c5" data-uuid="69e042ce3fb73" data-editable="true" class="w-2/3 mx-auto wow animate__zoomIn" data-wow-delay="0.6s" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-8-2.webp?alt=media&token=c37c0b4a-6e66-442a-9b29-d7b09480ea12">
+    </section>
+
+    <!-- ===== Guestbook (Sổ lưu bút) ===== -->
+    <section id="guestbook" class="w-[80%] mx-auto py-8 wow animate__fadeInUpSlow">
+      <h2 class="font-cormorant text-2xl font-bold text-center text-wedding-red mb-2">Sổ lưu bút</h2>
+      <p class="font-cormorant text-center text-[#444141] mb-8 text-[15px]">
+        Lời chúc của bạn là món quà tinh thần vô giá dành cho chúng mình.
+      </p>
+      <div id="guestbook-list" class="space-y-3">
+        <p class="font-cormorant text-center text-gray-400 text-sm" id="guestbook-loading">Đang tải lời chúc...</p>
+      </div>
+    </section>
+  </main>
+  <div class="h-16"></div>
+
+
+  <footer data-v2-uuid="13a97fc3-d296-4d20-b62a-61c0fe4bf5d4" data-uuid="69e042ce3fb7c" class="text-center text-gray-600 wow animate__fadeInUpSlow" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true">
+    <div data-uuid="69e042ce3fb86" class="container mx-auto px-4">
+
+
+    </div>
+  </footer>
+</div>    <script>
+      // =============================================
+      // FIREBASE CONFIGURATION
+      // =============================================
+      // Replace these placeholder values with your Firebase config from:
+      // https://console.firebase.google.com → Project Settings → Your apps → Web app
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyD8-z-yaMaaWCQ1jrJQnK2NPDFKsSZGZz4",
+        authDomain: "vu-nhung-wedding.firebaseapp.com",
+        projectId: "vu-nhung-wedding",
+        storageBucket: "vu-nhung-wedding.firebasestorage.app",
+        messagingSenderId: "345037471217",
+        appId: "1:345037471217:web:406efced395219bbf95850",
+        measurementId: "G-ML4CCW1CWW"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+      const storage = firebase.storage();
+
+      // =============================================
+      // RSVP FORM HANDLER
+      // =============================================
+      const confirmForm = document.getElementById('confirmForm');
+      const confirmMessage = document.getElementById('confirmMessage');
+      const submitBtn = confirmForm.querySelector('button[type="submit"]');
+
+      if (confirmForm) {
+        confirmForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+
+          // Get form values
+          const name = document.querySelector('.vs-attendance-name').value.trim();
+          const decision = document.querySelector('input[name="decision"]:checked');
+          const guestOf = document.querySelector('input[name="guest_of"]:checked');
+          const guestCount = document.querySelector('.vs-number-of-guests').value;
+          const message = document.querySelector('.vs-attendance-message').value.trim();
+
+          // Validate required fields
+          if (!name) {
+            alert('Vui lòng nhập họ tên của bạn');
+            return;
+          }
+          if (!decision) {
+            alert('Vui lòng chọn xác nhận tham dự');
+            return;
+          }
+          if (!guestOf) {
+            alert('Vui lòng chọn bạn là khách của cô dâu hay chú rể');
+            return;
+          }
+
+          // Disable button during submission
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Đang gửi...';
+
+          // Prepare guest data
+          const guestData = {
+            name: name,
+            attending: decision.value === 'yes',
+            guestOf: guestOf.value,
+            guestCount: parseInt(guestCount) || 1,
+            message: message || '',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          };
+
+          try {
+            // Save to Firestore
+            await db.collection('guests').add(guestData);
+
+            // Show success message
+            confirmForm.style.display = 'none';
+            confirmMessage.classList.remove('hidden');
+            confirmMessage.classList.add('block');
+
+            // Optional: Show different message for non-attending guests
+            if (decision.value === 'no') {
+              confirmMessage.innerHTML = 'Cảm ơn bạn đã phản hồi! Chúng mình rất tiếc vì bạn không thể tham dự.';
+            }
+
+          } catch (error) {
+            console.error('Error submitting form:', error);
+            alert('Có lỗi xảy ra khi gửi xác nhận. Vui lòng thử lại.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Gửi Xác Nhận';
+          }
+        });
+      }
+
+      // =============================================
+      // GUESTBOOK: LOAD & DISPLAY MESSAGES
+      // =============================================
+      function escapeHtml(text) {
+        const d = document.createElement('div');
+        d.textContent = text;
+        return d.innerHTML;
+      }
+      function formatGuestDate(ts) {
+        if (!ts || !ts.toDate) return '';
+        const d = ts.toDate();
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        const hours = String(d.getHours()).padStart(2, '0');
+        const mins = String(d.getMinutes()).padStart(2, '0');
+        return `${day}/${month}/${year} ${hours}:${mins}`;
+      }
+      const guestbookList = document.getElementById('guestbook-list');
+      if (guestbookList) {
+        db.collection('guests')
+          .orderBy('createdAt', 'desc')
+          .limit(100)
+          .onSnapshot((snapshot) => {
+            guestbookList.innerHTML = '';
+            if (snapshot.empty) {
+              guestbookList.innerHTML = '<p class="font-cormorant text-center text-gray-400 text-sm">Chưa có lời chúc nào. Hãy là người đầu tiên nhé!</p>';
+              return;
+            }
+            let hasMessages = false;
+            snapshot.forEach((doc) => {
+              const data = doc.data();
+              // Bỏ qua các guest không có lời chúc
+              if (!data.message || !data.message.trim()) return;
+              hasMessages = true;
+              const item = document.createElement('div');
+              item.className = 'guestbook-item wow animate__fadeInUpSlow';
+              item.innerHTML = `
+                <div class="guestbook-header">
+                  <span class="guestbook-name">${escapeHtml(data.name || 'Khách')}</span>
+                  <span class="guestbook-date">${formatGuestDate(data.createdAt)}</span>
+                </div>
+                <p class="guestbook-message">${escapeHtml(data.message)}</p>
+              `;
+              guestbookList.appendChild(item);
+            });
+            if (!hasMessages) {
+              guestbookList.innerHTML = '<p class="font-cormorant text-center text-gray-400 text-sm">Chưa có lời chúc nào. Hãy là người đầu tiên nhé!</p>';
+            } else {
+              // Re-trigger WOW for new items
+              new WOW().init();
+            }
+          }, (error) => {
+            console.error('Guestbook load error:', error);
+            guestbookList.innerHTML = '<p class="font-cormorant text-center text-gray-400 text-sm">Không thể tải lời chúc. Vui lòng thử lại sau.</p>';
+          });
+      }
+
+      // =============================================
+      // COUNTDOWN TIMER
+      // =============================================
+      function updateCountdown() {
+        // Set wedding date - UPDATE THIS TO YOUR ACTUAL WEDDING DATE
+        const weddingDate = new Date('2026-06-09T09:00:00').getTime();
+        const now = new Date().getTime();
+        const distance = weddingDate - now;
+
+        if (distance < 0) {
+          document.getElementById('days').textContent = '00';
+          document.getElementById('hours').textContent = '00';
+          document.getElementById('minutes').textContent = '00';
+          document.getElementById('seconds').textContent = '00';
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById('days').textContent = String(days).padStart(2, '0');
+        document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+        document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+
+      // ========== SMOOTH SCROLL NAV ==========
+      document.querySelectorAll('#nav-bar a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+          e.preventDefault();
+          const target = document.querySelector(a.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+
+      // ========== NAV BAR HIDE ON SCROLL IDLE ==========
+      let scrollTimeout;
+      const navBar = document.getElementById('nav-bar');
+      window.addEventListener('scroll', () => {
+        if (autoScrollId) return;
+        navBar.classList.remove('nav-hidden');
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          navBar.classList.add('nav-hidden');
+        }, 1500);
+      }, { passive: true });
+
+      // ========== MUSIC TOGGLE ==========
+      const weddingMusic = document.getElementById('weddingMusic');
+      const musicBtn = document.getElementById('vs-music-play-btn');
+      const musicTooltip = document.getElementById('vs-music-tooltip');
+      function toggleMusic() {
+        if (weddingMusic.paused) {
+          weddingMusic.play().then(() => {
+            musicBtn.classList.remove('music-paused');
+            musicBtn.classList.add('music-playing');
+            musicBtn.title = 'Tắt nhạc';
+            musicTooltip.classList.remove('music-paused');
+            musicTooltip.classList.add('music-playing');
+          }).catch(() => {});
+        } else {
+          weddingMusic.pause();
+          musicBtn.classList.remove('music-playing');
+          musicBtn.classList.add('music-paused');
+          musicBtn.title = 'Bật nhạc';
+          musicTooltip.classList.remove('music-playing');
+          musicTooltip.classList.add('music-paused');
+        }
+      }
+
+      // ========== INVITATION CARD — CLICK + CHOICE ==========
+      let autoScrollId = null; let scrolling = false;
+      let selectedGuest = 'groom';
+
+      const venueData = {
+        groom: {
+          address: 'Nhà hàng ABC - Sảnh Ruby, 123 Đường XYZ, Quận 1, TP. HCM',
+          mapUrl: 'https://www.google.com/maps/place/Qu%E1%BA%ADn+1,+Th%C3%A0nh+ph%E1%BB%91+H%E1%BB%93+Ch%C3%AD+Minh,+Vi%E1%BB%87t+Nam/@10.7768899,106.6965973,17z'
+        },
+        bride: {
+          address: 'Nhà hàng XYZ - Sảnh Diamond, 456 Đường ABC, Quận 2, TP. HCM',
+          mapUrl: 'https://www.google.com/maps/place/Qu%E1%BA%ADn+2,+Th%C3%A0nh+ph%E1%BB%91+H%E1%BB%93+Ch%C3%AD+Minh,+Vi%E1%BB%87t+Nam/@10.7930097,106.7389648,15z'
+        }
+      };
+
+      setTimeout(function() {
+        document.getElementById('cf-choice').classList.add('active');
+      }, 1000);
+
+      document.querySelectorAll('.cf-choice-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          selectedGuest = this.getAttribute('data-guest');
+
+          document.getElementById('venue-address').textContent = venueData[selectedGuest].address;
+          document.getElementById('gmaps-link').href = venueData[selectedGuest].mapUrl;
+
+          var radio = document.querySelector('input[name="guest_of"][value="' + selectedGuest + '"]');
+          if (radio) radio.checked = true;
+
+          document.getElementById('cf-choice').classList.remove('active');
+          document.getElementById('card-opening-overlay').classList.add('closed');
+
+          var audio = document.getElementById('weddingMusic');
+          if (audio) {
+            audio.volume = 0.5;
+            audio.play().catch(function(){});
+            musicBtn.classList.remove('music-paused');
+            musicBtn.classList.add('music-playing');
+            musicBtn.title = 'Tắt nhạc';
+            musicTooltip.classList.remove('music-paused');
+            musicTooltip.classList.add('music-playing');
+          }
+
+          setTimeout(function() {
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            setTimeout(function() { startSlowScroll(); }, 800);
+          }, 4000);
+        });
+      });
+
+      function startSlowScroll() {
+        const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (totalHeight <= 0) return;
+        const duration = 180000;
+        const startY = window.pageYOffset;
+        const startTime = performance.now();
+        scrolling = true;
+        autoScrollId = requestAnimationFrame(function scroll(timestamp) {
+          if (!scrolling) return;
+          const elapsed = timestamp - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          window.scrollTo(0, startY + totalHeight * progress);
+          if (progress < 1 && scrolling) autoScrollId = requestAnimationFrame(scroll);
+        });
+      }
+
+      window.addEventListener('wheel', cancelAutoScroll, { passive: true });
+      window.addEventListener('pointerdown', cancelAutoScroll);
+      window.addEventListener('touchstart', cancelAutoScroll, { passive: true });
+      window.addEventListener('keydown', cancelAutoScroll);
+
+      function cancelAutoScroll() {
+        scrolling = false;
+        if (autoScrollId) { cancelAnimationFrame(autoScrollId); autoScrollId = null; }
+      }
+    </script>
+  <nav id="nav-bar" class="nav-hidden">
+    <a href="#home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="#couple">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+      <span>Couple</span>
+    </a>
+    <a href="#gallery">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span>Gallery</span>
+    </a>
+    <a href="#timeline">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Timeline</span>
+    </a>
+    <a href="#rsvp">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      <span>Confirm</span>
+    </a>
+  </nav>
+  </body>
+</html>
