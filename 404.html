@@ -1441,6 +1441,8 @@
         document.getElementById('cf-group').classList.remove('active');
         document.getElementById('card-opening-overlay').classList.add('closed');
 
+        history.replaceState(null, '', '/' + selectedGuest + '/' + selectedGroup);
+
         renderAll();
 
         var audio = document.getElementById('weddingMusic');
