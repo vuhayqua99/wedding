@@ -10,33 +10,13 @@ Single-page wedding invitation website with Firebase backend for guest managemen
 - **Backend**: Firebase Firestore (guest data) + Firebase Storage (images)
 - **No build tool required**: Plain HTML file
 
-## Firebase Setup (Required before development)
+## Firebase Config
 
-### Step 1: Create Firebase Project
-1. Go to https://console.firebase.google.com
-2. Create new project: `vu-nhung-wedding`
-3. Enable **Firestore Database**:
-   - Create database → Start in **test mode** (allows read/write for 30 days)
-4. Enable **Firebase Storage**:
-   - Start in **test mode** (allows read/write for 30 days)
-
-### Step 2: Get Firebase Config
-1. Go to Project Settings (gear icon)
-2. Scroll down to "Your apps" → Click web icon `</>`
-3. Register app → Copy the `firebaseConfig` object
-
-### Step 3: Update HTML
-Replace placeholder config in `vu-nhung-wedding-cr.html`:
-```javascript
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
-```
+✅ **Đã cấu hình Firebase project thật** (trong `index.html`):
+- **Project ID**: `vu-nhung-wedding`
+- **Firestore DB**: collection `guests`
+- **Storage**: images + music files
+- Sử dụng `firebase-app-compat.js` + `firebase-firestore-compat.js` + `firebase-storage-compat.js`
 
 ## Data Structure
 
@@ -44,144 +24,165 @@ const firebaseConfig = {
 ```json
 {
   "name": "Nguyen Van A",
-  "phone": "0912345678",
   "attending": true,
   "guestCount": 2,
   "message": "Chúc cô dâu chú rể hạnh phúc!",
-  "guestOf": "bride",  // or "groom"
+  "guestOf": "bride",
   "createdAt": timestamp
 }
 ```
 
-## Development
+## Sections Order
 
-### Testing
-Open `vu-nhung-wedding-cr.html` directly in browser.
+| # | Section | ID | Notes |
+|---|---------|----|-------|
+| 1 | **Header** | `#home` | Hero image + "Chúng mình cưới!" |
+| 2 | **Invitation** | `#invitation` | Lời mời + ảnh cặp đôi |
+| 3 | **Family** | `#family` | Nhà Trai / Nhà Gái + họ tên bố mẹ |
+| 4 | **Event Party** | `#event-party` | Card động: Tiệc cưới |
+| 5 | **Event Ceremony** | `#event-ceremony` | Card động: Lễ Vu Quy |
+| 6 | **Event Marriage** | `#event-marriage` | Card động: Lễ Thành Hôn |
+| 7 | **Story** | `#story` | Ảnh + quote lãng mạn |
+| 8 | **Story 2** | `#story-2` | Ảnh ghép + text |
+| 9 | **Couple** | `#couple` | Groom & Bride intro |
+| 10 | **Gallery** | `#gallery` | Ảnh cưới collage |
+| 11 | **Countdown** | `#countdown` | Đếm ngược đến giờ cưới |
+| 12 | **Timeline** | `#timeline` | 3 cột ngang: lịch trình |
+| 13 | **Dress Code** | `#dresscode` | Gợi ý trang phục |
+| 14 | **RSVP** | `#rsvp` | Form xác nhận tham dự |
+| 15 | **Guestbook** | `#guestbook` | Sổ lưu bút real-time |
+| 16 | **Footer** | `footer` | Ảnh cảm ơn + copyright |
 
-### Edit Content
-Find elements with `data-editable="true"` attribute and modify the text/content inside.
+## Features
 
-### Key Dates to Update
-- Line ~175: Wedding date (Dương lịch)
-- Line ~178: Wedding date (Âm lịch)
-- Line ~343-346: Event date/time
-- Line ~408: Venue address
-- Line ~599: QR code image URL
-- Line ~604: Bank account info
-- **JS Config** (line ~620): Update `weddingDate` in countdown timer code
+### Invitation Card Overlay
+- 2 cánh fullscreen (trái kem `#f4f2ea`, phải burgundy `#7f0505`)
+- Chốt giữa hình tròn 囍
+- Tự động hiện choice dialog sau 1s: chọn "Chú Rể" / "Cô Dâu"
+- Sau khi chọn: flaps trượt 2 bên (4s), play nhạc, slow scroll 180s
 
-## Existing Sections (Keep as template)
+### Dynamic Event Cards (`#event-party`, `#event-ceremony`, `#event-marriage`)
+- Render động theo `selectedGuest` (groom/bride)
+- Mỗi card: title band, giờ, ngày-tháng-năm, thứ, âm lịch, địa chỉ, nút Chỉ đường
+- Groom: Tiệc cưới nhà trai (29/11 CN) + Lễ Thành Hôn (13:30)
+- Bride: Tiệc cưới nhà gái (28/11 T7) + Lễ Vu Quy (11:30)
 
-1. **Header**: Hero image with title
-2. **Invitation**: Main invitation text
-3. **Family**: Both family info
-4. **Story**: Couple photos with romantic text
-5. **Couple**: Bride & groom introduction
-6. **Gallery**: Photo collection
-7. **Countdown**: Days/hours/minutes/seconds to wedding
-8. **Timeline**: Event schedule (guest arrive → ceremony → reception)
-9. **Dress Code**: Color suggestions
-10. **RSVP Form**: Guest confirmation form (⚠️ needs Firebase integration)
-11. **Gift**: QR code for money gift
-12. **Footer**: Closing message
+### Timeline
+- 3 cột ngang, đường kẻ đỏ ở giữa
+- Icon ảnh tròn 64px cho mỗi mốc
+- Cập nhật động theo guest: giờ, label, venue, Google Maps link
+
+### Countdown Timer
+- Dùng `timelineData[selectedGuest].countdown` làm mốc
+- Tự động cập nhật mỗi giây
+
+### Music Player
+- Nút tròn 48px, fixed góc trên phải
+- Icon quay khi phát nhạc, hover tooltip
+- Auto-play với volume 50% sau khi chọn guest
+- File: `music/wedding-song.mp3` (upload Firebase Storage)
+
+### Navigation Bar
+- 6 items fixed bottom: Home, Events, Couple, Gallery, Timeline, Confirm
+- SVG icons, frosted glass background
+- Auto-hide sau 1.5s idle scroll
+- Smooth scroll khi click
+
+### Slow Scroll
+- Tự động scroll từ đầu đến cuối trang trong 180s
+- Linear speed, dùng `requestAnimationFrame`
+- Cancel khi user scroll/wheel/touch/keypress
+
+### RSVP Form
+- **Firebase integration**: Lưu vào collection `guests`
+- Fields: name, decision (yes/no), guest_of (bride/groom), number_of_guests, message
+- Pre-select `guest_of` theo lựa chọn từ overlay
+- Validation + success/error message
+
+### Guestbook (Sổ lưu bút)
+- Real-time listener: `onSnapshot` với `orderBy('createdAt', 'desc')` limit 11
+- Lọc message rỗng bằng JavaScript
+- Load More: `startAfter(lastDoc)` + limit 11, append vào container
+- PAGE_SIZE = 10, dùng limit(PAGE_SIZE+1) để phát hiện còn message
+- WOW.js animation cho mỗi item
+
+## Timeline Data
+
+Keyed by `selectedGuest` (groom/bride). Defined in JS object `timelineData`:
+- `dateLabel`, `lunarDateLabel`
+- `countdown`: ISO date string cho countdown timer
+- `events[]`: `{ time, label }` — 3 cột timeline
+- `venue`: `{ address, mapUrl }` — địa chỉ + Google Maps link
+- `sections[]`: `{ id, label, time, day, month, year, weekday, lunar }` — event cards
+
+### Groom (29/11/2026 - Chủ Nhật)
+- Tiệc cưới nhà trai: 09:00
+- Lễ Vu Quy: 11:30
+- Lễ Thành Hôn: 13:30
+- Venue: Nhà hàng Linh Trâm, 30 Đ. Kim Bài, Thanh Oai, Hà Nội
+
+### Bride (29/11/2026 - Chủ Nhật)
+- Tiệc cưới nhà gái: 09:00
+- Lễ Vu Quy: 11:30
+- Lễ Thành Hôn: 13:30
+- Venue: nhà riêng, thôn Trung Hiếu Thượng, Thanh Lâm, Ninh Bình
+
+## URL Path Routing (GitHub Pages)
+
+Website hỗ trợ path-based routing cho 4 tổ hợp khách:
+
+| Path | Guest | Group | Tiệc cưới | Lễ Vu Quy | Lễ Thành Hôn |
+|------|-------|-------|-----------|-----------|--------------|
+| `/groom/morning` (default) | Chú Rể | Sáng CN | 09:00 CN 29/11 | 11:30 CN 29/11 | 13:30 CN 29/11 |
+| `/groom/evening` | Chú Rể | Tối T7 | 17:00 T7 28/11 | 11:30 CN 29/11 | 13:30 CN 29/11 |
+| `/bride/morning` | Cô Dâu | Sáng CN | 09:00 CN 29/11 | 11:30 CN 29/11 | 13:30 CN 29/11 |
+| `/bride/evening` | Cô Dâu | Tối T7 | 17:00 T7 28/11 | 11:30 CN 29/11 | 13:30 CN 29/11 |
+
+Cơ chế: `404.html` copy từ `index.html`, JS đọc `window.location.pathname` và parse guest + group. Nếu path đầy đủ (`/groom/evening`) → auto-select, bỏ qua dialog. Nếu không → choice dialog 2 bước (Chú Rể/Cô Dâu → Tối T7/Sáng CN).
 
 ## Scroll Animations
 
-Already configured with WOW.js:
-- `wow animate__fadeIn`
-- `wow animate__fadeInUp`
-- `wow animate__slideInRight`
-- `wow animate__zoomIn`
-- `wow animate__bounceIn`
-
-Animation triggers on scroll. No changes needed unless customizing.
-
-## RSVP Form Integration
-
-✅ **DONE** - Form đã được tích hợp Firebase:
-- SDK: `firebase-app-compat.js` + `firebase-firestore-compat.js`
-- Handler: Lưu data vào collection `guests`
-- Validation: Kiểm tra required fields
-- Success/Error handling
-
-### Form Fields
-- `name`: Họ tên khách mời (required)
-- `decision`: Xác nhận tham dự (yes/no)
-- `guest_of`: Khách của cô dâu hay chú rể
-- `number_of_guests`: Số người đi cùng
-- `message`: Lời nhắn (optional)
-
-### Firestore Data Saved
-```javascript
-{
-  name: string,
-  attending: boolean,
-  guestOf: "bride" | "groom",
-  guestCount: number,
-  message: string,
-  createdAt: timestamp
-}
-```
-
-## Images
-
-✅ **DONE** - Firebase Storage SDK đã được thêm và cấu hình (`firebase-storage-compat.js` + `storage = firebase.storage()`)
-
-### Hướng dẫn upload ảnh lên Firebase Storage
-
-✅ **DONE** - Tất cả ảnh và nhạc đã được upload và cập nhật URL vào HTML.
-
-### Cấu trúc Storage
-```
-/ (root)
-├── images/
-│   ├── header-background.webp
-│   ├── img-content-1-1.webp
-│   ├── ...
-│   └── img-content-8-2.webp
-├── icons/
-│   ├── image-play.png
-│   └── image-playing.png
-└── music/
-    └── wedding-song.mp3
-```
-
-## Guestbook (Sổ lưu bút)
-
-✅ **DONE** - Hiển thị danh sách lời chúc từ Firestore:
-- Query collection `guests` với `message != ''`
-- Sắp xếp theo `createdAt` giảm dần (mới nhất trước)
-- Giới hạn 50 lời chúc gần nhất
-- Real-time cập nhật qua `onSnapshot`
-- Hiệu ứng WOW.js cho từng item
-
-## Animations
-
-✅ **DONE** - Nâng cấp animations theo phong cách miuwedding:
+Configured with WOW.js:
+- `animate__fadeIn`, `animate__fadeInUp`, `animate__fadeInLeft`, `animate__fadeInRight`
+- `animate__zoomIn`, `animate__rotateInDownLeft`, `animate__rotateInDownRight`
 - Custom slow variants: `animate__fadeInUpSlow`, `animate__fadeInLeftSlow`, `animate__fadeInRightSlow`, `animate__fadeInDownSlow` (1.5s)
-- `rotateInDownLeft` / `rotateInDownRight` cho ảnh cô dâu chú rể
-- Giảm padding sections (py-12→py-8, py-8→py-6) cho layout gần nhau hơn
+- `data-wow-delay` stagger cho nhiều element
 
-## ✅ ĐÃ SỬA: Guestbook không cần composite index nữa
+## Assets
 
-Guestbook trước đây báo lỗi "Không thể tải lời chúc" do query dùng `.where('message', '>', '')` kết hợp `.orderBy('createdAt', 'desc')` yêu cầu composite index.
+### Images (local in `vs-template-5/`, served via Firebase Storage URLs)
+- `header-background.webp` — hero
+- `img-content-1-1.webp` → `img-content-8-2.webp` — nội dung các section
 
-**Fix:** Đã bỏ `.where('message', '>', '')` — query giờ chỉ dùng `.orderBy('createdAt', 'desc')` và lọc message rỗng bằng JavaScript. Chỉ cần single-field index `createdAt DESC` (Firestore tự tạo).
+### Icons
+- `icons/icon-guests.svg`, `icons/icon-ceremony.svg`, `icons/icon-rings.svg`, `icons/icon-party.svg` — timeline icons
 
-### Các bước test:
-- [ ] Guestbook hiển thị lời chúc từ Firestore
-- [ ] RSVP form submit — kiểm tra Firestore collection `guests`
-- [ ] Music button hover animation + state sync
-- [ ] Nav-bar ẩn/hiện sau 1.5s idle
+### Music
+- `music/wedding-song.mp3` — nhạc nền
+
+## Editing Content
+
+Find elements with `data-editable="true"` attribute and modify the text/content inside. Key configurable data:
+- Wedding dates (28-29/11/2026) — in `timelineData` JS object
+- Family names (bố mẹ 2 bên)
+- Venue addresses + Google Maps URLs
+- Dress code colors
+- All section text content
+
+## 🚫 Guestbook — Không cần composite index
+
+Query dùng `.orderBy('createdAt', 'desc')` + filter message rỗng bằng JavaScript.
+Chỉ cần single-field index `createdAt DESC` (Firestore tự động tạo).
 
 ## Troubleshooting
 
 - **CORS issues**: If images don't load, check Firebase Storage CORS config
-- **Firestore permissions**: Use test mode or configure proper rules
-- **Form not submitting**: Check browser console for Firebase errors
-- **Guestbook error "Không thể tải lời chúc"**: Kiểm tra Firebase config, Firestore rules, và console log để xác định lỗi. Không cần composite index nữa.
+- **Firestore permissions**: Test mode hoặc cấu hình rules phù hợp
+- **Form not submitting**: Open browser console → check Firebase errors
+- **Guestbook error**: Kiểm tra Firebase config, Firestore rules, console log
+- **Slow scroll không cancel**: Check flag `scrolling` + `cancelAutoScroll()` listeners
 
-## Work Logging Rule (Bắt buộc - Automatically enforced)
+## Work Logging Rule (Bắt buộc)
 
 Sau mỗi lần thực hiện thay đổi code, **phải ghi chép ngay** vào `WORK_LOG.md`.
 

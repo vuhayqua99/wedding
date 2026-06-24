@@ -230,3 +230,210 @@
   - Fix: thêm flag `scrolling`, kiểm tra `if (!scrolling) return;` ở đầu mỗi frame + `if (progress < 1 && scrolling)` trước khi set frame mới
   - Bỏ `{ once: true }` khỏi event listeners để listeners tồn tại vĩnh viễn (không mất sau 1 lần kích hoạt)
   - File đã sửa: `vu-nhung-wedding-cr.html` (dòng 1097, 1147-1171), WORK_LOG.md
+
+---
+
+## Session 16: 2026-06-18
+
+### Tasks Completed
+- [x] Thêm timeline động theo URL parameter (?slot=evening / ?slot=morning)
+  - Tạo object `slotData` chứa dữ liệu 2 buổi (tối 28/11 + sáng 29/11)
+  - Đọc `?slot=` từ URL, fallback về `morning` nếu không có hoặc sai
+  - Thêm `id` vào 8 phần tử trong timeline HTML để cập nhật động
+  - Hàm `updateTimeline(slot)` cập nhật ngày tháng, âm lịch, 3 mốc thời gian
+  - Countdown timer tự động đổi mốc đếm ngược theo slot
+  - Màn hình mở đầu (chọn chú rể/cô dâu) giữ nguyên, không ảnh hưởng
+  - File đã sửa: `index.html` (timeline HTML thêm 8 id, JS thêm ~45 dòng), WORK_LOG.md
+
+## Session 17: 2026-06-19
+
+### Tasks Completed
+- [x] Tải 4 SVG icon timeline từ UXWing (free, không cần attribution)
+  - `icons/icon-guests.svg` — khách đến
+  - `icons/icon-ceremony.svg` — lễ vu quy
+  - `icons/icon-rings.svg` — lễ thành hôn / nhẫn cưới
+  - `icons/icon-party.svg` — tiệc cưới / ly sâm banh
+- [x] Thay thế timeline 3 cột ngang bằng timeline dọc ảnh nền (kiểu miuwedding)
+  - Background ảnh động theo lựa chọn nhà trai/gái
+  - Overlay gradient tối để text dễ đọc
+  - Mỗi mốc: icon tròn 64px → thời gian + label trắng
+  - Đường kẻ dọc nối các mốc (bên trái icon)
+  - Địa điểm + nút "Chỉ đường" ở cuối
+- [x] Tích hợp timeline với lựa chọn Chú Rể/Cô Dâu
+  - `timelineData` keyed by `groom`/`bride` thay vì `evening`/`morning`
+  - `updateTimeline(guest)` render động HTML từ JS
+  - Countdown timer tự động đổi theo selectedGuest
+  - Xoá `slotData`, `venueData`, các ID cũ không cần thiết
+- [x] Thêm CSS cho timeline dọc (~80 dòng)
+  - File đã sửa: `index.html`, `WORK_LOG.md`
+
+---
+
+## Session 29: 2026-06-24
+
+### Tasks Completed
+- [x] Thêm path-based routing cho 4 tổ hợp khách (groom/bride × morning/evening)
+  - Mở rộng `timelineData` từ `[guest]` → `[guest][group]` với 4 tổ hợp:
+    - groom/morning: 09:00 CN 29/11 (default)
+    - groom/evening: 17:00 T7 28/11
+    - bride/morning: 09:00 CN 29/11
+    - bride/evening: 17:00 T7 28/11
+  - Revert Lễ Thành Hôn từ 14:30 → **13:30**
+  - Thêm JS `parsePath()` đọc `window.location.pathname`
+  - Nếu path đầy đủ (`/groom/evening`) → auto-select, bỏ qua dialog
+  - Nếu không → choice dialog 2 bước: Chú Rể/Cô Dâu → Tối T7/Sáng CN
+  - Thêm `404.html` (copy từ `index.html`) cho GitHub Pages routing
+  - Thêm CSS cho group dialog (`.cf-group-btn`, `.cf-group-sub`)
+  - Cập nhật `updateTimeline`, `updateEventSections`, `updateCountdown` dùng `data()`
+  - File đã tạo: `404.html`
+  - File đã sửa: `index.html`, `AGENTS.md`, `WORK_LOG.md`
+
+## Session 19: 2026-06-19
+
+### Tasks Completed
+- [x] Restructure page layout to match miuwedding.com reference
+  - Added 3 event section containers (`#event-party`, `#event-ceremony`, `#event-marriage`) with card-style CSS (border-left, large time, venue, map button)
+  - Moved Countdown + Timeline sections from after Gallery to after event sections, before Story
+  - Updated `timelineData` JS: removed "Khách đến" events, added `sections` array per guest, updated countdown times to first event (groom 10:30, bride 17:30), added Lễ Thành Hôn to bride's timeline
+  - Added `updateEventSections(guest)` function to dynamically render 2 section cards per guest
+  - Called `updateEventSections('groom')` on init and `updateEventSections(selectedGuest)` in choice handler
+  - Added "Events" nav-bar link pointing to `#event-party`
+  - Fixed TDZ bug: moved `let selectedGuest = 'groom'` before `updateCountdown()` and `updateTimeline('groom')`
+  - File đã sửa: `index.html`, `WORK_LOG.md`
+
+## Session 20: 2026-06-19
+
+### Tasks Completed
+- [x] Cách điệu timeline title
+  - Split title thành 3 phần: "WEDDING TIMELINE" (small uppercase label), decorative "✦ ✦ ✦", và divider line
+  - Thêm CSS cho `.tl-decoration`, `.tl-divider`, `.tl-title` (chuyển thành label nhỏ)
+  - File đã sửa: `index.html`
+- [x] Đổi ảnh nền timeline thành ảnh tĩnh
+  - `updateTimeline()` giờ dùng URL cố định thay vì `data.bgImage` (không còn phụ thuộc guest)
+  - File đã sửa: `index.html`
+- [x] Fix dresscode bị đè lên story
+  - Nguyên nhân: gallery section dùng `absolute bottom-[-65%]` tràn xuống section dưới
+  - Fix: thêm `pb-[25%]` vào gallery section
+  - File đã sửa: `index.html`
+- [x] Xác nhận thứ tự event sections: Tiệc cưới (party) luôn là card đầu tiên cho cả groom và bride — không cần sửa
+
+---
+
+## Session 21: 2026-06-23
+
+### Tasks Completed
+- [x] Rollback timeline UI từ dọc (vertical) → 3 cột ngang (horizontal)
+  - Xoá toàn bộ CSS vertical timeline (`#timeline-section`, `.tl-overlay`, `.tl-inner`, `.tl-title`, `.tl-decoration`, `.tl-divider`, `.tl-subtitle`, `.tl-timeline`, `.tl-item`, `.tl-item-icon`, `.tl-item-content`, `.tl-item-time`, `.tl-item-label`, `.tl-venue`, `.tl-venue-address`, `.tl-map-btn`)
+  - Giữ nguyên CSS event cards (`event-section`, `.event-card`, ...)
+  - Thay thế HTML `#timeline` section bằng layout 3 cột ngang từ code cũ (VS Code Local History `tTUI.html`)
+  - Thêm `id` cho các phần tử để JS update động: `tl-date-label`, `tl-lunar-label`, `tl-event1-time/label`, `tl-event2-time/label`, `tl-event3-time/label`, `venue-address`, `gmaps-link`
+  - Đơn giản hoá `timelineData`: xoá `bgImage` và `icon` khỏi `events`
+  - Viết lại `updateTimeline(guest)`: cập nhật text các element trong grid 3 cột thay vì render vertical items
+  - File đã sửa: `index.html`, `WORK_LOG.md`
+
+## Session 22: 2026-06-23
+
+### Tasks Completed
+- [x] Restore to clean pre-Session21 state + re-apply timeline rollback, Plan B header
+  - Restore từ VS Code Local History `mocb.html` (trạng thái trước Session 21)
+  - Xoá CSS vertical timeline + HTML cũ
+  - Thay HTML `#timeline` bằng layout 3 cột ngang + Plan B header (font-allura text-5xl)
+  - Viết lại `updateTimeline(guest)` — cập nhật element 3 cột trực tiếp
+  - File đã sửa: `index.html`
+- [x] Scale text sizes toàn trang (largest → smallest, tránh cascade)
+  - `text-3xl` → `text-4xl`
+  - `text-2xl` → `text-3xl`
+  - `text-xl` → `text-2xl`
+  - `text-lg` → `text-xl`
+  - `text-[16px]` → `text-lg`
+  - `text-sm` → `text-base`
+  - `text-[18px]` → `text-2xl` (chỉ có 1 instance: "WEDDING INVITATION" heading)
+  - Lý do scale từ lớn→nhỏ: mỗi step tạo value LỚN hơn, không bị step sau bắt
+  - File đã sửa: `index.html`
+- [x] Sửa ngày cưới trong lời mời (09/06 → 28/11) + âm lịch
+  - File đã sửa: `index.html`
+
+### Next Steps
+- [ ] Kiểm tra trực quan layout + text sizes trên browser
+- [ ] Verify guestbook, RSVP form, countdown timer hoạt động
+
+## Session 25: 2026-06-23
+
+### Tasks Completed
+- [x] Scale text guestbook (subtitle 15px → text-lg, loading/empty text-base → text-xl)
+  - File đã sửa: `index.html`
+- [x] Thêm Load More button cho guestbook (10 message/lần)
+  - Real-time listener cho page 1: `onSnapshot` `.limit(11)`, luôn cập nhật message mới nhất
+  - Load More: `get()` với `startAfter(lastDoc)` `.limit(11)`, append vào `#guestbook-more`
+  - Kỹ thuật `limit(PAGE_SIZE + 1)` để phát hiện còn message — nếu snapshot.size > 10, hiện nút "Xem thêm"
+  - File đã sửa: `index.html`
+
+### Next Steps
+- [ ] Kiểm tra guestbook load more trên browser
+
+## Session 26: 2026-06-23
+
+### Tasks Completed
+- [x] Chuyển story + story-2 + couple lên trước countdown
+  - Cut 3 section (#story, #story-2, #couple) từ sau timeline (vị trí cũ)
+  - Chèn giữa #event-marriage và #countdown
+  - File đã sửa: `index.html`
+
+### Thứ tự mới
+event-party → event-ceremony → event-marriage → story → story-2 → couple → gallery → countdown → timeline → dresscode
+
+### Tasks Completed (bổ sung)
+- [x] Chuyển gallery lên sau couple
+  - Cut #gallery từ sau timeline
+  - Chèn giữa #couple và #countdown
+  - File đã sửa: `index.html`
+
+## Session 24: 2026-06-23
+
+### Tasks Completed
+- [x] Thêm ảnh "Cảm ơn" và Gmail vào cuối trang
+  - Chèn section mới sau footer (trước `</div>` wrapper)
+  - Ảnh: `img-content-8-2.webp` (giống ảnh cuối RSVP)
+  - Gmail: nguyentrongvu121199@gmail.com (clickable mailto link)
+  - File đã sửa: `index.html`
+
+## Session 23: 2026-06-23
+
+### Tasks Completed
+- [x] Fix khoảng trống giữa event cards và WEDDING INVITATION
+  - Countdown section dùng `mt-[60%]` tạo khoảng trống quá lớn
+  - Fix: `mt-[60%]` → `mt-8`
+  - File đã sửa: `index.html`
+- [x] Fix dresscode bị gallery overwrite
+  - Gallery section có absolute element `bottom-[-65%]` tràn xuống dresscode
+  - `pb-[25%]` không đủ để chắn — chỉ tương đương ~25% width
+  - Fix: `pb-[25%]` → `pb-[70%]`
+  - File đã sửa: `index.html`
+
+---
+
+## Session 27: 2026-06-24
+
+### Tasks Completed
+- [x] Cập nhật AGENTS.md cho khớp với trạng thái hiện tại của project
+  - Xoá mục "Firebase Setup" cũ (hướng dẫn tạo project + placeholder config) → thay bằng note ✅ đã có config thật
+  - Sửa tên file từ `vu-nhung-wedding-cr.html` → `index.html`
+  - Thay thế "Existing Sections" (12 section cũ, còn Gift) → bảng 16 section đúng thứ tự hiện tại
+  - Thêm mô tả các tính năng mới: overlay 2 cánh, choice dialog, event cards động, timeline groom/bride, music player, nav-bar, slow scroll, guestbook real-time + pagination
+  - Thêm "Timeline Data" section với dữ liệu groom/bride
+  - Bỏ các mục lỗi thời: Key Dates, Images (hướng dẫn upload), Animations cũ
+  - File đã sửa: `AGENTS.md`, `WORK_LOG.md`
+
+---
+
+## Session 28: 2026-06-24
+
+### Tasks Completed
+- [x] Cập nhật thông tin nhà trai & nhà gái theo yêu cầu
+  - Groom: countdown `2026-11-29T00:00:00`, Lễ Thành Hôn 13:30 → **14:30**
+  - Bride: đổi ngày 28/11 (Thứ Bảy) → **29/11 (Chủ Nhật)**, venue TP.HCM → **Ninh Bình**
+  - Bride venue: timeline = "nhà riêng, thôn Trung Hiếu Thượng, Thanh Lâm, Ninh Bình"
+  - Bride sections: thêm `venue` riêng cho mỗi card = "nhà văn hóa Trung Hiếu Thượng, Thanh Lâm, Ninh Bình"
+  - Countdown cả groom & bride: `2026-11-29T00:00:00`
+  - Dress code: 4 màu cũ → 5 màu mới (Hồng nhạt, Trắng, Be, Nâu đậm, Xanh nhạt)
+  - File đã sửa: `index.html`, `WORK_LOG.md`
