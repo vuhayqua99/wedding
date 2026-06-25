@@ -12,6 +12,9 @@
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
+      <!-- Confetti effect -->
+      <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+
       <!-- Firebase SDK -->
       <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
       <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -434,7 +437,10 @@
       }
 </style>
   </head><body>
-            <audio id="weddingMusic" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/music%2Fwedding-song.mp3?alt=media&token=0c103153-84be-49f0-9a8b-431bfbe919f0" loop preload="auto"></audio>
+            <audio id="weddingMusic" loop preload="auto">
+              <source src="/music/wedding-song.mp3" type="audio/mpeg">
+              <source src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/music%2Fwedding-song.mp3?alt=media&token=0c103153-84be-49f0-9a8b-431bfbe919f0" type="audio/mpeg">
+            </audio>
             <div id="vs-music-play-btn" class="music-paused" onclick="toggleMusic()" title="Bật nhạc"></div>
             <div id="vs-music-tooltip" class="music-paused"></div>
             <div id="card-opening-overlay">
@@ -487,7 +493,7 @@
 
             <div data-uuid="69e042ce3f67e" class="max-w-[640px] pb-24 mx-auto vs-no-vh bg-[#f4f2ea] text-[#444141] has-nav">
 
-  <header id="home" data-v2-uuid="6b969766-b2ac-4d1a-a448-f36917fc022f" data-uuid="69e042ce3f689" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true" class="w-full text-center wow animate__fadeInDownSlow">
+  <header id="home" data-v2-uuid="6b969766-b2ac-4d1a-a448-f36917fc022f" data-uuid="69e042ce3f689" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true" class="w-full text-center">
     <div data-uuid="69e042ce3f68d" class="container mx-auto relative">
       <img data-v2-uuid="75e7d855-b798-4f4f-aede-3da825600876" data-uuid="69e042ce3f68f" data-editable="true" class="" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fheader-background.webp?alt=media&token=2dd7b275-bafa-4bce-9958-a2ef53dce30b">
       <p data-v2-uuid="8ca12713-cea1-4fac-9d9c-de037a54ab86" data-uuid="69e042ce3f693" class="font-cormorant text-xl md:text-2xl text-white italic absolute top-5 left-1/2 transform -translate-x-1/2" data-editable="true">
@@ -732,12 +738,6 @@
 
     <section id="timeline" data-v2-uuid="13d2d722-64aa-4528-ad24-96a17bfa9762" data-uuid="69e042ce3f89b" class="content-item-7 w-[90%] mx-auto py-8 wow animate__fadeInUpSlow" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true">
 
-      <div class="text-center mb-10">
-        <p class="font-italianno text-8xl text-wedding-red mb-1">Timeline</p>
-        <div class="w-12 h-0.5 bg-gradient-to-r from-transparent via-wedding-red to-transparent mx-auto mb-2"></div>
-        <p class="font-cormorant text-lg text-[#444141] tracking-[0.2em] uppercase">Lịch Trình</p>
-      </div>
-
       <div data-hidable="true" data-uuid="69e042ce3f8b4" class="relative mb-12">
 
         <div data-uuid="69e042ce3f8ba" class="absolute top-1/2 left-0 right-0 h-0.5 bg-wedding-red transform -translate-y-1/2"></div>
@@ -746,7 +746,7 @@
 
           <div data-uuid="69e042ce3f8c6" class="text-center">
             <div data-uuid="69e042ce3f8cd" class="mb-4">
-              <img data-v2-uuid="16b92497-e1e7-489b-a5ae-8c4e9323ff1f" data-uuid="69e042ce3f8d3" data-editable="true" class="w-16 h-16 mx-auto wow animate__zoomIn" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-7-1.webp?alt=media&token=16764e29-2913-46fe-8015-5a57ff068b35">
+              <img class="w-16 h-16 mx-auto wow animate__zoomIn" src="/icons/icon-party.svg" alt="Tiệc cưới">
             </div>
             <div data-uuid="69e042ce3f8da" class="w-3 h-3 bg-wedding-red rounded-full mx-auto mb-2"></div>
             <p id="tl-event1-time" data-v2-uuid="6a5787b8-bc9e-403b-8512-ae739df522bb" data-uuid="69e042ce3f8e0" class="font-crimson text-wedding-red font-semibold text-xl" data-editable="true">
@@ -759,7 +759,7 @@
 
           <div data-uuid="69e042ce3f8ed" class="text-center">
             <div data-uuid="69e042ce3f8f4" class="mb-4">
-              <img data-v2-uuid="d9ae9f37-1cdc-43b2-9df3-6f696fb9cbb2" data-uuid="69e042ce3f8fa" data-editable="true" class="w-16 h-16 mx-auto wow animate__zoomIn" data-wow-delay="0.2s" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-7-2.webp?alt=media&token=4f6a63f3-c978-416a-97f1-d52ed113aca7">
+              <img class="w-16 h-16 mx-auto wow animate__zoomIn" data-wow-delay="0.2s" src="/icons/icon-ceremony.svg" alt="Lễ Vu Quy">
             </div>
             <div data-uuid="69e042ce3f901" class="w-3 h-3 bg-wedding-red rounded-full mx-auto mb-2"></div>
             <p id="tl-event2-time" data-v2-uuid="8d81ab26-a4d8-4f24-9095-5dc7141517df" data-uuid="69e042ce3f908" class="font-crimson text-wedding-red font-semibold text-xl" data-editable="true">
@@ -772,7 +772,7 @@
 
           <div data-uuid="69e042ce3f916" class="text-center">
             <div data-uuid="69e042ce3f91c" class="mb-4">
-              <img data-v2-uuid="49d1baba-546a-4510-80fc-be95b5f46a3d" data-uuid="69e042ce3f923" data-editable="true" class="w-16 h-16 mx-auto wow animate__zoomIn" data-wow-delay="0.4s" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-7-3.webp?alt=media&token=c63fe905-ac5b-43b4-b6ff-d3c517960b4f">
+              <img class="w-16 h-16 mx-auto wow animate__zoomIn" data-wow-delay="0.4s" src="/icons/icon-rings.svg" alt="Lễ Thành Hôn">
             </div>
             <div data-uuid="69e042ce3f92a" class="w-3 h-3 bg-wedding-red rounded-full mx-auto mb-2"></div>
             <p id="tl-event3-time" data-v2-uuid="b241175f-7e3f-4ddb-9776-4dbef3e5957d" data-uuid="69e042ce3f931" class="font-crimson text-wedding-red font-semibold text-xl" data-editable="true">
@@ -847,13 +847,13 @@
 
 
       <div data-hidable="true" data-uuid="69e042ce3fa22" class="confirm p-8 max-w-md mx-auto my-8">
-        <h3 data-v2-uuid="18410506-ae92-4483-b50b-2c839155d64f" data-uuid="69e042ce3fa29" class="font-cormorant text-3xl font-bold text-center text-wedding-red mb-6 wow animate__fadeInUp" data-wow-delay="0.5s" data-editable="true">
+        <h3 id="rsvp-title" data-v2-uuid="18410506-ae92-4483-b50b-2c839155d64f" data-uuid="69e042ce3fa29" class="font-cormorant text-3xl font-bold text-center text-wedding-red mb-6 wow animate__fadeInUp" data-wow-delay="0.5s" data-editable="true">
           Xác Nhận Tham Dự
         </h3>
         <form data-uuid="69e042ce3fa32" class="space-y-4 vs-attendance-form" id="confirmForm">
           <div data-uuid="69e042ce3fa3a">
             <label data-v2-uuid="1966d4e9-8095-452a-bb94-cf07739b133b" data-uuid="69e042ce3fa42" class="font-cormorant text-xl font-semibold block mb-2" data-editable="true">Họ và tên *</label>
-            <input data-v2-uuid="a2e89b6d-7092-4eb0-ba2c-9d5e722bb79e" data-uuid="69e042ce3fa4a" placeholder="Nhập họ tên của bạn" class="w-full vs-attendance-name px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-wedding-red font-cormorant" required="" type="text">
+            <input data-v2-uuid="a2e89b6d-7092-4eb0-ba2c-9d5e722bb79e" data-uuid="69e042ce3fa4a" placeholder="Nhập họ tên của bạn" class="w-full vs-attendance-name px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-wedding-red font-cormorant" required="" type="text" maxlength="50" pattern="[a-zA-ZÀ-ỹ0-9\s]+" title="Chỉ được nhập chữ cái, số và khoảng trắng">
           </div>
 
           <div data-uuid="69e042ce3fa52">
@@ -900,7 +900,7 @@
 
           <div data-uuid="69e042ce3fb44">
             <label data-v2-uuid="1060c43a-c840-4ee3-a2da-7da01b7bb21f" data-uuid="69e042ce3fb4d" class="font-cormorant text-xl font-semibold block mb-2" data-editable="true">Lời nhắn</label>
-            <textarea data-v2-uuid="b5925ba0-1983-45d7-b451-7778e6bbe278" data-uuid="69e042ce3fb57" placeholder="Gửi lời chúc đến cô dâu chú rể..." class="vs-attendance-message w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-wedding-red font-cormorant" rows="3" name="message"></textarea>
+            <textarea data-v2-uuid="b5925ba0-1983-45d7-b451-7778e6bbe278" data-uuid="69e042ce3fb57" placeholder="Gửi lời chúc đến cô dâu chú rể..." class="vs-attendance-message w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-wedding-red font-cormorant resize-none" rows="3" name="message" maxlength="200"></textarea>
           </div>
 
           <button data-v2-uuid="b225e149-6b7e-4633-81da-6389d7e9857d" data-uuid="69e042ce3fb60" class="w-full bg-wedding-red text-white font-cormorant font-semibold py-3 rounded-full hover:bg-red-700 transition-colors duration-300 shadow-md" data-editable="true" type="submit">
@@ -1026,6 +1026,37 @@
             confirmForm.style.display = 'none';
             confirmMessage.classList.remove('hidden');
             confirmMessage.classList.add('block');
+
+            // Bắn pháo hoa nếu khách xác nhận tham dự
+            if (decision.value === 'yes') {
+              var duration = 3000;
+              var end = Date.now() + duration;
+              (function frame() {
+                confetti({
+                  particleCount: 3,
+                  angle: 60,
+                  spread: 55,
+                  origin: { x: 0, y: 0.7 },
+                  colors: ['#7f0505', '#b0852b', '#f4f2ea']
+                });
+                confetti({
+                  particleCount: 3,
+                  angle: 120,
+                  spread: 55,
+                  origin: { x: 1, y: 0.7 },
+                  colors: ['#7f0505', '#b0852b', '#f4f2ea']
+                });
+                if (Date.now() < end) {
+                  requestAnimationFrame(frame);
+                }
+              }());
+            }
+
+            // Scroll về giữa "Xác Nhận Tham Dự"
+            setTimeout(function() {
+              var el = document.getElementById('rsvp-title');
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
 
             // Optional: Show different message for non-attending guests
             if (decision.value === 'no') {
@@ -1194,9 +1225,9 @@
             lunarDateLabel: 'Âm lịch ngày 21 tháng 10 năm Bính Ngọ',
             countdown: '2026-11-29T00:00:00',
             events: [
-              { time: '09:00', label: 'Tiệc cưới nhà trai' },
-              { time: '11:30', label: 'Lễ Vu Quy' },
-              { time: '13:30', label: 'Lễ Thành Hôn' }
+              { time: '09:00 29.10', label: 'Tiệc cưới nhà trai' },
+              { time: '11:30 29.10', label: 'Lễ Vu Quy' },
+              { time: '13:30 29.10', label: 'Lễ Thành Hôn' }
             ],
             venue: {
               address: 'Nhà hàng Linh Trâm - 30 Đ. Kim Bài, Kim Bài, Thanh Oai, Hà Nội',
@@ -1214,9 +1245,9 @@
             lunarDateLabel: 'Âm lịch ngày 20 tháng 10 năm Bính Ngọ',
             countdown: '2026-11-29T00:00:00',
             events: [
-              { time: '17:00', label: 'Tiệc cưới nhà trai' },
-              { time: '11:30', label: 'Lễ Vu Quy' },
-              { time: '13:30', label: 'Lễ Thành Hôn' }
+              { time: '17:00 28.11', label: 'Tiệc cưới nhà trai' },
+              { time: '11:30 29.11', label: 'Lễ Vu Quy' },
+              { time: '13:30 29.11', label: 'Lễ Thành Hôn' }
             ],
             venue: {
               address: 'Nhà hàng Linh Trâm - 30 Đ. Kim Bài, Kim Bài, Thanh Oai, Hà Nội',
@@ -1236,9 +1267,9 @@
             lunarDateLabel: 'Âm lịch ngày 21 tháng 10 năm Bính Ngọ',
             countdown: '2026-11-29T00:00:00',
             events: [
-              { time: '09:00', label: 'Tiệc cưới nhà gái' },
-              { time: '11:30', label: 'Lễ Vu Quy' },
-              { time: '13:30', label: 'Lễ Thành Hôn' }
+              { time: '09:00 29.11', label: 'Tiệc cưới nhà gái' },
+              { time: '11:30 29.11', label: 'Lễ Vu Quy' },
+              { time: '13:30 29.11', label: 'Lễ Thành Hôn' }
             ],
             venue: {
               address: 'nhà riêng, thôn Trung Hiếu Thượng, Thanh Lâm, Ninh Bình',
@@ -1247,10 +1278,10 @@
             sections: [
               { id: 'party', label: 'Tiệc cưới nhà gái', time: '09:00',
                 day: '29', month: '11', year: '26', weekday: 'Chủ Nhật', lunar: 'Âm lịch ngày 21 tháng 10 năm Bính Ngọ',
-                venue: { address: 'nhà văn hóa Trung Hiếu Thượng, Thanh Lâm, Ninh Bình', mapUrl: 'https://www.google.com/maps/place/20%C2%B023%2754.2%22N+105%C2%B054%2737.3%22E/@20.3982714,105.9103422,21z/data=!4m4!3m3!8m2!3d20.3983955!4d105.9103622?entry=ttu&g_ep=EgoyMDI2MDYyMS4wIKXMDSoASAFQAw%3D%3D' } },
+                venue: { address: 'Nhà văn hóa Trung Hiếu Thượng, Thanh Lâm, Ninh Bình', mapUrl: 'https://www.google.com/maps/place/20%C2%B023%2754.2%22N+105%C2%B054%2737.3%22E/@20.3982714,105.9103422,21z/data=!4m4!3m3!8m2!3d20.3983955!4d105.9103622?entry=ttu&g_ep=EgoyMDI2MDYyMS4wIKXMDSoASAFQAw%3D%3D' } },
               { id: 'ceremony', label: 'Lễ Vu Quy', time: '11:30',
                 day: '29', month: '11', year: '26', weekday: 'Chủ Nhật', lunar: 'Âm lịch ngày 21 tháng 10 năm Bính Ngọ',
-                venue: { address: 'nhà văn hóa Trung Hiếu Thượng, Thanh Lâm, Ninh Bình', mapUrl: 'https://www.google.com/maps/place/20%C2%B023%2754.2%22N+105%C2%B054%2737.3%22E/@20.3982714,105.9103422,21z/data=!4m4!3m3!8m2!3d20.3983955!4d105.9103622?entry=ttu&g_ep=EgoyMDI2MDYyMS4wIKXMDSoASAFQAw%3D%3D' } }
+                venue: { address: 'Nhà văn hóa Trung Hiếu Thượng, Thanh Lâm, Ninh Bình', mapUrl: 'https://www.google.com/maps/place/20%C2%B023%2754.2%22N+105%C2%B054%2737.3%22E/@20.3982714,105.9103422,21z/data=!4m4!3m3!8m2!3d20.3983955!4d105.9103622?entry=ttu&g_ep=EgoyMDI２MDYyMS4wIKXMDSoASAFQAw%3D%3D' } }
             ]
           },
           evening: {
@@ -1258,21 +1289,21 @@
             lunarDateLabel: 'Âm lịch ngày 20 tháng 10 năm Bính Ngọ',
             countdown: '2026-11-29T00:00:00',
             events: [
-              { time: '17:00', label: 'Tiệc cưới nhà gái' },
-              { time: '11:30', label: 'Lễ Vu Quy' },
-              { time: '13:30', label: 'Lễ Thành Hôn' }
+              { time: '17:00 28.11', label: 'Tiệc cưới nhà gái' },
+              { time: '11:30 29.11', label: 'Lễ Vu Quy' },
+              { time: '13:30 29.11', label: 'Lễ Thành Hôn' }
             ],
             venue: {
-              address: 'nhà riêng, thôn Trung Hiếu Thượng, Thanh Lâm, Ninh Bình',
+              address: 'Nhà riêng, thôn Trung Hiếu Thượng, Thanh Lâm, Ninh Bình',
               mapUrl: 'https://www.google.com/maps/place/20%C2%B023%2754.2%22N+105%C2%B054%2737.3%22E/@20.3982714,105.9103422,21z/data=!4m4!3m3!8m2!3d20.3983955!4d105.9103622?entry=ttu&g_ep=EgoyMDI2MDYyMS4wIKXMDSoASAFQAw%3D%3D'
             },
             sections: [
               { id: 'party', label: 'Tiệc cưới nhà gái', time: '17:00',
                 day: '28', month: '11', year: '26', weekday: 'Thứ Bảy', lunar: 'Âm lịch ngày 20 tháng 10 năm Bính Ngọ',
-                venue: { address: 'nhà văn hóa Trung Hiếu Thượng, Thanh Lâm, Ninh Bình', mapUrl: 'https://www.google.com/maps/place/20%C2%B023%2754.2%22N+105%C2%B054%2737.3%22E/@20.3982714,105.9103422,21z/data=!4m4!3m3!8m2!3d20.3983955!4d105.9103622?entry=ttu&g_ep=EgoyMDI2MDYyMS4wIKXMDSoASAFQAw%3D%3D' } },
+                venue: { address: 'Nhà văn hóa Trung Hiếu Thượng, Thanh Lâm, Ninh Bình', mapUrl: 'https://www.google.com/maps/place/20%C2%B023%2754.2%22N+105%C2%B054%2737.3%22E/@20.3982714,105.9103422,21z/data=!4m4!3m3!8m2!3d20.3983955!4d105.9103622?entry=ttu&g_ep=EgoyMDI2MDYyMS4wIKXMDSoASAFQAw%3D%3D' } },
               { id: 'ceremony', label: 'Lễ Vu Quy', time: '11:30',
                 day: '29', month: '11', year: '26', weekday: 'Chủ Nhật', lunar: 'Âm lịch ngày 21 tháng 10 năm Bính Ngọ',
-                venue: { address: 'nhà văn hóa Trung Hiếu Thượng, Thanh Lâm, Ninh Bình', mapUrl: 'https://www.google.com/maps/place/20%C2%B023%2754.2%22N+105%C2%B054%2737.3%22E/@20.3982714,105.9103422,21z/data=!4m4!3m3!8m2!3d20.3983955!4d105.9103622?entry=ttu&g_ep=EgoyMDI2MDYyMS4wIKXMDSoASAFQAw%3D%3D' } }
+                venue: { address: 'Nhà văn hóa Trung Hiếu Thượng, Thanh Lâm, Ninh Bình', mapUrl: 'https://www.google.com/maps/place/20%C2%B023%2754.2%22N+105%C2%B054%2737.3%22E/@20.3982714,105.9103422,21z/data=!4m4!3m3!8m2!3d20.3983955!4d105.9103622?entry=ttu&g_ep=EgoyMDI2MDYyMS4wIKXMDSoASAFQAw%3D%3D' } }
             ]
           }
         }
@@ -1334,8 +1365,8 @@
             + '<a class="event-map-btn wow animate__animated animate__pulse" href="' + venue.mapUrl + '" target="_blank" data-wow-iteration="infinite" data-wow-delay="1.5s">'
             + '<svg viewBox="0 0 20 20" fill="currentColor"><path clip-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" fill-rule="evenodd"/></svg>'
             + ' Chỉ đường</a>';
-            new WOW().init();
         });
+        new WOW().init();
       }
 
       // =============================================
@@ -1368,7 +1399,8 @@
       // ========== PARSE URL PATH ==========
       function parsePath() {
         var parts = window.location.pathname.replace(/\/+$/, '').split('/').filter(Boolean);
-        var guest = parts[0] === 'bride' ? 'bride' : 'groom';
+        if (parts[0] === 'index.html') parts = [];
+        var guest = (parts[0] === 'bride' || parts[0] === 'groom') ? parts[0] : 'groom';
         var group = parts[1] === 'evening' ? 'evening' : 'morning';
         return { guest: guest, group: group };
       }
@@ -1414,6 +1446,7 @@
       const weddingMusic = document.getElementById('weddingMusic');
       const musicBtn = document.getElementById('vs-music-play-btn');
       const musicTooltip = document.getElementById('vs-music-tooltip');
+
       function toggleMusic() {
         if (weddingMusic.paused) {
           weddingMusic.play().then(() => {
@@ -1441,24 +1474,48 @@
         document.getElementById('cf-group').classList.remove('active');
         document.getElementById('card-opening-overlay').classList.add('closed');
 
-        history.replaceState(null, '', '/' + selectedGuest + '/' + selectedGroup);
+        history.replaceState(null, '', '/' + (selectedGuest || 'groom') + '/' + (selectedGroup || 'morning'));
 
         renderAll();
 
+        // Play-pause immediately to capture user gesture (dialog click path)
         var audio = document.getElementById('weddingMusic');
         if (audio) {
           audio.volume = 0.5;
-          audio.play().catch(function(){});
-          musicBtn.classList.remove('music-paused');
-          musicBtn.classList.add('music-playing');
-          musicBtn.title = 'Tắt nhạc';
-          musicTooltip.classList.remove('music-paused');
-          musicTooltip.classList.add('music-playing');
+          audio.load();
+          audio.play().then(function() {
+            audio.pause();
+            audio.currentTime = 0;
+          }).catch(function(){});
         }
 
         setTimeout(function() {
           window.scrollTo({ top: 0, behavior: 'instant' });
           setTimeout(function() { startSlowScroll(); }, 800);
+
+          if (audio) {
+            audio.currentTime = 0;
+            audio.play().then(function() {
+              musicBtn.classList.remove('music-paused');
+              musicBtn.classList.add('music-playing');
+              musicBtn.title = 'Tắt nhạc';
+              musicTooltip.classList.remove('music-paused');
+              musicTooltip.classList.add('music-playing');
+            }).catch(function() {
+              function tryPlay() {
+                audio.play().then(function() {
+                  musicBtn.classList.remove('music-paused');
+                  musicBtn.classList.add('music-playing');
+                  musicBtn.title = 'Tắt nhạc';
+                  musicTooltip.classList.remove('music-paused');
+                  musicTooltip.classList.add('music-playing');
+                }).catch(function(){});
+              }
+              document.addEventListener('click', tryPlay, { once: true });
+              document.addEventListener('touchstart', tryPlay, { once: true });
+              document.addEventListener('wheel', tryPlay, { once: true, passive: true });
+            });
+          }
         }, 4000);
       }
 
@@ -1475,7 +1532,7 @@
           document.getElementById('cf-choice').classList.add('active');
         }, 1000);
 
-        document.querySelectorAll('.cf-choice-btn').forEach(function(btn) {
+        document.querySelectorAll('.cf-choice-btn[data-guest]').forEach(function(btn) {
           btn.addEventListener('click', function(e) {
             e.stopPropagation();
             selectedGuest = this.getAttribute('data-guest');

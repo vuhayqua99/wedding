@@ -288,6 +288,13 @@
   - File đã tạo: `404.html`
   - File đã sửa: `index.html`, `AGENTS.md`, `WORK_LOG.md`
 
+### Tasks Completed (follow-up)
+- [x] Fix null path khi chọn dialog từ trang chủ
+  - Thêm kiểm tra null trong `openCard()`: `'/' + (selectedGuest || 'groom') + '/' + (selectedGroup || 'morning')`
+  - Xử lý `index.html` trong `parsePath()`: nếu `parts[0] === 'index.html'` thì coi như root
+  - Cập nhật `parsePath()`: kiểm tra `parts[0]` hợp lệ trước khi gán guest
+  - File đã sửa: `index.html`, `404.html`, `WORK_LOG.md`
+
 ## Session 19: 2026-06-19
 
 ### Tasks Completed
@@ -437,3 +444,96 @@ event-party → event-ceremony → event-marriage → story → story-2 → coup
   - Countdown cả groom & bride: `2026-11-29T00:00:00`
   - Dress code: 4 màu cũ → 5 màu mới (Hồng nhạt, Trắng, Be, Nâu đậm, Xanh nhạt)
   - File đã sửa: `index.html`, `WORK_LOG.md`
+
+## Session 11: 2026-06-25
+
+### Tasks Completed
+- [x] Fixed bug: music & slow scroll không hoạt động khi chọn guest từ dialog
+  - Root cause: `.cf-group-btn` có cả class `.cf-choice-btn`, khi click "Evening"/"Morning" thì handler `.cf-choice-btn` chạy trước, đọc `data-guest` → null, gán `selectedGuest = null`, gây ra TypeError ở `timelineData[null][selectedGroup]`
+  - Fix: đổi selector `.cf-choice-btn` → `.cf-choice-btn[data-guest]` để group buttons không match handler này
+  - File đã sửa: `index.html` (dòng 1479), `404.html` (dòng 1479)
+
+## Session 12: 2026-06-25
+
+### Tasks Completed
+- [x] Thay thế timeline icons từ Firebase Storage ảnh sang local SVG icons
+  - Cột 1 (Tiệc cưới): `img-content-7-1.webp` → `icons/icon-party.svg`
+  - Cột 2 (Lễ Vu Quy): `img-content-7-2.webp` → `icons/icon-ceremony.svg`
+  - Cột 3 (Lễ Thành Hôn): `img-content-7-3.webp` → `icons/icon-rings.svg`
+  - Thêm wrapper `div` nền tròn `bg-wedding-red` (burgundy) để SVG hiển thị rõ
+  - File đã sửa: `index.html` (dòng 742-745, 756-760, 768-775), `404.html` (dòng 748-751, 762-766, 778-782)
+
+## Session 13: 2026-06-25
+
+### Tasks Completed
+- [x] Fix SVG icons không hiển thị do relative path sai sau `history.replaceState`
+  - Nguyên nhân: `src="icons/..."` → resolve thành `/groom/icons/...` → 404
+  - Fix: đổi thành absolute path `src="/icons/..."`
+  - File đã sửa: `index.html` (dòng 747, 762, 777), `404.html` (dòng 753, 768, 783)
+- [x] Fix nhạc không play trên localhost do CORS Firebase Storage
+  - Nguyên nhân: `<audio>` dùng Firebase Storage URL, browser chặn CORS trên localhost
+  - Fix: chuyển `<audio src="...">` sang `<audio>` với 2 `<source>` — local `/music/wedding-song.mp3` là primary, Firebase Storage là fallback
+  - File đã sửa: `index.html` (dòng 437-440), `404.html` (dòng 437-440)
+
+## Session 14: 2026-06-25
+
+### Tasks Completed
+- [x] Bỏ nền burgundy background của icon timeline
+  - Bỏ wrapper `<div>` nền tròn, SVG hiển thị trực tiếp với `w-16 h-16`
+  - File đã sửa: `index.html` (dòng 745-746, 758-759, 771-772), `404.html` (dòng 751-752, 764-765, 777-778)
+- [x] Fix nhạc không autoplay khi chọn guest từ dialog / auto-select URL
+  - Thêm `audio.load()` trước `audio.play()`
+  - Nếu play bị chặn (autoplay policy), retry trên event `click`/`touchstart` đầu tiên với `{ once: true }`
+  - File đã sửa: `index.html` (dòng 1447-1471), `404.html` (dòng 1453-1477)
+
+## Session 15: 2026-06-25
+
+### Tasks Completed
+- [x] Fix autoplay: play-pause ngay khi click dialog để capture user gesture, sau 4s play lại
+  - Thêm `audio.play()` → `audio.pause()` ngay trong `openCard()` (khi user gesture còn hiệu lực)
+  - Sau 4s: `audio.play()` lại (sticky activation từ browser cho phép)
+  - Fallback: nếu vẫn bị chặn (URL auto-select path), retry trên click/touch với `{ once: true }`
+  - File đã sửa: `index.html` (dòng 1446-1483), `404.html` (dòng 1452-1489)
+- [x] Fix timing: nhạc + scroll chạy sau khi cửa mở hoàn toàn (4s)
+- [x] Fix content giật: `new WOW().init()` chồng chéo
+  - Move `new WOW().init()` ra ngoài `d.sections.forEach()` → gọi 1 lần duy nhất
+  - File đã sửa: `index.html` (dòng 1334-1335), `404.html` (dòng 1340-1341)
+
+## Session 16: 2026-06-25
+
+### Tasks Completed
+- [x] Bỏ WOW animation cho header image (#home)
+  - Xóa class `wow animate__fadeInDownSlow` khỏi `<header id="home">`
+  - File đã sửa: `index.html` (dòng 493), `404.html` (dòng 493)
+- [x] Fix autoplay triệt để: unlock audio trên lần tương tác đầu tiên của user
+  - Thêm `unlockAudio()` listener trên `click`/`touchstart`/`wheel` ngay khi script load
+  - User click/scroll bất kỳ đâu → play-pause silent (+ volume 0.01) → unlock permission
+  - File đã sửa: `index.html` (dòng 1416-1432), `404.html` (dòng 1416-1432)
+
+## Session 17: 2026-06-25
+
+### Tasks Completed
+- [x] Fix autoplay: xóa `unlockAudio`, thêm `wheel` vào fallback listener
+  - Nguyên nhân: `unlockAudio` luôn pause audio → nhạc tắt ngay sau khi mở. Fallback chỉ listen click/touch → scroll không play được
+  - Fix: xóa `unlockAudio` hoàn toàn, thêm `wheel` event vào `tryPlay` trong `.catch()` của setTimeout(4000)
+  - File đã sửa: `index.html`, `404.html`
+
+## Session 18: 2026-06-25
+
+### Tasks Completed
+- [x] Thay thế timeline icons bằng hand-drawn SVG từ Temploola 24 Free Wedding Icons
+  - CHAMPAGNE.svg → icon-party.svg (Tiệc cưới)
+  - BRIDE AND GROOM.svg → icon-ceremony.svg (Lễ Vu Quy)
+  - RINGS.svg → icon-rings.svg (Lễ Thành Hôn)
+  - Tất cả icon đều style hand-drawn, fill #684C4B, 512x512px
+  - Files đã sửa: `icons/icon-party.svg`, `icons/icon-ceremony.svg`, `icons/icon-rings.svg`
+
+## Session 19: 2026-06-25
+
+### Tasks Completed
+- [x] Thêm hiệu ứng pháo hoa canvas-confetti khi xác nhận RSVP thành công
+  - Thêm script canvas-confetti CDN vào `<head>` (sau animate.css)
+  - Khi khách chọn "Có tham dự": bắn confetti 3 giây từ 2 góc (trái + phải)
+  - Màu sắc theo theme wedding: đỏ burgundy (#7f0505), gold (#b0852b), kem (#f4f2ea)
+  - Không bắn nếu khách chọn "Không thể tham dự"
+  - Files đã sửa: `index.html` (dòng 16, 1029-1052), `404.html` (dòng 16, 1029-1052)
