@@ -7,6 +7,11 @@ Single-page wedding invitation website with Firebase backend for guest managemen
 ## Tech Stack
 
 - **Frontend**: HTML, Tailwind CSS (CDN), WOW.js, Animate.css
+- **Fonts** (5): Cormorant Garamond (headings, body, numbers), Lora (body fallback), Great Vibes (couple names, accent), Italianno (script accent), Tangerine (unused)
+  - `.font-cormorant-lining` → Cormorant Garamond + `font-variant-numeric: lining-nums` (countdown, timeline, event cards, venue, GMaps, guestbook)
+  - `.font-lora` → Lora (body text in story sections)
+  - `.font-great-vibes` → Great Vibes (couple names, header, family names)
+  - `.font-italianno` → Italianno (story subheading, decorative text)
 - **Backend**: Firebase Firestore (guest data) + Firebase Storage (images)
 - **No build tool required**: Plain HTML file
 
