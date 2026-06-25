@@ -537,3 +537,20 @@ event-party → event-ceremony → event-marriage → story → story-2 → coup
   - Màu sắc theo theme wedding: đỏ burgundy (#7f0505), gold (#b0852b), kem (#f4f2ea)
   - Không bắn nếu khách chọn "Không thể tham dự"
   - Files đã sửa: `index.html` (dòng 16, 1029-1052), `404.html` (dòng 16, 1029-1052)
+
+## Session 20: 2026-06-25
+
+### Tasks Completed
+- [x] Redesign header + font system overhaul
+  - **Google Fonts**: Giảm từ 11 → 5 fonts (Cormorant Garamond, Lora, Great Vibes, Italianno, Tangerine)
+  - **CSS classes**: Xoá 7 classes cũ (`.font-dancing`, `.font-crimson`, `.font-libre`, `.font-sacramento`, `.font-alex`, `.font-allura`, `.font-pinyon`), thêm `.font-cormorant-lining` + `.font-tangerine`; đổi `.font-playfair` → `.font-lora`
+  - **Inline `'Crimson Text'`** (22 instances): thay bằng `'Cormorant Garamond', serif; font-variant-numeric: lining-nums` — áp dụng cho event cards, guestbook, dress code
+  - **Header hero**: thêm `bg-black/40` overlay, fix typo "WEDDING INVATION" → "Wedding Invitation", thêm SVG branch wreaths + couple names (Great Vibes) + date (Cormorant-lining)
+  - **#invitation section**: xoá couple name "Trọng Vũ & Hồng Nhung" (Italianno) — đã chuyển lên header
+  - **Language**: English cho "Wedding Invitation" header label (theo design plan)
+  - Files đã sửa: `index.html`, `404.html`, `WORK_LOG.md`
+
+### Notes
+- `.font-cormorant-lining`: dùng Cormorant Garamond với `font-variant-numeric: lining-nums` cho dữ liệu số (countdown, timeline, địa chỉ, guestbook entry)
+- Lora font vẫn được load (4th font) nhưng không còn dùng trong element nào — `.font-lora` class tồn tại như fallback cho body text
+- Tangerine font được load nhưng class `.font-tangerine` hiện không dùng — có thể dùng sau cho script accent nếu cần

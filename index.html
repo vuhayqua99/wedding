@@ -7,7 +7,7 @@
   
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&amp;family=Dancing+Script:wght@400;500;600;700&amp;family=Great+Vibes&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&amp;family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&amp;family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&amp;family=Sacramento&amp;family=Alex+Brush&amp;family=Allura&amp;family=Pinyon+Script&amp;family=Italianno&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&amp;family=Lora:wght@400;500;600;700&amp;family=Great+Vibes&amp;family=Italianno&amp;family=Tangerine:wght@400;700&amp;display=swap" rel="stylesheet">
 
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
@@ -27,38 +27,24 @@
     </script>
      <style>
       /* Custom Font Classes */
-      .font-dancing {
-        font-family: 'Dancing Script', cursive;
+      .font-cormorant {
+        font-family: 'Cormorant Garamond', serif;
       }
-      .font-playfair {
+      .font-cormorant-lining {
+        font-family: 'Cormorant Garamond', serif;
+        font-variant-numeric: lining-nums;
+      }
+      .font-lora {
         font-family: 'Lora', serif;
       }
       .font-great-vibes {
         font-family: 'Great Vibes', cursive;
       }
-      .font-cormorant {
-        font-family: 'Cormorant Garamond', serif;
-      }
-      .font-crimson {
-        font-family: 'Crimson Text', serif;
-      }
-      .font-libre {
-        font-family: 'Libre Baskerville', serif;
-      }
-      .font-sacramento {
-        font-family: 'Sacramento', cursive;
-      }
-      .font-alex {
-        font-family: 'Alex Brush', cursive;
-      }
-      .font-allura {
-        font-family: 'Allura', cursive;
-      }
-      .font-pinyon {
-        font-family: 'Pinyon Script', cursive;
-      }
       .font-italianno {
         font-family: 'Italianno', cursive;
+      }
+      .font-tangerine {
+        font-family: 'Tangerine', cursive;
       }
 
       /* Custom Color Classes */
@@ -195,9 +181,9 @@
         display: flex; justify-content: space-between; align-items: center;
         margin-bottom: 6px;
       }
-      .guestbook-name { font-weight: 600; color: #7f0505; font-size: 17px; font-family: 'Crimson Text', serif; }
-      .guestbook-date { font-size: 13px; color: #999; font-family: 'Crimson Text', serif; }
-      .guestbook-message { font-size: 16px; color: #444; line-height: 1.6; font-family: 'Crimson Text', serif; font-style: italic; word-break: break-word; }
+      .guestbook-name { font-weight: 600; color: #7f0505; font-size: 17px; font-family: 'Cormorant Garamond', serif; font-variant-numeric: lining-nums; }
+      .guestbook-date { font-size: 13px; color: #999; font-family: 'Cormorant Garamond', serif; font-variant-numeric: lining-nums; }
+      .guestbook-message { font-size: 16px; color: #444; line-height: 1.6; font-family: 'Cormorant Garamond', serif; font-variant-numeric: lining-nums; font-style: italic; word-break: break-word; }
 
       /* ===== TWO-FLAP FULLSCREEN OVERLAY ===== */
       html, body { background: #2c1810; min-height: 100vh; }
@@ -376,7 +362,7 @@
       }
       .event-title-band {
         background: #7f0505; color: #fff;
-        font-family: 'Crimson Text', serif;
+        font-family: 'Cormorant Garamond', serif; font-variant-numeric: lining-nums;
         font-size: 20px; font-weight: 700;
         padding: 10px 20px; border-radius: 8px;
         display: inline-block; margin: 0 auto 18px;
@@ -387,7 +373,7 @@
         gap: 18px; margin-bottom: 14px;
       }
       .event-dateline-time {
-        font-family: 'Crimson Text', serif;
+        font-family: 'Cormorant Garamond', serif; font-variant-numeric: lining-nums;
         font-size: 17px; font-weight: 600; color: #7f0505;
         white-space: nowrap;
       }
@@ -400,30 +386,30 @@
         line-height: 1.15;
       }
       .event-dateline-day {
-        font-family: 'Crimson Text', serif;
+        font-family: 'Cormorant Garamond', serif; font-variant-numeric: lining-nums;
         font-size: 38px; font-weight: 700; color: #7f0505;
         line-height: 1;
       }
 
       .event-dateline-weekday {
-        font-family: 'Crimson Text', serif;
+        font-family: 'Cormorant Garamond', serif; font-variant-numeric: lining-nums;
         font-size: 16px; font-weight: 500; color: #444141;
         white-space: nowrap;
       }
       .event-lunar {
-        font-family: 'Crimson Text', serif;
+        font-family: 'Cormorant Garamond', serif; font-variant-numeric: lining-nums;
         font-size: 13px; font-style: italic;
         color: #b0852b; margin-bottom: 14px;
       }
       .event-venue {
-        font-family: 'Crimson Text', serif;
+        font-family: 'Cormorant Garamond', serif; font-variant-numeric: lining-nums;
         font-size: 14px; color: #444141;
         margin-bottom: 12px; line-height: 1.5;
       }
       .event-map-btn {
         display: inline-flex; align-items: center; gap: 8px;
         background: transparent; color: #7f0505;
-        font-family: 'Crimson Text', serif;
+        font-family: 'Cormorant Garamond', serif; font-variant-numeric: lining-nums;
         font-size: 15px; font-weight: 600;
         padding: 8px 20px; border-radius: 30px;
         border: 1.5px solid #7f0505;
@@ -493,15 +479,45 @@
 
             <div data-uuid="69e042ce3f67e" class="max-w-[640px] pb-24 mx-auto vs-no-vh bg-[#f4f2ea] text-[#444141] has-nav">
 
-  <header id="home" data-v2-uuid="6b969766-b2ac-4d1a-a448-f36917fc022f" data-uuid="69e042ce3f689" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true" class="w-full text-center">
+  <header id="home" data-v2-uuid="6b969766-b2ac-4d1a-a448-f36917fc022f" data-uuid="69e042ce3f689" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true" class="w-full text-center relative">
     <div data-uuid="69e042ce3f68d" class="container mx-auto relative">
-      <img data-v2-uuid="75e7d855-b798-4f4f-aede-3da825600876" data-uuid="69e042ce3f68f" data-editable="true" class="" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fheader-background.webp?alt=media&token=2dd7b275-bafa-4bce-9958-a2ef53dce30b">
-      <p data-v2-uuid="8ca12713-cea1-4fac-9d9c-de037a54ab86" data-uuid="69e042ce3f693" class="font-cormorant text-xl md:text-2xl text-white italic absolute top-5 left-1/2 transform -translate-x-1/2" data-editable="true">
-        Chúng mình cưới!
-      </p>
-      <h1 data-v2-uuid="2dcfc94a-a4ea-4daa-b900-ee3594d31ef3" data-uuid="69e042ce3f696" class="font-cormorant text-xl md:text-2xl text-white italic absolute top-10 left-1/2 mt-2 transform -translate-x-1/2" data-editable="true">
-        WEDDING INVATION
-      </h1>
+      <img data-v2-uuid="75e7d855-b798-4f4f-aede-3da825600876" data-uuid="69e042ce3f68f" data-editable="true" class="w-full h-auto" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fheader-background.webp?alt=media&token=2dd7b275-bafa-4bce-9958-a2ef53dce30b">
+      <div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center pt-4 md:pt-8">
+        <p data-v2-uuid="8ca12713-cea1-4fac-9d9c-de037a54ab86" data-uuid="69e042ce3f693" class="font-cormorant text-xl md:text-2xl text-white italic" data-editable="true">
+          Chúng mình cưới!
+        </p>
+        <p class="text-white text-[10px] md:text-xs tracking-[0.2em] uppercase font-light mt-1">
+          Wedding Invitation
+        </p>
+        <div class="flex items-center justify-center gap-3 mt-4">
+          <svg class="w-16 md:w-24 h-auto" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 30 Q30 10 60 15 Q90 20 100 30" stroke="#d4c9a8" stroke-width="1.5" fill="none"/>
+            <path d="M100 30 Q110 20 140 15 Q170 10 190 30" stroke="#d4c9a8" stroke-width="1.5" fill="none"/>
+            <path d="M10 30 Q20 8 40 10 Q65 12 80 22" stroke="#d4c9a8" stroke-width="1" fill="none"/>
+            <path d="M190 30 Q180 8 160 10 Q135 12 120 22" stroke="#d4c9a8" stroke-width="1" fill="none"/>
+            <ellipse cx="35" cy="20" rx="4" ry="3" fill="#d4c9a8" opacity="0.6"/>
+            <ellipse cx="65" cy="16" rx="3" ry="2" fill="#d4c9a8" opacity="0.6"/>
+            <ellipse cx="135" cy="16" rx="3" ry="2" fill="#d4c9a8" opacity="0.6"/>
+            <ellipse cx="165" cy="20" rx="4" ry="3" fill="#d4c9a8" opacity="0.6"/>
+          </svg>
+          <h1 class="font-great-vibes text-3xl md:text-5xl text-white" data-editable="true">
+            Trọng Vũ <span class="text-rose-300">&amp;</span> Hồng Nhung
+          </h1>
+          <svg class="w-16 md:w-24 h-auto" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 30 Q30 10 60 15 Q90 20 100 30" stroke="#d4c9a8" stroke-width="1.5" fill="none"/>
+            <path d="M100 30 Q110 20 140 15 Q170 10 190 30" stroke="#d4c9a8" stroke-width="1.5" fill="none"/>
+            <path d="M10 30 Q20 8 40 10 Q65 12 80 22" stroke="#d4c9a8" stroke-width="1" fill="none"/>
+            <path d="M190 30 Q180 8 160 10 Q135 12 120 22" stroke="#d4c9a8" stroke-width="1" fill="none"/>
+            <ellipse cx="35" cy="20" rx="4" ry="3" fill="#d4c9a8" opacity="0.6"/>
+            <ellipse cx="65" cy="16" rx="3" ry="2" fill="#d4c9a8" opacity="0.6"/>
+            <ellipse cx="135" cy="16" rx="3" ry="2" fill="#d4c9a8" opacity="0.6"/>
+            <ellipse cx="165" cy="20" rx="4" ry="3" fill="#d4c9a8" opacity="0.6"/>
+          </svg>
+        </div>
+        <p class="font-cormorant-lining text-white text-base md:text-lg tracking-wider mt-1">
+          29 . 11 . 2026
+        </p>
+      </div>
     </div>
   </header>
 
@@ -509,7 +525,7 @@
   <main data-v2-uuid="d1dcf239-c39a-4fc9-80c8-95b88017c742" data-uuid="69e042ce3f699" class="container mx-auto py-8">
 
     <section id="invitation" data-v2-uuid="98eee4a8-7adb-45bd-8f2a-800f6e72cb8e" data-uuid="69e042ce3f69c" class="content-item-1 w-[80%] mx-auto wow animate__fadeInUpSlow" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true">
-      <h2 data-v2-uuid="9b989ee8-a8d9-4222-881a-6b5120d54c2e" data-uuid="69e042ce3f69f" class="font-playfair text-lg text-center mb-4" data-editable="true">
+      <h2 data-v2-uuid="9b989ee8-a8d9-4222-881a-6b5120d54c2e" data-uuid="69e042ce3f69f" class="font-lora text-lg text-center mb-4" data-editable="true">
         Một hành trình mới sắp bắt đầu,<br data-uuid="69e042ce3f6a2">
           và chúng mình muốn những người thân thương nhất có mặt để chứng kiến
           giây phút ấy.<br data-uuid="69e042ce3f6a5">
@@ -519,9 +535,7 @@
           Mong được nhìn thấy bạn trong ngày hạnh phúc của chúng mình.
       </h2>
       <img data-v2-uuid="1613c6ae-e613-4386-b584-4f6ad55040e4" data-uuid="69e042ce3f6b0" data-editable="true" class="w-[70%] mx-auto py-12 wow animate__zoomIn" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-1-1.webp?alt=media&token=cdb23f72-7c46-44a3-83d1-fbe048502dec">
-      <h2 data-v2-uuid="b5a1e36f-5cf3-4169-bcfc-e00803adaaff" data-uuid="69e042ce3f6b4" class="font-italianno text-4xl text-center text-rose-500 mb-4 wow animate__fadeInUpSlow" data-wow-delay="0.3s" data-editable="true">
-        <span data-v2-uuid="36238c1c-000b-457c-810c-e2aef4a4fe86" data-uuid="69e042ce3f6b7" class="font-italianno text-3xl"><span data-v2-uuid="230c3f2e-8564-4914-86c7-a0c30be7cba9" style="font-size: 36px;">Trọng Vũ&nbsp;</span>&amp;</span>&nbsp;Hồng
-        Nhung</h2>
+
     </section>
 
     <section id="family" data-v2-uuid="bdd7f10c-b8d2-4280-9791-e66e655736eb" data-uuid="69e042ce3f6bb" class="family w-[90%] mx-auto py-6 wow animate__fadeInUpSlow" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true">
@@ -605,7 +619,7 @@
         <img data-v2-uuid="f15e05ee-db9d-441f-9ea3-669a6850b304" data-uuid="69e042ce3f757" data-editable="true" class="w-[85%] wow animate__fadeIn" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-3-1.webp?alt=media&token=04034642-aab1-448c-a745-f3dbc7488638">
         <img data-v2-uuid="cc9d10fe-47af-4c6f-9051-1ae2664a4b3d" data-uuid="69e042ce3f75b" data-editable="true" class="w-1/3 absolute bottom-[-10%] right-0 wow animate__fadeInUp" data-wow-delay="0.3s" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-3-2.webp?alt=media&token=a87e3391-fb53-4e66-9526-f8e71e43ef97">
       </div>
-      <p data-v2-uuid="e835c2ba-a004-4541-9ce8-c81afffb5a4a" data-uuid="69e042ce3f760" class="font-playfair text-xl w-2/3 ml-auto mr-8 tracking-wide leading-relaxed text-right" data-editable="true">
+      <p data-v2-uuid="e835c2ba-a004-4541-9ce8-c81afffb5a4a" data-uuid="69e042ce3f760" class="font-lora text-xl w-2/3 ml-auto mr-8 tracking-wide leading-relaxed text-right" data-editable="true">
         Giữa làn gió hè dịu nhẹ và ánh hoàng hôn rực rỡ,
         <br data-uuid="69e042ce3f764">
           từ khoảnh khắc rung động ban đầu đến lời hẹn ước tương lai,
@@ -615,7 +629,7 @@
           Gặp ngày lành tháng đẹp, <br data-uuid="69e042ce3f770">
           mong được cùng bạn chung vui.
       </p>
-      <p data-v2-uuid="8a9b1234-a567-8901-b234-c567d890e123" class="font-playfair text-xl w-2/3 ml-auto mr-8 tracking-wide leading-relaxed text-right wow animate__fadeInUp" data-wow-delay="0.5s" data-editable="true">
+      <p data-v2-uuid="8a9b1234-a567-8901-b234-c567d890e123" class="font-lora text-xl w-2/3 ml-auto mr-8 tracking-wide leading-relaxed text-right wow animate__fadeInUp" data-wow-delay="0.5s" data-editable="true">
         Hãy đến và cùng chúng tôi viết tiếp những kỷ niệm đẹp.
       </p>
     </section>
@@ -645,7 +659,7 @@
           <p data-v2-uuid="866b690e-a3c4-417d-8f70-af59d7f7c5db" data-uuid="69e042ce3f7b3" class="font-cormorant text-xl text-center" data-editable="true">Hồng Nhung</p>
         </div>
       </div>
-      <p data-v2-uuid="bd61e21b-0599-429d-8fc5-4d31d4cb2fc8" data-uuid="69e042ce3f7b8" class="font-playfair text-xl tracking-wide leading-relaxed w-2/3 wow animate__fadeInUp" data-wow-delay="0.5s" data-editable="true">
+      <p data-v2-uuid="bd61e21b-0599-429d-8fc5-4d31d4cb2fc8" data-uuid="69e042ce3f7b8" class="font-lora text-xl tracking-wide leading-relaxed w-2/3 wow animate__fadeInUp" data-wow-delay="0.5s" data-editable="true">
         Hóa ra lời hứa sâu đậm nhất <br data-uuid="69e042ce3f7bc">không nằm
           nơi trời cao biển rộng, <br data-uuid="69e042ce3f7c1">mà trong hơi
           ấm từ bàn tay nhau, <br data-uuid="69e042ce3f7c6">những ngày thường
@@ -664,7 +678,7 @@
         </div>
         <div data-uuid="69e042ce3f7ed" class="absolute bottom-[-65%] left-0 flex items-center gap-4">
           <img data-v2-uuid="d3379896-369a-495d-9a24-1dd929166ae9" data-uuid="69e042ce3f7f2" data-editable="true" class="w-[60%] border-[8px] border-[#f4f2ea] wow animate__fadeInUp" data-wow-delay="0.2s" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fimg-content-5-5.webp?alt=media&token=afaaeb26-9381-4643-9a83-cbd70175d0f5">
-          <p data-v2-uuid="ebab0d44-4397-4420-9d24-0bb018149964" data-uuid="69e042ce3f7f7" class="font-playfair text-center text-xl leading-relaxed wow animate__fadeInUp" data-wow-delay="0.4s" data-editable="true">
+          <p data-v2-uuid="ebab0d44-4397-4420-9d24-0bb018149964" data-uuid="69e042ce3f7f7" class="font-lora text-center text-xl leading-relaxed wow animate__fadeInUp" data-wow-delay="0.4s" data-editable="true">
             Hạnh phúc không phải là đích đến, mà là hành trình chúng ta cùng
             nhau trải qua.
           </p>
@@ -723,7 +737,7 @@
           </div>
         </div>
       </div>
-      <p data-v2-uuid="ebef3593-5b0f-4804-9a40-a0bc923a8782" data-uuid="69e042ce3f877" class="font-playfair text-xl w-1/2 mx-auto text-center text-lg leading-relaxed" data-editable="true">
+      <p data-v2-uuid="ebef3593-5b0f-4804-9a40-a0bc923a8782" data-uuid="69e042ce3f877" class="font-lora text-xl w-1/2 mx-auto text-center text-lg leading-relaxed" data-editable="true">
         Khi thời khắc đẹp nhất đã đến, <br data-uuid="69e042ce3f87d">Chúng
           tôi trân trọng mong bạn đến như lời hẹn ước.
         <br data-uuid="69e042ce3f883">Gửi đến gia đình và những người bạn
