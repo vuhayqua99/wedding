@@ -580,4 +580,13 @@ event-party → event-ceremony → event-marriage → story → story-2 → coup
   - onSnapshot dùng limit(100), render tất cả vào #guestbook-recent
   - Giữ nguyên max-height:500px + overflow-y:auto cho #guestbook-list (messages trong 1 khung)
   - Xoá ~45 dòng JS + 6 dòng HTML
-  - Files đã sửa: `index.html` (HTML dòng 952-962, JS dòng 1123-1253), `404.html` (HTML dòng 952-962, JS dòng 1123-1253), `WORK_LOG.md`
+   - Files đã sửa: `index.html` (HTML dòng 952-962, JS dòng 1123-1253), `404.html` (HTML dòng 952-962, JS dòng 1123-1253), `WORK_LOG.md`
+
+## Session 31: 2026-06-26
+
+### Tasks Completed
+- [x] Đổi font 3 section title (Dress Code, Xác Nhận Tham Dự, Sổ lưu bút) → Allura script
+  - Thêm Google Fonts `Allura` vào `<head>` (cả 2 file)
+  - Thêm CSS class `.font-allura { font-family: 'Allura', cursive; }`
+  - Áp dụng cho 3 title: `font-cormorant text-3xl font-bold` → `font-allura text-5xl md:text-6xl`
+  - Files đã sửa: `index.html`, `404.html`, `WORK_LOG.md`
