@@ -554,3 +554,30 @@ event-party → event-ceremony → event-marriage → story → story-2 → coup
 - `.font-cormorant-lining`: dùng Cormorant Garamond với `font-variant-numeric: lining-nums` cho dữ liệu số (countdown, timeline, địa chỉ, guestbook entry)
 - Lora font vẫn được load (4th font) nhưng không còn dùng trong element nào — `.font-lora` class tồn tại như fallback cho body text
 - Tangerine font được load nhưng class `.font-tangerine` hiện không dùng — có thể dùng sau cho script accent nếu cần
+
+---
+
+## Session 30: 2026-06-26
+
+### Tasks Completed
+- [x] Redesign header overlay với style mới (SVG wreath 2 bên, tên 2 dòng + heart divider)
+  - Thay overlay hiện tại bằng cấu trúc giống example: giữ "Chúng mình cưới!" + "Wedding Invitation" label
+  - SVG wreath 2 bên (56×96 viewBox) với 2 path cành + 6 leaf ellipses mỗi bên, position absolute
+  - Tên "Trọng Vũ" + "Hồng Nhung" thành 2 h1 riêng (font-great-vibes, text-5xl md:text-6xl)
+  - Thêm divider: line + heart icon SVG + line giữa 2 tên
+  - Date "29 . 11 . 2026" style font-sans, tracking-[0.5em], text-[11px]
+  - Files đã sửa: `index.html`, `404.html`, `WORK_LOG.md`
+- [x] Fix scroll sau RSVP submit: đổi target từ `#rsvp-title` → `#confirmMessage`
+  - Nguyên nhân: scroll vào title làm message thành công (phía dưới form) bị đẩy xuống cuối page
+  - Fix: scroll `#confirmMessage` ra giữa màn hình thay vì `#rsvp-title`
+  - Files đã sửa: `index.html` (dòng 1086), `404.html` (dòng 1086), `WORK_LOG.md`
+- [x] Fix guestbook re-render đẩy success message khỏi viewport sau RSVP submit
+  - Nguyên nhân: guestbook `onSnapshot` render tin nhắn mới làm page cao hơn, success message bị đẩy lên
+  - Fix: thêm biến cờ `pendingScrollAfterSubmit`, guestbook sau khi render xong sẽ re-scroll về `#confirmMessage`
+  - Files đã sửa: `index.html` (dòng 1439, 1084, 1194-1201), `404.html` (dòng 1439, 1084, 1194-1201), `WORK_LOG.md`
+- [x] Đơn giản hoá guestbook: bỏ "Xem thêm", get all messages, 1 khung scroll
+  - Xoá toàn bộ pagination (PAGE_SIZE, lastDoc, loadMore handler, #guestbook-more, #guestbook-loadmore-wrap, #guestbook-loadmore-btn)
+  - onSnapshot dùng limit(100), render tất cả vào #guestbook-recent
+  - Giữ nguyên max-height:500px + overflow-y:auto cho #guestbook-list (messages trong 1 khung)
+  - Xoá ~45 dòng JS + 6 dòng HTML
+  - Files đã sửa: `index.html` (HTML dòng 952-962, JS dòng 1123-1253), `404.html` (HTML dòng 952-962, JS dòng 1123-1253), `WORK_LOG.md`

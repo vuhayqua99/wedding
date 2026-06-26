@@ -482,39 +482,54 @@
   <header id="home" data-v2-uuid="6b969766-b2ac-4d1a-a448-f36917fc022f" data-uuid="69e042ce3f689" data-removable="true" data-copyable="true" data-hidable="true" data-moveable="true" class="w-full text-center relative">
     <div data-uuid="69e042ce3f68d" class="container mx-auto relative">
       <img data-v2-uuid="75e7d855-b798-4f4f-aede-3da825600876" data-uuid="69e042ce3f68f" data-editable="true" class="w-full h-auto" alt="" src="https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/vs-template-5%2Fheader-background.webp?alt=media&token=2dd7b275-bafa-4bce-9958-a2ef53dce30b">
-      <div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center pt-4 md:pt-8">
-        <p data-v2-uuid="8ca12713-cea1-4fac-9d9c-de037a54ab86" data-uuid="69e042ce3f693" class="font-cormorant text-xl md:text-2xl text-white italic" data-editable="true">
+      <div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-center px-8">
+        <!-- "Chúng mình cưới!" -->
+        <p data-v2-uuid="8ca12713-cea1-4fac-9d9c-de037a54ab86" data-uuid="69e042ce3f693" class="font-cormorant text-xl md:text-2xl text-white italic drop-shadow-sm" data-editable="true">
           Chúng mình cưới!
         </p>
-        <p class="text-white text-[10px] md:text-xs tracking-[0.2em] uppercase font-light mt-1">
+        <!-- Wedding Invitation label -->
+        <p class="font-sans text-white/80 text-[10px] tracking-[0.6em] uppercase mb-8 drop-shadow-sm">
           Wedding Invitation
         </p>
-        <div class="flex items-center justify-center gap-3 mt-4">
-          <svg class="w-16 md:w-24 h-auto" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 30 Q30 10 60 15 Q90 20 100 30" stroke="#d4c9a8" stroke-width="1.5" fill="none"/>
-            <path d="M100 30 Q110 20 140 15 Q170 10 190 30" stroke="#d4c9a8" stroke-width="1.5" fill="none"/>
-            <path d="M10 30 Q20 8 40 10 Q65 12 80 22" stroke="#d4c9a8" stroke-width="1" fill="none"/>
-            <path d="M190 30 Q180 8 160 10 Q135 12 120 22" stroke="#d4c9a8" stroke-width="1" fill="none"/>
-            <ellipse cx="35" cy="20" rx="4" ry="3" fill="#d4c9a8" opacity="0.6"/>
-            <ellipse cx="65" cy="16" rx="3" ry="2" fill="#d4c9a8" opacity="0.6"/>
-            <ellipse cx="135" cy="16" rx="3" ry="2" fill="#d4c9a8" opacity="0.6"/>
-            <ellipse cx="165" cy="20" rx="4" ry="3" fill="#d4c9a8" opacity="0.6"/>
+        <!-- Wreath + Names container -->
+        <div class="relative">
+          <!-- Left branch SVG -->
+          <svg viewBox="0 0 56 96" fill="none" class="absolute -left-16 top-1/2 -translate-y-1/2 w-14 h-24 opacity-70">
+            <path d="M50 48 C40 40, 20 35, 8 40 C18 32, 35 30, 48 42" stroke="rgba(255,255,255,0.6)" stroke-width="1" fill="none"></path>
+            <path d="M50 48 C40 56, 20 61, 8 56 C18 64, 35 66, 48 54" stroke="rgba(255,255,255,0.6)" stroke-width="1" fill="none"></path>
+            <ellipse cx="8" cy="40" rx="6" ry="3.5" transform="rotate(-20 8 40)" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"></ellipse>
+            <ellipse cx="8" cy="56" rx="6" ry="3.5" transform="rotate(20 8 56)" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"></ellipse>
+            <ellipse cx="20" cy="36" rx="5" ry="3" transform="rotate(-12 20 36)" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.35)" stroke-width="0.5"></ellipse>
+            <ellipse cx="20" cy="60" rx="5" ry="3" transform="rotate(12 20 60)" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.35)" stroke-width="0.5"></ellipse>
           </svg>
-          <h1 class="font-great-vibes text-3xl md:text-5xl text-white" data-editable="true">
-            Trọng Vũ <span class="text-rose-300">&amp;</span> Hồng Nhung
+          <!-- Right branch SVG -->
+          <svg viewBox="0 0 56 96" fill="none" class="absolute -right-16 top-1/2 -translate-y-1/2 w-14 h-24 opacity-70">
+            <path d="M6 48 C16 40, 36 35, 48 40 C38 32, 21 30, 8 42" stroke="rgba(255,255,255,0.6)" stroke-width="1" fill="none"></path>
+            <path d="M6 48 C16 56, 36 61, 48 56 C38 64, 21 66, 8 54" stroke="rgba(255,255,255,0.6)" stroke-width="1" fill="none"></path>
+            <ellipse cx="48" cy="40" rx="6" ry="3.5" transform="rotate(20 48 40)" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"></ellipse>
+            <ellipse cx="48" cy="56" rx="6" ry="3.5" transform="rotate(-20 48 56)" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"></ellipse>
+            <ellipse cx="36" cy="36" rx="5" ry="3" transform="rotate(12 36 36)" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.35)" stroke-width="0.5"></ellipse>
+            <ellipse cx="36" cy="60" rx="5" ry="3" transform="rotate(-12 36 60)" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.35)" stroke-width="0.5"></ellipse>
+          </svg>
+          <!-- Name: Trọng Vũ -->
+          <h1 class="font-great-vibes text-white text-5xl md:text-6xl leading-tight mb-2 drop-shadow-lg">
+            Trọng Vũ
           </h1>
-          <svg class="w-16 md:w-24 h-auto" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M10 30 Q30 10 60 15 Q90 20 100 30" stroke="#d4c9a8" stroke-width="1.5" fill="none"/>
-            <path d="M100 30 Q110 20 140 15 Q170 10 190 30" stroke="#d4c9a8" stroke-width="1.5" fill="none"/>
-            <path d="M10 30 Q20 8 40 10 Q65 12 80 22" stroke="#d4c9a8" stroke-width="1" fill="none"/>
-            <path d="M190 30 Q180 8 160 10 Q135 12 120 22" stroke="#d4c9a8" stroke-width="1" fill="none"/>
-            <ellipse cx="35" cy="20" rx="4" ry="3" fill="#d4c9a8" opacity="0.6"/>
-            <ellipse cx="65" cy="16" rx="3" ry="2" fill="#d4c9a8" opacity="0.6"/>
-            <ellipse cx="135" cy="16" rx="3" ry="2" fill="#d4c9a8" opacity="0.6"/>
-            <ellipse cx="165" cy="20" rx="4" ry="3" fill="#d4c9a8" opacity="0.6"/>
-          </svg>
+          <!-- Divider: line + heart + line -->
+          <div class="flex items-center justify-center gap-5 my-3">
+            <div class="w-14 h-px bg-white/50"></div>
+            <svg viewBox="0 0 24 24" fill="rgba(255,255,255,0.9)" class="w-5 h-5 flex-shrink-0 drop-shadow">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+            </svg>
+            <div class="w-14 h-px bg-white/50"></div>
+          </div>
+          <!-- Name: Hồng Nhung -->
+          <h1 class="font-great-vibes text-white text-5xl md:text-6xl leading-tight drop-shadow-lg">
+            Hồng Nhung
+          </h1>
         </div>
-        <p class="font-cormorant-lining text-white text-base md:text-lg tracking-wider mt-1">
+        <!-- Date -->
+        <p class="font-sans text-white/90 text-[11px] tracking-[0.5em] uppercase mt-10 drop-shadow-sm">
           29 . 11 . 2026
         </p>
       </div>
@@ -936,15 +951,8 @@
       </p>
       <div id="guestbook-list" class="space-y-3">
         <div id="guestbook-recent"></div>
-        <div id="guestbook-more"></div>
-        <p class="font-cormorant-lining text-center text-gray-400 text-xl" id="guestbook-loading">Đang tải lời chúc...</p>
-        <div id="guestbook-loadmore-wrap" class="text-center mt-4 hidden">
-          <button id="guestbook-loadmore-btn"
-                  class="px-6 py-2 bg-wedding-red text-white rounded-full font-cormorant-lining text-lg hover:bg-red-800 transition-colors">
-            Xem thêm
-          </button>
-        </div>
       </div>
+      <p class="font-cormorant-lining text-center text-gray-400 text-xl" id="guestbook-loading">Đang tải lời chúc...</p>
     </section>
   </main>
   <div class="h-16"></div>
@@ -1066,9 +1074,10 @@
               }());
             }
 
-            // Scroll về giữa "Xác Nhận Tham Dự"
+            // Scroll về giữa message thành công
+            pendingScrollAfterSubmit = true;
             setTimeout(function() {
-              var el = document.getElementById('rsvp-title');
+              var el = document.getElementById('confirmMessage');
               if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 300);
 
@@ -1105,23 +1114,16 @@
         return `${day}/${month}/${year} ${hours}:${mins}`;
       }
       const guestbookRecent = document.getElementById('guestbook-recent');
-      const guestbookMore = document.getElementById('guestbook-more');
       const guestbookLoading = document.getElementById('guestbook-loading');
-      const guestbookLoadMoreWrap = document.getElementById('guestbook-loadmore-wrap');
-      const guestbookLoadMoreBtn = document.getElementById('guestbook-loadmore-btn');
 
-      if (guestbookRecent && guestbookMore) {
-        const PAGE_SIZE = 10;
-        let lastDoc = null;
-        let loading = false;
-
-        function renderGuestbookItems(container, docs, isAppend) {
+      if (guestbookRecent) {
+        function renderGuestbookItems(container, docs) {
           let html = '';
           docs.forEach((doc) => {
             const data = doc.data();
             if (!data.message || !data.message.trim()) return;
             html += `
-              <div class="guestbook-item wow animate__fadeInUpSlow">
+              <div class="guestbook-item">
                 <div class="guestbook-header">
                   <span class="guestbook-name">${escapeHtml(data.name || 'Khách')}</span>
                   <span class="guestbook-date">${formatGuestDate(data.createdAt)}</span>
@@ -1130,103 +1132,31 @@
               </div>
             `;
           });
-          if (isAppend) {
-            container.insertAdjacentHTML('beforeend', html);
-          } else {
-            container.innerHTML = html;
-          }
+          container.innerHTML = html || '<p class="font-cormorant text-center text-gray-400 text-xl">Chưa có lời chúc nào. Hãy là người đầu tiên nhé!</p>';
           if (html) new WOW().init();
-          return html !== '';
         }
 
-        // Real-time listener — always shows the latest PAGE_SIZE messages
+        // Real-time listener — render all messages
         db.collection('guests')
           .orderBy('createdAt', 'desc')
-          .limit(PAGE_SIZE + 1)
           .onSnapshot((snapshot) => {
             if (guestbookLoading) guestbookLoading.classList.add('hidden');
 
-            if (snapshot.empty) {
-              guestbookRecent.innerHTML = '<p class="font-cormorant text-center text-gray-400 text-xl">Chưa có lời chúc nào. Hãy là người đầu tiên nhé!</p>';
-              guestbookMore.innerHTML = '';
-              if (guestbookLoadMoreWrap) guestbookLoadMoreWrap.classList.add('hidden');
-              return;
-            }
-
-            const hasMoreMessages = snapshot.size > PAGE_SIZE;
             const docs = [];
             snapshot.forEach(doc => docs.push(doc));
-            const displayDocs = docs.slice(0, PAGE_SIZE);
 
-            if (displayDocs.length > 0) {
-              lastDoc = displayDocs[displayDocs.length - 1];
-            }
+            renderGuestbookItems(guestbookRecent, docs);
 
-            const hadContent = renderGuestbookItems(guestbookRecent, displayDocs, false);
-            guestbookMore.innerHTML = '';
-
-            if (!hadContent) {
-              guestbookRecent.innerHTML = '<p class="font-cormorant text-center text-gray-400 text-xl">Chưa có lời chúc nào. Hãy là người đầu tiên nhé!</p>';
-              if (guestbookLoadMoreWrap) guestbookLoadMoreWrap.classList.add('hidden');
-              return;
-            }
-
-            if (hasMoreMessages && guestbookLoadMoreWrap) {
-              guestbookLoadMoreWrap.classList.remove('hidden');
-            } else if (guestbookLoadMoreWrap) {
-              guestbookLoadMoreWrap.classList.add('hidden');
+            // Re-scroll to confirmMessage if RSVP was just submitted
+            if (pendingScrollAfterSubmit) {
+              var el = document.getElementById('confirmMessage');
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              pendingScrollAfterSubmit = false;
             }
           }, (error) => {
             console.error('Guestbook load error:', error);
             guestbookRecent.innerHTML = '<p class="font-cormorant text-center text-gray-400 text-xl">Không thể tải lời chúc. Vui lòng thử lại sau.</p>';
           });
-
-        // Load More handler
-        if (guestbookLoadMoreBtn) {
-          guestbookLoadMoreBtn.addEventListener('click', async () => {
-            if (loading || !lastDoc) return;
-            loading = true;
-            guestbookLoadMoreBtn.disabled = true;
-            guestbookLoadMoreBtn.textContent = 'Đang tải...';
-
-            try {
-              const snapshot = await db.collection('guests')
-                .orderBy('createdAt', 'desc')
-                .startAfter(lastDoc)
-                .limit(PAGE_SIZE + 1)
-                .get();
-
-              if (snapshot.empty) {
-                if (guestbookLoadMoreWrap) guestbookLoadMoreWrap.classList.add('hidden');
-                loading = false;
-                guestbookLoadMoreBtn.disabled = false;
-                guestbookLoadMoreBtn.textContent = 'Xem thêm';
-                return;
-              }
-
-              const hasMoreMessages = snapshot.size > PAGE_SIZE;
-              const docs = [];
-              snapshot.forEach(doc => docs.push(doc));
-              const displayDocs = docs.slice(0, PAGE_SIZE);
-
-              if (displayDocs.length > 0) {
-                lastDoc = displayDocs[displayDocs.length - 1];
-              }
-
-              renderGuestbookItems(guestbookMore, displayDocs, true);
-
-              if (!hasMoreMessages && guestbookLoadMoreWrap) {
-                guestbookLoadMoreWrap.classList.add('hidden');
-              }
-            } catch (error) {
-              console.error('Guestbook load more error:', error);
-            }
-
-            loading = false;
-            guestbookLoadMoreBtn.disabled = false;
-            guestbookLoadMoreBtn.textContent = 'Xem thêm';
-          });
-        }
       }
 
       // =============================================
@@ -1422,6 +1352,7 @@
       // ========== INVITATION CARD — SELECTED GUEST & GROUP ==========
       let selectedGuest = 'groom';
       let selectedGroup = 'morning';
+      let pendingScrollAfterSubmit = false;
 
       function renderAll() {
         updateCountdown();
