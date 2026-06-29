@@ -1,4 +1,4 @@
-# Work Log - Wedding Website Vũ & Nhung
+﻿# Work Log - Wedding Website Vũ & Nhung
 
 ## Session 1: 2026-04-25
 
@@ -225,7 +225,7 @@
 ## Session 15: 2026-06-16
 
 ### Tasks Completed
-- [x] Fix auto-scroll không cancel được trên mobile & click desktop
+- [x] Fix auto-scroll không cancel được trên mobilee & click desktop
   - Root cause: race condition giữa `cancelAnimationFrame` và `requestAnimationFrame` — scroll function set `autoScrollId` mới sau khi event listener cancel
   - Fix: thêm flag `scrolling`, kiểm tra `if (!scrolling) return;` ở đầu mỗi frame + `if (progress < 1 && scrolling)` trước khi set frame mới
   - Bỏ `{ once: true }` khỏi event listeners để listeners tồn tại vĩnh viễn (không mất sau 1 lần kích hoạt)
@@ -590,3 +590,29 @@ event-party → event-ceremony → event-marriage → story → story-2 → coup
   - Thêm CSS class `.font-allura { font-family: 'Allura', cursive; }`
   - Áp dụng cho 3 title: `font-cormorant text-3xl font-bold` → `font-allura text-5xl md:text-6xl`
   - Files đã sửa: `index.html`, `404.html`, `WORK_LOG.md`
+
+## Session 32: 2026-06-29
+
+### Tasks Completed
+- [x] Thay toan bo .font-lora -> .font-cormorant
+  - 6 cho trong HTML class attribute + 1 CSS rule o moi file
+  - Xoa CSS rule .font-cormorant { font-family: 'Lora' } bi duplicate (se override rule dung)
+  - Files da sua: index.html, 404.html, WORK_LOG.md
+
+## Session 33: 2026-06-29
+
+### Tasks Completed
+- [x] Fix autoplay nhac tren mobilee cho URL path routing
+  - Tao ham updateMusicUI(playing) de tranh duplicate code
+  - Tao ham setupPlayAfterGesture(audio) - dang ky listener click/touchstart ngay khi play() bi channel
+  - Goi setupPlayAfterGesture() o ca 2 lan play (ngay lap tuc + sau 4s) thay vi chi o lan thu 2
+  - Toi uu toggleMusic() dung lai updateMusicUI()
+  - Files da sua: index.html, 404.html, WORK_LOG.md
+
+## Session 34: 2026-06-29
+
+### Tasks Completed
+- [x] Fix autoplay nhac mobilee cho URL path routing (vd /groom/evening)
+  - Thay setTimeout(openCard, 1000) bang listener click/touch tren overlay
+  - User chap vao thiep (overlay) -> openCard() co user gesture -> audio.play() OK mobile
+  - Files da sua: index.html, 404.html, WORK_LOG.md
