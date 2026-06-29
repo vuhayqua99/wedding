@@ -616,3 +616,14 @@ event-party → event-ceremony → event-marriage → story → story-2 → coup
   - Thay setTimeout(openCard, 1000) bang listener click/touch tren overlay
   - User chap vao thiep (overlay) -> openCard() co user gesture -> audio.play() OK mobile
   - Files da sua: index.html, 404.html, WORK_LOG.md
+
+## Session 35: 2026-06-29
+
+### Tasks Completed
+- [x] Rollback Session 33 + 34 (refactor nhac va gesture autopath)
+  - Restore toggleMusic() ve ban inline cu (khong dung updateMusicUI)
+  - Xoa updateMusicUI(), setupPlayAfterGesture()
+  - Restore openCard(): empty catch lan 1, inline UI + tryPlay lan 2
+  - Restore auto-path: setTimeout(openCard, 1000) thay vi gesture listener
+  - Giu lai Session 32 (font-lora -> font-cormorant)
+  - Files da sua: index.html, 404.html, WORK_LOG.md

@@ -1390,42 +1390,23 @@
       const musicBtn = document.getElementById('vs-music-play-btn');
       const musicTooltip = document.getElementById('vs-music-tooltip');
 
-      function updateMusicUI(playing) {
-        if (playing) {
-          musicBtn.classList.remove('music-paused');
-          musicBtn.classList.add('music-playing');
-          musicBtn.title = 'Tắt nhạc';
-          musicTooltip.classList.remove('music-paused');
-          musicTooltip.classList.add('music-playing');
+      function toggleMusic() {
+        if (weddingMusic.paused) {
+          weddingMusic.play().then(() => {
+            musicBtn.classList.remove('music-paused');
+            musicBtn.classList.add('music-playing');
+            musicBtn.title = 'Tắt nhạc';
+            musicTooltip.classList.remove('music-paused');
+            musicTooltip.classList.add('music-playing');
+          }).catch(() => {});
         } else {
+          weddingMusic.pause();
           musicBtn.classList.remove('music-playing');
           musicBtn.classList.add('music-paused');
           musicBtn.title = 'Bật nhạc';
           musicTooltip.classList.remove('music-playing');
           musicTooltip.classList.add('music-paused');
         }
-      }
-
-      function toggleMusic() {
-        if (weddingMusic.paused) {
-          weddingMusic.play().then(function() {
-            updateMusicUI(true);
-          }).catch(function() {});
-        } else {
-          weddingMusic.pause();
-          updateMusicUI(false);
-        }
-      }
-
-      function setupPlayAfterGesture(audio) {
-        function tryPlay() {
-          audio.play().then(function() {
-            updateMusicUI(true);
-          }).catch(function(){});
-        }
-        document.addEventListener('click', tryPlay, { once: true });
-        document.addEventListener('touchstart', tryPlay, { once: true });
-        document.addEventListener('wheel', tryPlay, { once: true, passive: true });
       }
 
       // ========== INVITATION CARD — CHOICE + GROUP ==========
@@ -1440,6 +1421,7 @@
 
         renderAll();
 
+        // Play-pause immediately to capture user gesture (dialog click path)
         var audio = document.getElementById('weddingMusic');
         if (audio) {
           audio.volume = 0.5;
@@ -1447,9 +1429,7 @@
           audio.play().then(function() {
             audio.pause();
             audio.currentTime = 0;
-          }).catch(function() {
-            setupPlayAfterGesture(audio);
-          });
+          }).catch(function(){});
         }
 
         setTimeout(function() {
@@ -1459,9 +1439,24 @@
           if (audio) {
             audio.currentTime = 0;
             audio.play().then(function() {
-              updateMusicUI(true);
+              musicBtn.classList.remove('music-paused');
+              musicBtn.classList.add('music-playing');
+              musicBtn.title = 'Tắt nhạc';
+              musicTooltip.classList.remove('music-paused');
+              musicTooltip.classList.add('music-playing');
             }).catch(function() {
-              setupPlayAfterGesture(audio);
+              function tryPlay() {
+                audio.play().then(function() {
+                  musicBtn.classList.remove('music-paused');
+                  musicBtn.classList.add('music-playing');
+                  musicBtn.title = 'Tắt nhạc';
+                  musicTooltip.classList.remove('music-paused');
+                  musicTooltip.classList.add('music-playing');
+                }).catch(function(){});
+              }
+              document.addEventListener('click', tryPlay, { once: true });
+              document.addEventListener('touchstart', tryPlay, { once: true });
+              document.addEventListener('wheel', tryPlay, { once: true, passive: true });
             });
           }
         }, 4000);
@@ -1473,15 +1468,7 @@
       if (pathParts.length >= 1 && (pathParts[0] === 'groom' || pathParts[0] === 'bride')) {
         selectedGuest = pathInfo.guest;
         selectedGroup = pathInfo.group;
-        var overlayEl = document.getElementById('card-opening-overlay');
-        function gestureOpen(e) {
-          e.stopPropagation();
-          overlayEl.removeEventListener('click', gestureOpen);
-          overlayEl.removeEventListener('touchstart', gestureOpen);
-          openCard();
-        }
-        overlayEl.addEventListener('click', gestureOpen);
-        overlayEl.addEventListener('touchstart', gestureOpen, { passive: true });
+        setTimeout(function() { openCard(); }, 1000);
       } else {
         // Show guest choice dialog
         setTimeout(function() {
