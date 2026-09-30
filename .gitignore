@@ -5,6 +5,9 @@
 vs-template-5/
 music/
 
+# Miu template source (transformed into index.html)
+wedding2.html
+
 # opencode config
 .opencode/
 opencode.json
