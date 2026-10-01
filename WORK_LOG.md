@@ -1170,3 +1170,526 @@ nó: ở 15% thời gian nó đã đi được 15% quãng. Tôi hỏi lựa ch�
 - Cảnh báo đã nêu với user: cửa 4.5s + popup chọn nhóm = phải chờ ~4.5s trước nội dung lần đầu (không
   hồi tố so với bản 3D 4.97s). Nếu thấy chờ lâu, hạ `--door-duration`.
 - Backup trước khi sửa: `index.before-session29.html` (212.292 bytes) trong thư mục temp opencode.
+
+---
+
+## Session 31 - sửa 41 node mất `opacity:0` (hiệu ứng scroll reveal)
+
+### Nguyên nhân
+User yêu cầu "thêm hiệu ứng animation lúc scroll giống https://melipage.com/david-lan-2027-01-02-06".
+Khảo sát cho thấy **hệ thống đã có sẵn từ bản export** — không thiếu gì để "thêm":
+- Script observer **byte-identical** tham chiếu: **6239 ký tự, khác biệt 0** (đối chiếu 2 file trực tiếp).
+- 58 `@keyframes miu-*`, 81 node mang `data-anim-preset` + `duration/delay/easing/loop/distance`.
+- Cùng tham số: `rootMargin '0px 0px -12% 0px'`, `threshold [0.08,0.15,0.22]`, chơi 1 lần rồi `unobserve`.
+- Tham chiếu có 85 node, ta có 81; preset (`fadeInDown` 40, `fadeInRight` 13, `fadeIn` 10…) và
+  duration (`3000` × 77, `2000` × 4) gần như trùng khớp.
+
+Nhưng có **1 lỗi thật khiến hiệu ứng nháy thay vì fade**: `applyAnim` viết `el.style.opacity='1'`
+rồi gán `animation: … both`, nên *backwards fill* lập tức đẩy node về `from{opacity:0}`. Node nào
+**không** ship `opacity:0` ở cuối `style` thì hiện sẵn từ đầu → khi observer bắn thì **biến mất đột
+ngột rồi mới fade vào**. Đó chính là cảm giác "không có animation lúc scroll".
+- Trước: **40/81** node có `opacity:0` ở khai báo cuối, **41** node chỉ có `opacity: 1`.
+- 41 node lỗi nằm trọn trong **3100px đầu**: hero (18), gia đình, chữ V/N, **timeline + cả 2 thẻ
+  sự kiện** (23) — tức toàn bộ phần quan trọng nhất. 40 node đúng nằm từ 3100px trở xuống.
+- Dấu hiệu nhận diện: 41 node đó dùng định dạng `style` bị **một session sửa canvas trước đó viết lại**
+  (`--miu-node-rotate: 0deg; ` có khoảng trắng + `position: absolute; left: …`), nên mất khai báo
+  `opacity:0` cuối chuỗi. 40 node nhóm gốc dùng `var(--miu-node-rotate,0deg)` không khoảng trắng.
+
+### File bị sửa
+- **`index.html`** — thay **41** lần:
+  `--miu-node-rotate: 0deg; transform: rotate(var(--miu-node-rotate,0deg)); opacity: 1;`
+  → `… opacity: 0;`
+  Chuỗi khoá đã kiểm chứng khớp **1:1** với đúng 41 node cần sửa (không thiếu, không thừa, không
+  trùng, không đụng 40 node đang đúng). Hai chuỗi **dài bằng nhau** nên file giữ nguyên 212.307 bytes.
+  **Không** sửa script reveal, keyframe, preset, timing, easing hay bất kỳ node nào khác.
+- **`AGENTS.md`** — thêm mục "Scroll reveal system (miu engine)" ghi lại đặc tả hệ thống (script
+  byte-identical, tham số observer, preset/duration/distance, cảnh báo hai định dạng serialisation)
+  để session sau không viết lại và không làm rơi `opacity:0` lần nữa.
+  Kèm 1 dòng chú thích `ribbon-01.png` là asset dư (đã commit nhưng `index.html` không tham chiếu).
+
+### Kết quả kiểm tra tĩnh
+| Hạng mục | Trước | Sau |
+|---|---|---|
+| Node có `data-anim-preset` | 81 | 81 |
+| Có `opacity:0` là khai báo cuối | 40 | **81/81** |
+| Node còn hiện sẵn trước reveal | 41 | **0** |
+| 40 node nhóm gốc | 40 | 40 (không đổi) |
+| Kích thước file | 212.307 | 212.307 |
+
+Encoding giữ nguyên UTF-8 không BOM, LF thuần (0 CR / 2548 LF). Đã đếm lại và xác nhận không đổi:
+`@keyframes` 62, `data-anim-preset` 83, `WEDDING_MASTER` 3, `data-miu-wishes` 23,
+`miu-fadeInDown` 27, `applyAnim` 5, `IntersectionObserver` 4, `--door-duration` 6, `baseH` 2.
+
+### Ghi chú — 2 điều tham chiếu KHÔNG có
+Đã xác nhận để session sau không đi tìm nhầm hoặc tưởng là "thiếu":
+- Tham chiếu **không** có `position:sticky`, **không** parallax, **không** scroll-scrub (0 lần xuất
+  hiện trong 279 KB). Toàn trang là canvas tĩnh 9250px. Muốn thêm thì đó là bổ sung, không phải port.
+  FAB dock của tham chiếu chỉ có nhạc + thu gọn, **không** phải điều hướng theo mục.
+- Tham chiếu **có bug reduced-motion**: dù bật `prefers-reduced-motion:reduce` nó vẫn chạy
+  animation, chỉ bỏ gate scroll. Ta thừa kế nguyên bug đó (script giống hệt).
+
+### Deferred (chưa làm)
+- **User chọn KHÔNG kiểm chứng bằng trình duyệt** ("tôi tự xem"), nên chưa có bằng chứng runtime rằng
+  observer thực sự kích hoạt và 81 node về `opacity≈1`. Đã báo rõ rủi ro: **nếu gate chờ overlay hỏng,
+  41 node đó sẽ vĩnh viễn ở `opacity:0`** (hero + 2 thẻ sự kiện biến mất).
+  Cách kiểm: mở `index.html` → mở thiệp → chọn nhóm; ngay khi lách cửa trượt đi, hero phải **fade dần
+  từ 0 → 1 trong 3 giây**, không phải đã nằm sẵn rồi nháy. Thấy nội dung đứng yên không hiện →
+  `git checkout -- index.html`.
+- **Chưa commit** (user không yêu cầu). Commit nền hiện tại: `35118d4`.
+- Backup trước khi sửa: `index.before-animfix.html` (212.307 bytes) trong thư mục temp opencode.
+  Hoàn tác bằng 1 lệnh: `git checkout -- index.html`.
+
+---
+
+## Session 32 - xoá 41 `animation:` bị bake trong inline `style` => chữ xuất hiện chạy đúng như mẫu
+
+### Yêu cầu
+User: *"tôi muốn hiệu ứng, các chữ xuất hiện trong thiệp như trong mẫu này"* — tham chiếu
+`https://melipage.com/david-lan-2027-01-02-06`. User chọn phạm vi **"chỉ sửa cho khớp mẫu"**
+(không đổi preset sang hiệu ứng giàu chất hơn, không viết thêm hiệu ứng tách từng chữ).
+
+### Điều tra: chỉ có **một** sai lệch với mẫu
+Đã tải HTML mẫu `david-lan-2027-01-02-06` (280.364 bytes) và so **từng node** với `index.html` trên
+**104 node id chung**
+(cắt file theo ranh giới `data-node-id`, so `data-node-type` + 6 thuộc tính `data-anim-*`):
+
+| Hạng mục | Mẫu | Ta |
+|---|---|---|
+| Observer script (6.239 ký tự) | – | **giống hệt byte-for-byte** |
+| `@keyframes miu-*` | 57 | 58 (đủ) |
+| `data-anim-preset/duration/delay/easing/loop/distance` | – | **khớp 100%** trên 104 node |
+| Node có `opacity:0` là khai báo opacity cuối | 85/85 | 81/81 |
+| `animation:` ghi cứng trong inline `style` | **0** | **41** |
+
+Phân bố preset hai bên giống nhau (`fadeInDown` 40, `fadeInLeft` 14, `fadeInRight` 13, `fadeIn` 10,
+`fadeInUp` 2, `heartBeat` 2) — tức Session 31 đã port đúng thuộc tính; chỉ còn **dấu vết export**.
+Mẫu cũng **không** có tách từng chữ / `clip-path` / `mask-image` / stagger `nth-child` / thư viện
+GSAP — hiệu ứng "chữ xuất hiện" của mẫu **chính là** reveal của cả node.
+
+### Nguyên nhân gốc
+41 node đó có sẵn `animation: 3000ms cubic-bezier(0.2, 0.8, 0.2, 1) 0ms 1 normal both running miu-<preset>;`
+**ngay trong HTML**. Bản export của miu được lưu từ một DOM đang chạy, nên engine đã gán shorthand
+đó vào inline style của những node đang nằm trong khung nhìn của tác giả; người lưu lại chép thẳng.
+
+Hệ quả (toàn bộ im lặng):
+1. CSS animation bắt đầu **lúc parse trang** — tức **dưới overlay mở câu 4,5 s**;
+2. chạy hết 3 s rồi `fill-mode: both` khoá ở trạng thái `to`;
+3. khi observer gọi `applyAnim()`, nó gán **đúng y chuỗi cũ** => trình duyệt **không restart**;
+4. kết quả: **toàn bộ 1/3 đầu thiệp không có hiệu ứng gì** — chữ hiện sẵn từ khung hình đầu tiên,
+   trong khi 2/3 dưới vẫn reveal bình thường.
+
+41 node lỗi nằm trọn trong `top <= 3079px`: hero, gia đình, chữ V/N, timeline + **cả 2 thẻ sự
+kiện**, 2 nút bản đồ, ảnh hero. Tương quan **1:1** với 41 node "serialisation dạng 2" mà Session
+31 đã sửa mất `opacity:0` — **cùng một lần export hỏng, hai triệu chứng.**
+
+### File bị sửa
+- **`index.html`** — xoá **41** khai báo, khớp **1:1** (7 chuỗi phân biệt): `26x` `fadeInDown`,
+  `4x` `fadeInLeft`, `3x` `fadeIn`, `2x` `2000ms fadeInLeft`, `2x` `2000ms fadeInRight`,
+  `2x` `fadeInRight`, `2x` `heartBeat … infinite`. Xoá cả khoảng trắng dẫn và dấu `;` cuối.
+  Kiểm chứng an toàn trước khi ghi: **0/41** nằm trong `<style>`/`<script>` (27 block) — tất cả
+  nằm trong thuộc tính `style`. **Không** sửa observer, keyframe, `data-anim-*`, `opacity:0`,
+  master data, overlay hay bất kỳ node nào khác. 210.968 → 207.233 ký tự
+  (212.307 → 208.572 bytes, `-3.735`).
+- **`AGENTS.md`** — thêm trap mới (bake `animation:`) ngay sau trap `opacity:0`, ghi rõ 7 chuỗi
+  đã xoá + lệnh audit (kỳ vọng **0**), ghi chú 41 node vẫn giữ khoảng trắng serialisation (vô
+  hại), và ghi lại **gate là `miu:opening:willClose`, không phải `display:none`** (xem dưới).
+  Thêm mục "Verifying the scroll reveal: `doortest\reveal.js` = 25 assertions" + 5 bẫy đo.
+- **`WORK_LOG.md`** — entry này.
+
+### Bằng chứng diff thuần tuý
+Dựng lại file cũ từ backup bằng **đúng** regex xoá 41 mẫu → so sánh ordinal case-sensitive với file
+mới: **bằng nhau**. Encoding giữ nguyên UTF-8 **không BOM**, LF thuần (0 CR), tiếng Việt còn nguyên.
+
+### Kết quả kiểm tra tĩnh
+| Hạng mục | Trước | Sau | Mẫu |
+|---|---|---|---|
+| Node `data-node-id` | 106 | **106** | – |
+| Node `data-anim-preset` | 81 | **81** | 85 |
+| `animation:` bake trong inline `style` | 41 | **0** | **0** |
+| Có `opacity:0` là khai báo cuối | 81/81 | **81/81** | 85/85 |
+| Marker serialisation dạng 2 (dư, vô hại) | 41 | 41 | – |
+| Marker dạng gốc (dấu phẩy) | 275 | 275 | – |
+| `--ch/--sh/height/baseH` | 9250 | **9250** | – |
+
+### Kết quả kiểm tra runtime — `doortest\reveal.js`, **25/25, 3 run liên tiếp**
+Chạy `file:///D:/lean_AI/wedding/index.html?g=groom&t=evening` với `puppeteer-core`:
+- **`A2` — 0 node có `CSSAnimation` chạy lúc `load`** (overlay còn đang mở). Đây chính là assertion
+  chết nếu ai đó bake lại `animation:`. Trước khi sửa: 41 node.
+- `B1/B2` — 76 node ngoài khung nhìn: `getAnimations().length === 0` **và** `opacity === 0`.
+- `C1` — quét hết canvas (~40 cú nhảy): **81/81** node có đúng **một** animation, `animationName`
+  = `miu-<preset>`, `--miu-anim-distance` khớp `data-anim-distance`, và **không** node nào bắt
+  đầu trước lúc cửa bắt đầu mở.
+- `D1..D5` — hero **TRỌNG VŨ**: `opacity 0.067 → 0.918 → 1`, `startTime` = gate + 45 ms,
+  `duration` 3000, `iterations` 1, `animation-timing-function` = `cubic-bezier(0.2, 0.8, 0.2, 1)`.
+- `F1` — cả 5 node từng bị bake giờ hành xử y hệt node khác: hero, chữ V, tên địa điểm, nút bản
+  đồ (`heartBeat` loop vô hạn), tên chú rể.
+- `G` — độ trễ thật (1 cú nhảy sạch mỗi node, chỉ đo khi `startTime` đã resolve nên animation
+  bắt buộc phải mới): **12,7 – 31,3 ms**.
+
+### Điều tra phụ: vì sao reveal chạy *trước khi* cửa mở hẳn — và vì sao để nguyên
+Đo timeline thật của deep link: `miu:opening:willClose` lúc **~2,8 s**, 2 lá cửa `animationend`
+lúc **~4,8 s**, `miu:opening:closed` → `display:none` lúc **~7,8 s** (độ trễ 4,9 s là do
+`data-open` đổi lúc 2,8 s nhưng `animation-delay` vẫn còn 500 ms). 5 node nằm trong khung nhìn
+đầu tiên vì thế bắt đầu 3 s reveal của mình **khoảng 4,9 s trước** khi cửa mở hẳn, và khách nhìn
+thấy hero fade vào **qua khe cửa đang mở**. Đây là hành vi **đúng ý muốn** (khớp mẫu: mẫu cũng
+gate bằng `willClose`). Sửa thành gate `closed` sẽ khiến khách nhìn trang trắng 4,8 s rồi mới thấy
+hero — tức **mất** hiệu ứng. Đã ghi lại trong `AGENTS.md` để session sau không "sửa nhầm".
+
+### Bẫy trong script kiểm thử (đã ghi vào `AGENTS.md`)
+- `CSSAnimation` mới có `startTime === null` rồi mới = 0; phải chờ `> 1000` mới đo được.
+- Cú nhảy tới ~3 node cuối bị **clamp** vào đáy trang tốn thêm frame; loại khỏi phép đo (220 ms
+  giả vs 12–31 ms thật).
+- Node nằm ngay dưới mục tiêu đã nằm trong vùng trigger của cú nhảy **trước**, nên độ trễ âm
+  (ví dụ nút `heartBeat` `-19,9 ms`) là đúng, không phải lỗi.
+- `effect.getTiming().easing` trả `linear` với animation CSS-eased; phải đọc
+  `getComputedStyle(el).animationTimingFunction`.
+- `history.replaceState` tới path khác bị từ chối trên `file://` → phải deep-link `?g=&t=` và
+  chứng minh `cfApply` đã chạy qua `[data-countdown="1"]`.
+
+### Deferred (chưa làm)
+- **Chưa commit** (user không yêu cầu). `git status` hiện có `index.html`, `AGENTS.md`,
+  `WORK_LOG.md` đều sửa; hai file tài liệu đã mang thay đổi của Session 31 từ trước.
+- Backup trước khi sửa: `C:\Users\Admin\AppData\Local\Temp\opencode\index.before-session32.html`
+  (212.307 bytes, SHA-256 ghi lại trước khi đụng). Hoàn tác: `git checkout -- index.html`.
+- Không thay đổi overlay, master data, routing, âm thanh, Firestore.
+
+---
+
+## Session 33 - nhạc chỉ phát sau khi cửa mở xong (hiệu ứng giữ nguyên)
+
+### Yêu cầu
+User: *"nên mở cửa xong thì mới start nhạc và chạy hiệu ứng"*. Sau khi báo rõ hệ quả, user chốt:
+- **hiệu ứng** → giữ nguyên (vẫn chạy lúc `miu:opening:willClose`, t=0, đúng bằng mẫu);
+- **nhạc** → chuyển sang `miu:opening:closed` (4820ms);
+- **auto-scroll** → giữ nguyên 4850ms;
+- **iOS** → thêm bước unlock.
+
+Phạm vi vì thế thu hẹp còn **một script duy nhất**. Đặc biệt: **không sửa** observer reveal, `boot()`,
+`MutationObserver`, `close()`, timing `--door-*`, auto-scroll (kể cả hằng số fallback `6000`).
+
+### Vì sao cần
+Script audio cũ gắn `pointerdown/touchstart/touchend/keydown/scroll/click` và gọi `start()` ngay, nên
+nhạc phát đúng lúc khách bấm nút nhóm giờ — **cửa còn đang trượt**. Mẫu melipage làm ngược lại: block
+script cuối file của nó nghe `miu:opening:closed` rồi mới `playAll()`.
+
+### File bị sửa — chỉ `index.html`, chỉ trong script audio
+Backup: `C:\Users\Admin\AppData\Local\Temp\opencode\index.before-session33.html` (208.572 bytes,
+SHA-256 `D0D5251C30D3688841104997C36D12A842E0B10EB9AF4129F0A95083328D5ECE` = bản gốc).
+
+| # | Sửa | Vì sao |
+|---|---|---|
+| 1 | thêm `var hold = false;` + `var primed = false;` | cờ trì hoãn |
+| 2 | `start()`: `if (started) return;` → `if (started \|\| hold) return;` | phải chặn **trước** khi `started = true`, nếu không sẽ mất listener gesture |
+| 3 | `window.addEventListener('miu:opening:closed', releaseMusic, true)` | đúng pattern mẫu |
+| 4 | `onReady` set `hold` **trước** khi gọi `start()` | script này parse ở offset ~27.240, còn `#miuOpening` tới ~34.169 mới có ⇒ không query được lúc boot |
+| 5 | thêm `unlock()` | mở khoá autoplay iOS |
+| 6 | 6 `add(..., start, ...)` → `onIntent` | gesture làm 2 việc |
+
+**`unlock()`** (mới): `primed` một lần → `a.muted = true` → `play()` → khi resolve thì `pause()` +
+`currentTime = 0` + trả lại `muted`. Cố tình **không** đụng `started`, không gỡ listener nào.
+Lợi phụ: m4a được tải sớm nên lúc `closed` phát ra không bị nghẽn.
+
+**`onIntent`** = `if (hold) unlock(); start();`. Chữ `if (hold)` là bắt buộc — đây là **một lỗi đã
+bắt được và sửa trước khi test**: nếu `unlock()` luôn chạy, callback `.then` của nó sẽ `pause()`
+đúng cái audio mà `start()` vừa phát ngay sau (ở nhánh phục hồi sau khi `play()` bị từ chối).
+
+**Bẫy iOS**: `miu:opening:closed` bắn từ `setTimeout` ⇒ không phải user gesture ⇒ Safari sẽ từ chối
+`play()`. `unlock()` ở gesture đầu tiên là lớp phòng thủ đầu. Lớp thứ hai **đã có sẵn từ trước**:
+`p.catch(function(){ started = false; })` giữ nguyên listener, nên lần cuộn/chạm đầu tiên của khách
+sẽ phát nhạc. Nút nhạc trên FAB luôn có sẵn để bật tay.
+
+### Bằng chứng diff chỉ nằm trong script audio
+Cắt file bằng 2 marker bao quanh script audio (đầu = `var sp = null;`, cuối = `else onReady();`):
+
+| | Ký tự |
+|---|---|
+| phần **trước** script audio (27.349 ký tự) | **giống hệt** (`-ceq` True) |
+| phần **sau** script audio (176.376 ký tự) | **giống hệt** (`-ceq` True) |
+| script audio | 3.508 → 6.005 ký tự (**+2.497**) |
+
+Tổng 207.233 → 209.730 ký tự, 208.572 → 211.069 bytes. Vẫn UTF-8 không BOM, LF thuần (0 CR).
+
+**Proof mạnh nhất (không phụ thuộc marker):** thay đoạn script audio mới bằng đoạn cũ rồi so với file
+gốc → **`-ceq` = True**. Nghĩa là *toàn bộ* khác biệt của Session 33 nằm trong script audio; không
+ có gì ngoài nó bị đụng tới, kể cả byte nào.
+
+### Kết quả kiểm tra tĩnh — mọi số của Session 32 giữ nguyên
+| Hạng mục | Giá trị | Kỳ vọng |
+|---|---|---|
+| `animation:` bake trong inline `style` | **0** | 0 |
+| Node `data-node-id` | 106 | 106 |
+| Node `data-anim-preset` | 81 | 81 |
+| Có `opacity:0` là khai báo cuối | **81/81** | 81/81 |
+| Marker serialisation dạng 2 / dạng gốc | 41 / 275 | 41 / 275 |
+| `IntersectionObserver` | 4 | 4 |
+| `miu:opening:willClose` | **4** | 4 (không đụng) |
+| `miu:opening:closed` | 7 | 6 → 7 (+1 listener `releaseMusic`) |
+| `@keyframes miu-` | 58 | 58 |
+
+### Kết quả kiểm tra runtime
+- **`doortest\music.js` mới — 17 assertion, 4 chế độ, chạy 3 lần: 17/17 cả 3 lần.**
+  - **A** (deep link + `--autoplay-policy=no-user-gesture-required`): giữa lúc cửa trượt
+    (`willClose + 1500ms`, `data-open="0"`, `display=block`) `paused === true`; sau `closed + 800ms`
+    `paused === false`; FAB đổi sang class `playing`; `muted === false`; `currentTime` 2,28s.
+  - **B** (từ chối `play()` được chèn, auto-scroll bị dừng): `paused === true` sau
+    `closed + 1200ms`; gesture `mouse.click` kế tiếp ⇒ `paused === false`, `currentTime` 0,86s.
+  - **C** (luồng click thật — chính là hành trình của khách): sau khi bấm nhóm giờ, `paused === true`
+    **và** `muted === false` (tức `unlock()` đã chạy và trả lại trạng thái, không để lại tiếng kêu);
+    `paused === true` ở `willClose + 1500ms`; `closed` cách `willClose` **4823–4831ms** (đúng
+    4500 + 320); sau đó nhạc phát, FAB `playing`, `currentTime` 2,31s.
+  - **D** (từ chối 1 lần, để auto-scroll chạy): `scroll` event của chính auto-scroll gọi
+    `onIntent` → `start()` và nhạc tự lên, `currentTime` 0,85s.
+- **`doortest\reveal.js` — 25/25** (không sửa file test này, vì gate của hiệu ứng không đổi).
+- **`doortest\s29.js` — 35/35** (đặc tả cửa nguyên vẹn).
+
+### Ba bẫy trong `music.js`, mỗi cái tốn một lần chạy
+1. **Chrome không chịu từ chối autoplay.** Cả policy mặc định lẫn
+   `--autoplay-policy=user-gesture-required` đều **không** chặn `play()` trên trang `file://`.
+   Phải chèn từ chối bằng cách bọc `HTMLMediaElement.prototype.play` trong
+   `evaluateOnNewDocument`. Điều kiện nhắm phải là *"sau `miu:opening:closed`"*, **không** phải
+   đếm số lần gọi: `play()` đầu tiên sau `closed` không phải lúc nào cũng của `start()` — `scroll`
+   của auto-scroll cũng là listener của `onIntent` và có thể tới trước (đã quan sát thấy đúng 1
+   `play()` REJECT ở `closed − 1537ms` do `unlock()` gọi trong lúc `hold` còn đang bật).
+2. **Auto-scroll bắn `scroll` ~30ms sau `closed`.** `setTimeout(start, 350)` của nó chạy ở
+   `close()+4850`, sau `closed` ở `close()+4820`, và cú `scroll` đầu tiên kéo `onIntent` →
+   `start()`. Mọi assertion dạng *"vẫn còn paused sau `closed`"* đều là **race** nếu không dừng nó.
+   `wheel` là stop-event của auto-scroll **và không phải** gesture của audio, nên
+   `setInterval(dispatchEvent('wheel'), 50)` dừng được mà không giả lập gesture. Bắn `wheel` một
+   lần là **không đủ** — timer fallback 6000ms sẽ gọi `start()` lại.
+3. `KILL_SCROLL` phải cài **sau** `goto(…, {waitUntil:'load'})`, vì interval phải sống sót tới sau
+   timer fallback 6000ms tính từ lúc parse.
+
+### Deferred (chưa làm)
+- **Chưa commit** (user không yêu cầu). `git status`: `index.html`, `AGENTS.md`, `WORK_LOG.md`.
+  Hai file tài liệu vẫn mang thay đổi chưa commit của Session 31.
+- Hoàn tác: `git checkout -- index.html`.
+- Không đổi overlay, auto-scroll, master data, routing, hiệu ứng reveal, Firestore.
+
+---
+
+## Session 34 - reveal chỉ chạy sau khi cửa mở xong (theo yêu cầu mới)
+
+### Yêu cầu
+User yêu cầu **để cửa mở xong thì hiệu ứng trong thiệp bắt đầu chạy**. Chọn cách 1 (ngay tại `miu:opening:closed`, ~4820ms sau `willClose`). Áp dụng trong khi vẫn giữ nguyên auto-scroll, nhạc, geometry cửa, keyframes.
+
+### Phạm vi thay đổi
+**index.html (khối reveal boot)** và **doortest/reveal.js**. Không sửa `close()`, timing `--door-*`, IntersectionObserver config, 81 node, music/s29.
+
+### Backup
+`C:\Users\Admin\AppData\Local\Temp\opencode\index.before-session34.html` (211.069 bytes)
+SHA-256: `0B4CA314444187A9AFEEFFD5F31AD55DC6A07C5B73F5997784B50E35AAD68E46`
+
+### Sửa index.html
+Khối `boot()` trong reveal script (gần ~167k). Hai thay đổi:
+
+| # | Vị trí | Thay đổi | Vì sao |
+|---|---|---|---|
+| 1 | `cleanup()` | bỏ `removeEventListener('miu:opening:willClose', onWillClose, true)` | đường kích hoạt 1 không còn dùng. |
+| 2 | Xoá toàn bộ `onWillClose` + `addEventListener('miu:opening:willClose', ...)` | ngăn hiệu ứng bật tại t=0. |
+| 3 | MutationObserver (nhánh `!st.open`) | chuyển từ `if (sawOpen && !st.open) onClosed();` → check `display:none` | `data-open="0"` được flip **đồng bộ** ngay khi `close()` gọi (t=0), trong lúc lá cửa còn đang trượt. Đó là đường kích hoạt sớm ẩn, nên chỉ cho phép `onClosed()` khi overlay thực sự đã `display:none` (được set cùng callback với `miu:opening:closed`) hoặc không tồn tại. Giữ lại `sawOpen` để phân biệt “chưa từng mở” vs “đã mở rồi mới đóng”. |
+
+`miu:opening:willClose` vẫn được **dispatch** trong `close()` (2 chỗ: ở `#cf-choice-step2` click và ở auto-close sau deep link). **Không xoá dispatch** để tránh phình diff không cần thiết và để `s29.js`/`music.js` vẫn dùng làm mốc đo thời gian (chúng đo khoảng 4820ms từ `willClose → closed`).
+
+`onClosed()` vẫn được đăng ký. `fallbackTimer 2500ms` giữ nguyên (bật `start()` nếu overlay chưa từng mở).
+
+### Sửa doortest/reveal.js (28 → 29 assertions)
+- Thêm 3 assertion **P1–P3** ở ~300ms *trước* gate: 81/81 `opacity 0`, 0 animation. Đây là cái bắt được đường kích hoạt sớm thứ 2 (MutationObserver không được cho phép chạy tại t=0).
+- Đổi Phase 1 giả lập gate: từ `willClose` → `o.style.display='none'` rồi `dispatchEvent('miu:opening:closed')`.
+- Phase 2: thay baseline `tClosed.willClose` → `tClosed.closed` trong điều kiện “không bắt đầu trước gate”.
+- C4: đổi từ “gate mở lúc cửa đang trượt” → “gate là lúc cửa **hoàn tất**: `closed = willClose + 4820ms`”.
+- Thêm `window.__closed` trong `evaluateOnNewDocument`, chờ `window.__closed != null`.
+
+### Bằng chứng diff
+- Chỉ khối `boot()` trong reveal script đổi (delta +307 ký tự trong khối đó).
+- `swap reveal mới → bản cũ == file gốc` (`-ceq` True). Nghĩa là toàn bộ khác biệt nằm trong khối boot; prefix/suffix ngoài khối **giống hệt**.
+- bytes: 209.730 → 210.037 (delta +307). CR=0, UTF-8 không BOM, LF thuần.
+
+### Kết quả regression
+- **reveal.js**: 28/28 × 3 lần
+- **s29.js**: 35/35
+- **music.js**: 17/17 × 3 lần
+
+Audit tĩnh sau sửa:
+- baked animation (inline style): 0
+- `data-node-id` 106, `data-anim-preset` 81, `@keyframes miu-` 58
+- `opacity:0` là khai báo cuối: 81/81
+- `serial form 2/original`: 41/275 (giữ nguyên như Session 32)
+- `addEventListener('miu:opening:willClose')`: 0, `onWillClose`: 0
+- `miu:opening:willClose` tổng: 2 (2 chỗ dispatch còn lại)
+- `miu:opening:closed`: 8 (+1 so với trước khi xoá willClose listener block)
+
+`git status`: `index.html`, `AGENTS.md`, `WORK_LOG.md` — **chưa commit**.
+Backup: `index.before-session34.html` giữ nguyên.
+---
+
+## Session 35 - header Trọng Vũ / Hồng Nhung lên nhanh hơn + dịch trái
+
+### Yêu cầu
+User: *"ở phần header text Trọng Vũ và Hồng Nhung xuất hiện sớm hơn chút nữa"*, chọn phương án **B**
+(không đụng delay), sau đó thêm *"ảnh & text Trọng Vũ, Hồng Nhung dịch sang trái một chút cho cân đối
+với header"*.
+
+### Vì sao chọn B thay vì delay âm
+Xét 3 phương án trước khi sửa:
+- **A. delay âm** (`data-anim-delay="-150"`): bắt đầu sớm hơn `closed`. **Loại** — `startTime` sẽ
+  nhỏ hơn `closed`, phá assertion `C1` của `reveal.js` (`x.start < tClosed.closed - 30`) và nghĩa
+  là hiệu ứng chạy *trước* khi cửa mở xong — trái với chính thay đổi Session 34 vừa làm.
+- **B. giảm duration** 3000 → 2400: `startTime` **không đổi** (vẫn = `closed + 0`), chỉ fade xong
+  sớm hơn 600ms. Test không cần nới điều kiện nào. **Chọn.**
+- C. delay âm rất nhỏ (−80): vẫn vượt ngưỡng −30 của `C1`. Vô nghĩa.
+
+### Sửa index.html — chỉ 2 node, 4 giá trị
+| Node | Nội dung | `data-anim-duration` | `left` |
+|---|---|---|---|
+| `element_text_ghi89lrdzxt` | TRỌNG VŨ (65px) | 3000 → **2400** | 194.018 → **180px** |
+| `element_text_58ymmmme3xn` | HỒNG NHUNG (48px) | 3000 → **2400** | 194.036 → **180px** |
+
+`top`, `width`, `font-size`, preset (`fadeInLeft` / `fadeInRight`), delay 0, distance 200 — **không đổi**.
+Hai `left` khác nhau 0.018px ở bản gốc (vết export); gộp về `180px` cho đúng một giá trị.
+
+### Sửa doortest/reveal.js — 2 assertion bám cứng số 3000
+- `D5`: đổi tên + điều kiện `r2.dur === 3000` → `2400`.
+- `E1`: census duration trước là `77×3000 + 4×2000`; nay là
+  `75×3000 + 2×2400 + 4×2000`. Thêm nhánh kiểm `census.d['2400'] === 2`.
+
+Đây là chỗ test **bắt đúng** thay đổi: trước khi sửa test, 2 assertion FAIL với thông báo rõ
+(`dur=2400` trong khi kỳ vọng 3000).
+
+### Kết quả
+- **reveal.js**: 28/28 × 3 lần
+- **s29.js**: 35/35
+- **music.js**: 17/17
+- Audit tĩnh: baked animation **0**, `opacity:0` cuối **81/81**, `@keyframes miu-` **58**, 106 node.
+  Không node nào khác bị đụng.
+
+Backup: `C:\Users\Admin\AppData\Local\Temp\opencode\index.before-session35.html` (211.376 bytes).
+
+### Bài học quy trình (đã mất thời gian thật)
+Sửa `reveal.js` bằng PowerShell với `cd '...\doortest'` rồi `[IO.File]::ReadAllText('reveal.js')`
+sai: **`cd` trong PowerShell không đổi current directory của .NET**, nên lệnh đọc/ghi nhầm
+`D:\lean_AI\wedding\reveal.js` (đường dẫn tương đối resolve theo process CWD, không theo
+PowerShell location). Phải chạy lại ~10 lần trước khi nhận ra, và trong lúc đó đã **tạo nhầm một
+file rác `D:\lean_AI\wedding\reveal.js` trong thư mục repo** — đã xoá. Sửa lại bằng đường dẫn tuyệt đối
+thì lần đầu ăn ngay.
+**Quy tắc: khi sửa file bằng .NET trong PowerShell, luôn dùng đường dẫn tuyệt đối; không dựa vào `cd`.**
+
+
+---
+
+## Session 36 - header vua hien som hon + can bang giua
+
+### Yeu cau
+1. "header van hien thi muon qua" - canh dau tien ra len ngay khi cua bat dau mo.
+2. "phan text Trong Vu va Hong Nhung va anh and-ornament nen hien thi ra giua can doi" - can
+   giua 2 dong chu, day `&` sang mot ben cho can bang.
+
+### Files
+- **Chinh sua** `index.html`
+  - `element_text_ghi89lrdzxt` / `element_text_58ymmmme3xn`:
+    `left:180px` + shrink-to-fit box -> **`left:0px; width:575px; text-align:center`**.
+    Do bang puppeteer (`doortest\measure36.js`): ca hai dong co **ink centre = 287.5 chinh xac**
+    o 3 viewport (575x900, 390x844, 360x640). Dung `text-align` thay vi tinh
+    `left = 287.5 - w/2` de dung ca khi font fallback (Ergisa -> Brush Script MT) doi metrics.
+  - `element_text_w6mjrszfugn` (THE WEDDING OF): `left:133.952` -> **`136.3125`** cho tinh
+    khop 287.5 (truoc do lech -2.4).
+  - `element_image_e9ddhxndm6z` (dau `&`): `left:122.08px` -> **`23.38px`**.
+  - Reveal engine: **hoist** `isInfinitePreset` + `applyAnim` ra khoi body cua `start()` len IIFE
+    scope (thuan di chuyen code, 2303 ky tu, khong doi noi dung - chung chi phu thuoc globals).
+  - Reveal engine: them `HEADER_EARLY` (3 id) + `onWillCloseHeader()` + listener tren
+    `miu:opening:willClose`, va `removeEventListener` trong `cleanup()`.
+- **Chinh sua** `C:\Users\Admin\AppData\Local\Temp\opencode\doortest\reveal.js` (25 -> 37 assertions)
+- **Tao** `C:\Users\Admin\AppData\Local\Temp\opencode\doortest\measure36.js` (do ink, doc-only)
+- **Chinh sua** `AGENTS.md`, `WORK_LOG.md`
+
+### Backup
+`C:\Users\Admin\AppData\Local\Temp\opencode\index.before-session36.html` - 211368 bytes,
+SHA-256 `36DD7DA905F7D3658CBFD9B932E98B71392D8F29480669440C159917FCEAC419`
+
+### Ly do ky thuat
+**1. Header chay o `willClose`, 78 node con lai van o `closed` (ngoai le co chu dich).**
+Session 34 chuyen toan bo gate sang `closed` de khong co hieu ung nao chay truoc khi la het.
+Nhung hero la **phan duy nhat cua canvas co tren man hinh tu frame dau**, va no khong co scroll
+reveal gi de ma "bi treo": khach phai nhin 1 cua trong 4.8s roi lai doi them 2.4s moi thay ten.
+Vay mot ngoai le rat hep cho 3 node hero, dung y cua nguoi dung.
+- `applyAnim` nam **ben trong** `start()` nen listener som khong goi duoc. Hoist ra IIFE scope
+  la bat buoc - day la thay doi co truc luong nhat cua session.
+- `onWillCloseHeader` **khong** set `started`. `start()` co guard `if (started) return;` - neu
+  dat `started = true` o gate som thi gate `closed` se khong chay va 78 node se mai an.
+- `applyAnim` **khong** early-return tren `__miuAnimApplied`, nhung gan lai chuoi `animation`
+  giong het nen browser khong restart (cung co che voi trap `animation:` bi bake o Session 32).
+  Khong can guard dedupe rieng.
+- **Guard viewport**: node hero nao co `getBoundingClientRect().top >= innerHeight` se bi bo qua.
+  Khong co guard nay, mot cua so thap (dien thoai ngang, canvas khong scale nen hero nam o
+  y=483..683) se chay fade ngoai man hinh roi khach cuon xuoi thay node da opacity 1 - mat hanh
+  ung scroll reveal. Tren dien thoai doc khong xay ra (stage scale = `min(575, 100vw-32)`, tai
+  380px rong hero da o screen y~293..362), nen `reveal.js` PHASE 4 phai test o **640x360**.
+
+**2. Dinh vi tri dau `&`.**
+Do ink that bang `Range.selectNodeContents()` + `getClientRects()` (khong dung
+`getBoundingClientRect()` cua node - xem loi). Ket qua canvas px:
+Trong Vu **110.1 -> 464.9**, Hong Nhung **112.7 -> 462.3**. Hai khe trong deu rong **110.1**.
+Dau `&` truoc day o **122.08 -> 185.42** tuc la **nằm trọn ben trong** dai chu cua Trong Vu, va
+noi DOM no den TRUOC hai ten, ca ba deu `z-index:0` => chu ve đè len `&`. Do la ly do no "bi
+bien mat" ma khong ai thay.
+- `left = (110.1 - 63.34) / 2 = 23.38` -> chiem 23.38..86.72: **23.4px den mep canvas, 23.4px
+  den ink Trong Vu**, hai khe can bang.
+- `top` giu nguyen (571.4177517361111) - `&` van straddle ca hai dong ten.
+- Khong them `data-anim-preset` cho `&` (xem Deferred).
+
+**3. Test phai tach thanh 2 quan the.**
+`P1`/`P2`/`C1` deu co gia dinh "khong node nao chay truoc `closed`" nen se **FAIL** neu giu
+nguyen. Da loai 3 node hero khoi tap kiem tra, them `P4` (3 node da chay o `willClose`) va
+`C6` (bat dau **trong** khoang `[willClose, closed)`, do lai +47ms). Them PHASE 4 (K0-K2) cho
+guard viewport va PHASE 5 (H1-H4) cho hinh hoc hero.
+
+### Bai hoc (3 loi, tat ca deu o *ky vong cua test*, khong phai loi san pham)
+- **`D1` phai doc opacity cung task voi luc dispatch gate.** No doc sau 120ms, bien thanh race:
+  reference curve `cubic-bezier(0.2, 0.8, 0.2, 1)` front-loaded manh (`y1 = 0.8`) nen opacity da
+  **0.41 o giua 250ms cua ramp 2400ms**, ngan sach `< 0.3` fail vi sai timing. Callback cua
+  `IntersectionObserver` la async nen mot lan doc trong cung task van thay gia tri an.
+- **`P4` phai assert `getAnimations()`, khong assert opacity.** Mau lay o `willClose` + ~40ms nen
+  3 node hero dang o giua ramp, opacity ~0. Phien ban dau doi `op=1` ("da xong trong gap") va fail
+  vi chinh ly do do - dau cua cua so la `C6` lo, khong phai `P4`.
+- **`K1` regex.** `toFixed(2)` tao ra `op=0.00` chu khong phai `op=0`, nen `/op=0$/` khong khop.
+- **`H3` co rang that.** Da chay lai logic voi toa do cu (122.1->185.4) va xac nhan tra ve
+  `false` - neu khong co assertion nay, chinh "bi chu nuot" lai co the quay lai im lang.
+
+### Kiem chung
+- `reveal.js`: **37/37**, chay 3 lan lien (co lan fix 3 loi test o tren)
+- `s29.js`: **35/35** (cua 2D khong doi)
+- `music.js`: **17/17** (nhac van start o `closed`)
+- Audit tinh: baked `animation:` = **0**, `data-anim-preset` = **81**, `@keyframes miu-` = **58**,
+  opacity cuoi = `0` cho **81/81**, node id trung = 0
+- Proof chi 4 region thay doi (git word-diff voi ranh gioi `;`): 4 node attribute + 1 khoi
+  script (hoist + 1 dong cleanup + khoi gate). Khong co thay doi nam ngoai y muon.
+
+### Bo sung Session 36 - dua dau & sat chu
+`&` ban dau duoc dat `left:23.38px` = **canh giua** khe trong (23.4px den mep canvas, 23.4px den
+chu). Nguoi dung xem la "detached" va yeu cau dua sat hon, chon **cach 8px** ->
+`element_image_e9ddhxndm6z` **`left:38.76px`**, nét `&` 38.8..102.0, cach nét `T` cua Trong Vu
+**8.1px**. Chi doi 1 thuoc tinh; `top`/`width`/`height` va reveal engine giu nguyen (`&` khong co
+`data-anim-preset` nen khong thuoc `HEADER_EARLY`).
+
+**Do khong co sai so an** (truoc khi chon so):
+- `and-ornament.png` 437x556, quet alpha: nét chiem 23.4..86.6 trong hop 23.38..86.72 => chi
+  **0.1px** đệm ngang.
+- Chu "T" cua Trong Vu: `measureText('T').actualBoundingBoxLeft = 0` => mép hop **chinh la mép nét**.
+
+Nen 23.4px -> 8.1px la so do, khong phai uoc luong. Chuyen sang phai cung lam hero can hon: khoi
+ink ca `&` + 2 dong ten lech trai **35.6px** so voi tam 287.5 (truoc khi doi la 43.3px).
+
+**H4 doi y nghia**: tu *"canh giua trong khe (mép = mép, chenh <=2px)"* sang **"ôm sát nhung khong
+cham"** — khoang cach nét ∈ **[4, 16]px**. Khoang nay de du chỗ cho font fallback (Ergisa ->
+Brush Script MT) khi nét dam hon ma khong va cham. Van **37** assertions.
+
+### Kiem chung (sau bo sung)
+`reveal.js` **37/37** x2, `s29.js` **35/35**, `music.js` **17/17**. Audit tinh giu nguyen:
+baked 0 / preset 81 / keyframes 58 / opacity 81-81.
+### Deferred
+- **Chua commit** (khong duoc yeu cau). `git status`: `index.html`, `AGENTS.md`, `WORK_LOG.md`.
+- Hoan tac: `git checkout -- index.html`.
+- Dau `&` **van khong co** `data-anim-preset` nen no hien ngay tu frame dau, lech nhip voi 2
+  dong ten. Them preset se bien no thanh animated node thu 82, phai them `opacity:0` cuoi (bay
+  hien flicker) va sua lai census. Neu muon dong bo, lam o session sau.
+- `dsi747wh7aq` ( dong Lora "Trong Vu & Hong Nhung ") van lech tinh: ink centre **284.8**, lech
+  -2.7. Khong sua vi ngoai pham vi header.

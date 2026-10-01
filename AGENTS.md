@@ -35,8 +35,15 @@ runtime export (`wedding2.html` → `index.html`). Deployed on GitHub Pages unde
 The HTML is a huge single-line canvas (the body is minified). Edit with regex anchored on
 `data-node-id`. Key nodes (inner text after `">`...`</div>`):
 
-- Couple headlines (hero): `element_text_ghi89lrdzxt` (Trọng Vũ), `element_text_58ymmmme3xn`
-  (Hồng Nhung, `font-size:48px`).
+- Couple headlines (hero): `element_text_ghi89lrdzxt` (Trọng Vũ, 65px), `element_text_58ymmmme3xn`
+  (Hồng Nhung, `font-size:48px`). **Session 36:** both are now **centred on the canvas**
+  (`left:0px; width:575px; text-align:center`) instead of the old `left:180px` + shrink-to-fit box,
+  and `data-anim-duration="2400"` (Session 35; was 3000). Presets `fadeInLeft` / `fadeInRight`,
+  delay 0, distance 200. Centring via `text-align` rather than `left = 287.5 - w/2` so it stays
+  correct if the font fallback (Ergisa → Brush Script MT) has different metrics.
+  `element_text_w6mjrszfugn` (THE WEDDING OF, 3000ms) was nudged `133.952 → 136.3125` so its box
+  centre is exactly 287.5. Measured ink boxes (canvas px): Trọng Vũ 110.1→464.9, Hồng Nhung
+  112.7→462.3 — the two free gutters are 110.1px each.
 - Initials (two separate, slightly interlocked): `element_text_se9nr38shaq` (V, Playfair Display 75px,
   right-aligned, left 28.14), `element_text_prol2tcxgdc` (N, UVN Hoa Tay 70px, left-aligned, left 242
   = template position −20px so the N tucks over the V's right stroke for a romantic closeness; both
@@ -186,7 +193,11 @@ Google Fonts link is kept only as a safety fallback for these families.
   GitHub Pages). Session 25 flattened the old `assets/uploads/6a2a56e562badd7da97313bb/` subfolder away;
   that id was the **miu export's invitation id** (still visible once on the canvas as
   `data-invitation-id`, read by nothing) and is no longer part of any path.
-- Music: `assets/audio/ordinary.m4a` (autoplay after the opening flow).
+- Music: `assets/audio/ordinary.m4a`. **Session 33: starts on `miu:opening:closed`** — i.e. only
+  once the door has finished sliding (4500 = `--door-duration` 4s + `--door-delay` 500ms +
+  `--door-stagger` 0ms, + the script's 320ms pad ⇒ **4820ms after `close()`**). Before this it
+  fired on the very first gesture, so the music started while the door was still moving. That
+  matches the melipage reference, which gates its audio on `closed` too.
 - Decorations: `assets/elements/` (9 files, downloaded from miuwedding.com + melipage.com — no remote dependency).
 - Favicon: `assets/favicon.svg` + `assets/favicon.png` + `assets/apple-touch-icon.png`
   (red `#7f0505` square with 囍; linked in `<head>`).
@@ -212,9 +223,102 @@ the photo ever moves.
 |------|-----|
 | `ribbon-01.png` … `ribbon-04.png` | `bieutuongluudo/*.png` |
 | `ribbon-05.webp`, `ribbon-06.webp` | `bieutuongluudo/*.webp` |
-| `and-ornament.png` | `and.png` |
+| `and-ornament.png` | `and.png` — **Session 36: the `&` in the hero.** Was `left:122.08px`, i.e. spanning 122→185 while Trọng Vũ's ink spans 110→465, so it sat *inside* the text and was painted over (it precedes both names in DOM order and all three are `z-index:0`). Now **`left:38.76px`**, on the **left** of the names and **tucked against them** — 8.1px from Trọng Vũ's ink. It was briefly centred in the gutter at `23.38px` (23.4px to each side) but that read as detached; a flourish only reads as one when it nearly touches the word. `top` unchanged (571.4177517361111) — it still straddles the two name lines. It has **no** `data-anim-preset`, so it is visible from the first frame and is *not* part of `HEADER_EARLY`. Both edges are real ink, not layout: the "T" has 0px left side-bearing and the PNG has ~0.1px horizontal padding. |
 | `floral-pattern.png` | `hoavan/ mndsmdnsjadhsjakd.png` (URL had a space) |
 | `side-card-icon.png` | `melipage.com/assets/images/side-card-icon.png` (icon ấn cửa, Session 26) |
+| `ribbon-01.png` | *(Session 31: đã commit nhưng `index.html` **không** tham chiếu — asset dư, giữ cho đủ bộ)* |
+
+## Scroll reveal system (miu engine) — already installed, do not rebuild
+
+- Animated nodes carry `data-anim-preset` + `data-anim-duration` / `-delay` / `-easing` / `-loop` /
+  `-distance` (81 nodes). Preset resolves as `'miu-' + preset` against the 58 `@keyframes miu-*`
+  already in the file. Easing is `cubic-bezier(0.2, 0.8, 0.2, 1)` everywhere; duration `3000`
+  (75 nodes), `2400` (2 — the hero couple names, Session 35) or `2000` (4); distance `200` (32) or
+  `150` (1), keyframe default `12px`.
+  `isInfinitePreset` forces `infinite` for `rotate`/`spin`/`flicker`/`pulse`/`wiggle`/`heartBeat`/
+  `swayBottom` regardless of `data-anim-loop`.
+- The observer script is **byte-identical (6239 chars) to the melipage reference** — do not rewrite
+  it. `IntersectionObserver` `{root:null, rootMargin:'0px 0px -12% 0px', threshold:[0.08,0.15,0.22]}`,
+  then `applyAnim()` + `obs.unobserve()` so each node plays **once**. It gates on the opening overlay
+  via `miu:opening:willClose` / `miu:opening:closed`, plus a 2500 ms fallback that fires **only if
+  the overlay was never seen open**.
+- **A node without `opacity:0` does not animate correctly.** `applyAnim` writes
+  `el.style.opacity='1'` and then `animation: … both`, so the *backwards* fill re-hides the node at
+  the trigger instant. An unhidden node is therefore **visible from page load → snaps invisible →
+  fades in** (a flicker, not a reveal). All 81 nodes need `opacity:0` as the **last** `opacity`
+  declaration in their inline `style`.
+- **Trap: the canvas carries two different `style` serialisations**, and the second is the warning sign.
+
+  | Form | Marker | `opacity` declarations |
+  |------|--------|------------------------|
+  | Original export | `var(--miu-node-rotate,0deg)` (no space after comma) | `opacity:1;…;opacity:0` (2, last wins) |
+  | Re-serialised by an earlier session's node edit | `--miu-node-rotate: 0deg; ` (space) + `position: absolute; left: …` | had only `opacity: 1` (1) — **the hiding `opacity:0` was lost** |
+
+  Session 31 found **41 of 81** nodes in the second form with the hiding declaration missing, all
+  inside the first 3100px (hero, families, the V/N initials, timeline and both event cards — i.e.
+  the whole middle of the invitation). Fixed by replacing the 41 occurrences of
+  `--miu-node-rotate: 0deg; transform: rotate(var(--miu-node-rotate,0deg)); opacity: 1;` with the
+  same string ending `opacity: 0;`. **Any future edit that rewrites a node's `style` must re-append
+  the trailing `opacity:0`**, otherwise that node silently stops animating.
+  The very same 41 nodes were the ones carrying a baked `animation:` (see the next trap) — one
+  broken export, two symptoms.
+  Audit: count `[data-anim-preset]` nodes whose *last* `opacity` declaration is `0` — must be
+  **81/81** (the reference export is 85/85).
+- **Trap (Session 32): the export bakes `animation:` into 41 inline `style` attributes.** This is
+  the second half of the "two serialisations" problem above, and it is *worse* than the lost
+  `opacity:0`. Those 41 nodes carried a literal
+  `animation: 3000ms cubic-bezier(0.2, 0.8, 0.2, 1) 0ms 1 normal both running miu-<preset>;`
+  in their `style` — the author saved the export from a live DOM where the engine had already
+  applied them. Consequences, all silent:
+  - the CSS animation starts at **page parse**, i.e. behind the 4.5 s opening overlay, runs its
+    3 s and is latched at the `to` state by `fill-mode:both`;
+  - when the observer later calls `applyAnim()`, it assigns the **identical** animation string, so
+    the browser does **not** restart it → the node never reveals;
+  - so the whole **top third of the invitation** (hero, families, V/N initials, timeline, both
+    event cards, both map buttons) was simply visible from the first frame, while the bottom two
+    thirds revealed normally.
+  The melipage reference has **0** such declarations. Fixed by deleting all 41 (7 distinct strings:
+  26× `fadeInDown`, 4× `fadeInLeft`, 3× `fadeIn`, 2× `2000ms fadeInLeft`, 2× `2000ms fadeInRight`,
+  2× `fadeInRight`, 2× `heartBeat … infinite`). **Any future edit that rewrites a node's `style`
+  must not re-introduce a literal `animation:`** — the animation belongs to the observer.
+  Audit (must be **0**, and all 41 hits must sit inside a `style="…"` attribute, never in the
+  `<style>` block or the engine JS):
+  `[regex]'animation:\s*[\d.]+ms[^;"]*miu-[A-Za-z]+'`
+- The 41 nodes also keep the *whitespace* half of the re-serialisation (`--miu-node-rotate: 0deg; `
+  with a space, 41 occurrences) — that is cosmetic and functionally identical to the original
+  comma form (275 occurrences), so it is left alone. The tell that a node was touched is that
+  marker, **not** the whitespace itself.
+- **The reveal gate is `miu:opening:closed`, NOT `willClose` (Session 34).** This reverses the
+  earlier "run through the gap" behaviour: animations start **only after** the door has finished
+  opening (4820ms after `willClose`). The change was deliberate at user request. The previous
+  `willClose` gate had caused effects to begin ~4.8s before the leaves completed. Gate remains on
+  `miu:opening:closed` (fired when `#miuOpening` becomes `display:none`), with a 2500 ms fallback
+  that fires only if the overlay was never seen open.
+- **…with ONE exception: the 3 hero nodes start at `willClose` (Session 36).** Session 34's gate
+  made the guest stare at a blank door for 4.8s and then wait another 2.4s for the names, and the
+  hero is the only part of the canvas on screen from the first frame — it has no scroll reveal to
+  speak of. So `element_text_w6mjrszfugn` / `ghi89lrdzxt` / `58ymmmme3xn` are started by
+  `onWillCloseHeader` (a second listener on `miu:opening:willClose`, the list is `HEADER_EARLY`
+  and it must stay in sync with the same list in `doortest\reveal.js`). Everything else — the
+  other 78 — is still gated on `closed`.
+  - Two structural consequences, both deliberate:
+    - **`applyAnim` and `isInfinitePreset` were hoisted out of `start()`** to IIFE scope. They used
+      to be inside it, so the early listener had no way to reach them. `start()`'s
+      `if (started) return;` guard is untouched and the early handler does **not** set `started` —
+      if it did, the `closed` gate would never run and 78 nodes would stay invisible.
+    - **A hero node whose `getBoundingClientRect().top >= innerHeight` is skipped.** Without that
+      guard a short window (a landscape phone, where the unscaled canvas puts the hero at
+      y=483..683) would run the fade off-screen and the guest would scroll down to a node that
+      was already at opacity 1 — the scroll reveal gone. This cannot happen on a portrait phone
+      (the stage is scaled to `min(575px, 100vw-32px)`, so at 380px wide the hero is already at
+      screen y≈293..362), which is why `reveal.js` PHASE 4 tests it at **640×360**.
+  - `applyAnim` does **not** early-return on `__miuAnimApplied`, so when the IntersectionObserver
+    later re-applies the hero's identical `animation` string the browser does not restart it (same
+    mechanism as the baked-`animation:` trap). That is why no dedupe guard was needed.
+- The reference has **no** `position:sticky`, no parallax, no scroll-scrub (0 occurrences in its
+  279 KB) — any such effect here is an *addition*, not a port. It also has a **bug**: under
+  `prefers-reduced-motion:reduce` it still plays the animation, it only drops the scroll gate.
+  Its FAB dock is music + collapse only, **not** section navigation.
 
 ## Opening Flow (overlay) — contract with the miu engines
 
@@ -350,6 +454,78 @@ the photo ever moves.
   `elementFromPoint`; `s26b.js` = overlap matrix at 5 viewports).
   **`s27.js` is obsolete and was deleted** — it asserted the final angle was 108°, a design Session 29
   deliberately removed. Do not resurrect it; port new ideas into `s29.js`.
+- **Verifying the scroll reveal: `doortest\reveal.js` = 37 assertions, run it after any change to a
+  node's `style` or to the observer.** It is the only test that would have caught the baked
+  `animation:` trap. What it does: at `load`, with the overlay still up, assert **0** nodes have a
+  running `CSSAnimation` (this is the assertion that fails if anyone re-bakes one); ~40ms after
+  `willClose` assert the two reveal populations are still apart (78 anonymous nodes at
+  `opacity 0`, the 3 hero nodes already animating — Session 36); after the deep link closes,
+  assert every off-screen node has `getAnimations().length === 0` **and** `opacity 0` (76 nodes
+  qualify); walk the canvas in ~40 jumps and assert all 81 end with exactly one animation whose
+  `animationName` is `miu-<preset>`, `--miu-anim-distance` matches `data-anim-distance`, and
+  `startTime` falls inside that node's own window (hero: `[willClose, closed)`, the rest
+  `≥ closed`); measure the reveal latency with one clean jump per node; in a **640×360
+  viewport** prove a below-the-fold hero node is handed back to the IntersectionObserver (K0–K2);
+  and measure the **hero geometry** (H1–H4) — see the next trap.
+  **Traps in this script, each of which cost a run:**
+  - **P4 asserts `getAnimations()`, not opacity.** The pre-gate sample is taken ~40ms after
+    `willClose`, so the hero nodes are mid-ramp at opacity ≈0. An earlier version of this
+    assertion demanded `op=1` ("finished inside the gap") and failed for exactly that reason —
+    the far end of the window is C6's job, not P4's.
+  - **H1–H4 must measure INK, never the node's `getBoundingClientRect()`.** Since Session 36 the
+    two names are `left:0; width:575px` boxes, so their *rect* is the whole canvas and a box-based
+    overlap test would pass forever. Use `Range.selectNodeContents()` + `getClientRects()` and
+    divide by the stage scale to get canvas px. `element_image_e9ddhxndm6z` (the `&`) has **no**
+    `data-anim-preset`, so every other phase in the script skips it — that is how it sat buried
+    behind the text for this long. **H3 has teeth: verified it returns `false` for the old
+    `122.1→185.4` position.** `H4` asserts the gap is **4..16px** ("tucked, not touching"), not
+    that the ornament is centred in the gutter — `38.76px` is a deliberate tuck, and a
+    gutter-centring assertion would fail on it.
+  - **D1 must sample opacity in the same task as the gate dispatch.** It used to read it 120ms
+    later, which made it a race: the reference curve `cubic-bezier(0.2, 0.8, 0.2, 1)` is heavily
+    front-loaded (`y1 = 0.8`), so opacity is already **0.41 at 250ms** of a 2400ms ramp and the
+    old `< 0.3` threshold failed on nothing but timing. The IntersectionObserver callback is
+    async, so a same-task read still sees the hidden value.
+  - a *new* `CSSAnimation` reports `startTime === null`, then `0`, before the timeline resolves it.
+    Polling for `!== null` measures Chrome's pending→ready bookkeeping (up to ~230 ms), not the
+    reveal. Wait for `startTime > 1000` (the page has been open seconds by then).
+  - the last ~3 nodes sit at the clamped page end: a jump there requests `target > scrollHeight -
+    innerHeight` and costs extra frames. Exclude clamped groups from the latency metric — measured
+    12–31 ms on a legal jump vs ~220 ms on a clamped one.
+  - a node 120 px below the jump target is already inside the trigger band, so a *lower* node can be
+    revealed by the *previous* jump and report a **negative** latency. Record how many ids in the
+    group already had an animation before scrolling and do not charge them to this jump.
+  - `Animation.startTime` is the time the **delay** phase began, not the first painted frame.
+  - `effect.getTiming().easing` reads `linear` for any CSS-eased animation — the timing function
+    lives in the shorthand, so read `getComputedStyle(el).animationTimingFunction` instead.
+  - `history.replaceState` to a different path is refused on `file://`, so use `?g=groom&t=evening`
+    and prove `cfApply` ran instead of reading the address bar.
+- **Verifying the music timing: `doortest\music.js` = 17 assertions in 4 browser modes**, run it
+  after any change to the audio script or to the opening events. No mode covers everything, which
+  is why there are four:
+  | Mode | Chrome | What it proves |
+  |---|---|---|
+  | A | `--autoplay-policy=no-user-gesture-required`, deep link | the happy path: held mid-slide, starts at `closed`, FAB syncs, `currentTime` advances |
+  | B | default policy, injected refusal, auto-scroll killed | a refused `play()` stays paused and the **next guest gesture** recovers it (the iPhone path) |
+  | C | default policy, real click flow | the actual guest journey: `unlock()` primes without a blip, music starts 4831ms after `willClose` |
+  | D | default policy, injected refusal **once**, auto-scroll running | on Chrome the auto-scroll's own `scroll` event repairs the refusal by itself |
+
+  Three traps in this script, each of which cost a run:
+  - **Chrome will not refuse autoplay for you.** Neither the default policy nor
+    `--autoplay-policy=user-gesture-required` blocks `play()` on a `file://` page, so Safari's
+    refusal has to be injected by wrapping `HTMLMediaElement.prototype.play` in
+    `evaluateOnNewDocument`. Aim it with `window.__evts['miu:opening:closed'] != null`, **not**
+    with a call counter: the first post-`closed` `play()` is not always `start()`'s — the
+    auto-scroll's `scroll` is one of `onIntent`'s listeners, so `unlock()` can get there first.
+  - **The auto-scroll fires ~30ms after `closed`** (its `setTimeout(start, 350)` runs at
+    `close()+4850`, after `closed` at `close()+4820`) and its very first `scroll` drives
+    `onIntent` → `start()`. Any assertion of the form "still paused after `closed`" is therefore
+    a race unless the auto-scroll is suppressed. `wheel` is one of the auto-scroll's stop events
+    and is **not** an audio gesture, so `setInterval(dispatchEvent('wheel'), 50)` kills it
+    without standing in for a guest gesture. A wheel dispatched once is not enough — the 6000ms
+    fallback timer calls `start()` again afterwards.
+  - `KILL_SCROLL` must be installed **after** `goto(…, {waitUntil:'load'})`, since the interval
+    has to outlive the auto-scroll's parse-time 6000ms fallback timer.
   - Traps that cost a run each: `history.replaceState` to a different path is **refused on
     `file://`**, so URL routing is only assertable through the `?g=&t=` deep link (prove `cfApply` ran via
     `[data-countdown="1"]` + `element_text_0iedk0b1132` instead); the smooth auto-scroll fires hundreds of
@@ -380,7 +556,12 @@ the photo ever moves.
 
 - **Images 404**: verify that `assets/uploads/...` exists and is committed (exact name).
 - **Souvenir not submitting**: browser console → Firestore errors (rules/indexes).
-- **Music not playing**: some browsers block autoplay; the overlay captures interaction first.
+- **Music not playing**: the audio script now waits for `miu:opening:closed` (see Assets) and falls
+  back to the next guest gesture if `play()` is refused. `unlock()` primes the element during the
+  first gesture for iOS; if that still fails the guest can press the FAB music button.
+- **Music starts while the door is still moving**: `hold` is being cleared too early, or something
+  else is calling `start()` — the only thing that may clear it is the `miu:opening:closed` listener
+  (`releaseMusic`). Check with `doortest\music.js`.
 - **Auto-scroll not starting**: check that `.card-side` uses `animation` (not `transition`) and that
   `data-open="0"` is fired.
 
