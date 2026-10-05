@@ -1693,3 +1693,156 @@ baked 0 / preset 81 / keyframes 58 / opacity 81-81.
   hien flicker) va sua lai census. Neu muon dong bo, lam o session sau.
 - `dsi747wh7aq` ( dong Lora "Trong Vu & Hong Nhung ") van lech tinh: ink centre **284.8**, lech
   -2.7. Khong sua vi ngoai pham vi header.
+## Session 37 - guestbook: khung cuon thay cho "Xem them"
+
+### Yeu cau
+"Danh sach guestbook co thanh truot nhu project cu code o nhanh master" - port y tuong cuon + ngay
+giok tu site cu (vs-template-5), giu nguyen collection hien tai.
+
+Quyet dinh da chot voi nguoi dung:
+1. Bo hoan toan nut "Xem them" -> render HET loi chuc (van toi da 200 doc) vao khung cuon.
+2. Giu style item hien tai (xam #707070), CHI them ngay `dd/MM/yyyy HH:mm`.
+3. Khong dung collection `guests` cu cua site cu (field `name`/`message`) - giu `vu_nhung_2_messages`.
+4. Thanh truot xam `#707070` rong 4px.
+5. Giu nguyen chieu cao section 727.23px -> khung list ~336px canvas, KHONG doi ho so canvas.
+
+### Files
+- **Chinh sua** `index.html` (chi file nay; `wedding2.html` la export goc, da gitignore)
+  - CSS block `[data-miu-wishes="1"]`: them `.miu-wishes-head` (flex + `align-items:baseline`) va
+    `.miu-wishes-date` (15px, xam 75%), 4 rule `::-webkit-scrollbar*`, va 1 khoi
+    `@supports not selector(::-webkit-scrollbar)` cho Firefox.
+    `.miu-wishes-name`: `margin-bottom:6px` -> `0` (margin chuyen len `.miu-wishes-head`).
+    `.miu-wishes-comment`: them `word-break:break-word`.
+  - DOM: list div doi inline `overflow:auto` -> `overflow-y:auto; overflow-x:hidden`; **XOA** node
+    `<button data-miu-wishes-more="1">`.
+  - Script (IIFE wishes): them `fmtDate()`; xoa `moreBtn` / `initial` / `showN` / 2 cho
+    `moreBtn.style.display` / ca khoi listener phan trang; `render()` bo `slice(0,showN)` va bo
+    `.miu-wishes-head`; `onSnapshot` push them `at: fmtDate(d.createdAt)`.
+
+### Ly do ky thuat
+- **Sua `overflow` bang inline, khong dua vao stylesheet.** Longhand trong stylesheet thua
+  shorthand `overflow:auto` dang nam tren `style` cua chinh node do.
+- **`@supports not selector(::-webkit-scrollbar)` la bat buoc.** Chrome tu 121 ho tro
+  `scrollbar-color`; neu viet thang `scrollbar-width/color`, Chrome se **bo qua** toan bo
+  `::-webkit-scrollbar` va lay do day `thin` (~11px) - mat dung 4px da chon.
+  `@supports selector(::-webkit-scrollbar)` = true o Chrome/Safari, false o Firefox, nen
+  `@supports not ...` moi dung chieu: Webkit lay 4px chinh xac, Firefox lay thin.
+- **`align-items:baseline` -> test phai assert OVERLAP, khong phai equal `top`.** Tieu de 20px vs
+  ngay 15px nen box `top` lech nhau 5px *dung y do* baseline thang hang.
+- **`word-break:break-word`** de 1 chuoi 220 ky tu khong sinh thanh truot ngang trong khung hep.
+- **Format `createdAt` 1 lan luc snapshot** (thanh `at`), khong tinh lai 200 lan moi render.
+- **Khong doi chieu cao section/canvas.** Node ke tinh sau section bat dau `top:8590.31`, section
+  bottom = 8427.61 => con 162px de noi cao, nhung nguoi dung chon giu nguyen. Do do lai thuc te o
+  viewport 575x900: section man hinh `686.7px`, list `300.5px` tu `369.2` -> `669.7` (phan duoi
+  17px = padding 18 * scale 0.944) - `flex:1 1 auto` tu lap day khong can them gi.
+- `data-initial-limit="3"` va `data-loadmore-text` giu nguyen tren section (khong con script doc) -
+  de neu export lai tu miu thi khoi cu khong mat them.
+
+### Bai hoc (2 loi, ca 2 deu o *ky vong cua test*, khong phai loi san pham)
+1. **`clientWidth - offsetWidth === 4` KHONG do duoc tren may nay.** Windows 11 bat overlay
+   scrollbar, nen ca mot div `overflow-y:scroll` CHUA style cung gutter = 0 (`probeW8.js`:
+   `win=0, plain=0, unstyled=0`). Assertion nay fail voi BAT KY implement nao -> doi sang doc
+   rule truc tiep tu CSSOM (W8a/W8b/W8c). He qua thuc te: tren may/khe, thanh 4px se **noi tren
+   noi dung** (overlay) chu khong chiem layout; tren Safari Android/Firefox no la thanh binh
+   thuong. Site cu dung `::-webkit-scrollbar` y het.
+2. **Collection chi co 2 tin thi layout khong bao gio tran.** Vong do thi truoc bang cach inject
+   60 item gia + 1 chuoi 220 ky tu vao DOM roi do lai, va **restore `innerHTML` cu** sau do.
+   Khong the cho assertion "co thanh truot" chay tren du lieu that.
+
+### Kiem chung
+- `wishes.js`: **16/16** (moi). Data that 2 doc, render 2/2, cuon toi day `5297/5297`,
+  khong thanh ngang (548 = 548), moi ngay deu dung dinh dang, moi nhat o dau.
+- `reveal.js`: **37/37** va `s29.js`: **35/35** (khong doi).
+- Audit tinh: baked `animation:` = **0**, `data-anim-preset` = **81** (78 div + 2 a + 1 section),
+  `@keyframes miu-` = **58**, opacity cuoi = `0` cho **81/81**, node id **107/107 khac nhau**.
+- Hinh hoc thuc te (575x900): ten `20px/900` canh trai, ngay `15px` canh phai cach mep `13.2px`,
+  cung hang (overlap y). Anh: `wishes-1-that.png`, `wishes-2-tran.png`.
+
+### Deferred
+- **Chua commit** (khong duoc yeu cau). Hoan tac: `git checkout -- index.html`.
+- `wishes.js`, `probeW8.js`, `measure37.js`, `shootwishes.js` nam ngoai repo
+  (`%TEMP%\opencode\doortest\`) - **khong** copy vao `D:\lean_AI\wedding` (Session 36 da gap loi
+  tu chinh tai do).
+- `.miu-wishes-head` / `.miu-wishes-date` la class MO. Export lai tu `wedding2.html` se mat.
+- Cuon long tren mobile: khong scroll noi trong node canvas da scale co the nuot swipe doc cua
+  trang. Site cu y het, chua lam gi. Muon xu ly: thu `touch-action` o session sau.
+- Dang doc giua chung, co nguoi gui -> noi dung don xuong 1 item, lech view. Muon: them pill
+  "co loi chuc moi".
+- Khong dung collection `guests` cu. Muon gop loi chuc cu site cu vao: query them va chuyen field
+  (`name`/`message` -> `fullname`/`comment`), roi tron 2 nguon theo `createdAt`.
+## Session 38 - chuyen 32 asset sang Firebase Storage (33 cho + 2 meta)
+
+Muc tieu: **doi anh tren Firebase thi thiep tu doi, khong can deploy lai**. Cac file local
+**khong xoa**, chi doi thuoc tinh `src`/`href` tro sang Firebase Storage.
+
+### Files edited
+- `index.html`: 33 cho `src`/`href` + 2 `<meta>` (og:image, twitter:image) doi sang URL
+  Firebase Storage. +4,552 bytes (214,380 -> 218,932).
+
+### Files created (test, ngoai repo - %TEMP%\opencode\doortest\)
+- `assets.js`: 23 assertion moi.
+- `shoot38.js`: so sanh tile truoc/sau (canh, natural size, ratio, object-fit).
+- `s38-assets.js`: script thay the co assert so lan xuat hien (da chay 1 lan de sinh ra thay doi).
+- `s38-head.ps1`: HEAD/GET 34 URL Firebase trong `index.html`.
+
+### Files unchanged (co chu dich)
+- `assets/uploads/` 20 anh, `assets/elements/` 9 file, `assets/audio/ordinary.m4a`, 3 favicon,
+  14 font: **giu nguyen tren dia**. Chay lai tu dong khi can fallback thu cong.
+- `wedding2.html` (export goc), `404.html`, Firebase config.
+
+### Ky thuat
+- **Thu tu thay the bat buoc** (trap chinh cua session):
+  1. `og:image` + `twitter:image` phai doi **TRUOC**.
+  2. Sau do moi den cac `src="assets/uploads/..."`.
+  Ly do: `assets/uploads/couple-main.webp` xuat hien **3 lan** - 1 `src` + 2 `content` trong meta
+  dang URL tuyet doi `https://vunhungwedding.online/assets/uploads/couple-main.webp`. Thay chuoi
+  `assets/uploads/...` bang `replace` tran se bien 2 dong meta thanh
+  `https://vunhungwedding.online/https://firebasestorage...` (URL hong). `assets.js` A3a assert
+  khong con chuoi nay.
+- `s38-assets.js` **assert so lan xuat hien cua tung chuoi cu truoc khi ghi file**, roi assert 8
+  dieu kien tren OUTPUT (0 tham chieu `assets/uploads|elements|audio|favicon|apple-touch-icon`,
+  37 URL Firebase, 14 font local). Sai so lan -> abort, khong ghi file nao.
+- 14 font **khong** chuyen sang Firebase (Session 24). `assets.js` A6 assert 14 `@font-face`
+  local + 0 remote.
+- `?alt=media&token=` bat buoc - thieu token thi Firebase tra 403.
+
+### Ket qua do
+- **33/33 URL Firebase tra 200**, tong 12.8 MB (curl GET that).
+- `assets.js`: **23/23**. 29 `<img>` trong DOM + 1 audio + 3 `<link>` deu remote; 0 anh 0px;
+  0 request Firebase loi; 0 404 asset.
+- Hoi quy: `reveal.js` **37/37**, `s29.js` **35/35**, `wishes.js` **16/16**, `music.js` **17/17**.
+- Canvas van **9250px** (A7a) - moi hinh hoc canvas / animation / audio timing giu nguyen.
+
+### 5 anh doi ti le - ket qua **tot hon duoc lua chon**
+Do bang `shoot38.js` (truoc = ban backup, sau = ban moi), so ratio anh voi ratio o:
+
+| Anh | Truoc (local) | Sau (Firebase) | Tỉ lệ ô | Kết quả |
+|-----|---------------|----------------|---------|----------|
+| `gallery-09` | 1.316 | 0.667 | 0.707 | ✅ khop o hon |
+| `gallery-10` | 1.392 | 0.667 | 0.715 | ✅ khop o hon |
+| `gallery-15` | 1.778 | 1.500 | 1.627 | ✅ khop o hon |
+| `gallery-16` | 1.778 | 1.500 | 1.627 | ✅ khop o hon |
+| `gallery-12` | 1.500 | 1.500 | 1.654 | ➖ khong doi |
+
+`gallery-12` **da duoc user upload lai** (dung token, size 594 -> 702 KB) nen da nam ngang
+6240x4160 = 1.500, bo cua crop 60% du da bao. 21 anh con lai + 11 element giu nguyen ti le.
+
+### Trap trong test (da gap, da chua)
+- `assets.js` phai **dem 29 `<img>` chu khong phai 30**: chuoi thu 30 la
+  `'<img data-miualbum-img="1" ...'` do album lightbox JS tao luc mo (khong nam trong DOM luc load).
+- Doc ten file tu URL Firebase phai **cat sau `%2F` cuoi cung**, khong dung regex
+  `[\w.-]+\.webp` - `[\w.-]` an nuoc `2F` nen key ra `"2Fgallery-09.webp"` (A4 doc 0.000).
+- Cho phep `304` trong A5a: Chrome cache-hit audio tra 304, khong phai loi.
+- `net::ERR_ABORTED` tren `ordinary.m4a` la **binh thuong** - `preload="metadata"` dung range
+  request sau khi du metadata. A5b bo qua loi do (curl da chung minh file tai duoc).
+- Cho `protocolTimeout: 300000` va cho `loading="eager"` roi poll tu Node: mot lan
+  `evaluate()` blocking tren 8.5 MB se timeout.
+
+### Deferred
+- **Chua commit** (khong duoc yeu cau).
+- **Xoay/regenerate download token** trong Firebase console se lam hong ca 33 cho. Phai sua lai
+  map trong `assets.js` + `index.html`.
+- Dung luong anh 4.8 -> 8.5 MB (ban Firebase full-resolution, ~14x oversampling). 29/30 anh co
+  `loading="lazy"` nen chi anh dang xem moi tai.
+- Offline / mang yeu -> mat het anh (font van local nen text khong vo). Phat trien `file://` can
+  mang.

@@ -30,6 +30,47 @@ runtime export (`wedding2.html` → `index.html`). Deployed on GitHub Pages unde
 - Real-time read: `orderBy('createdAt', 'desc')`, limit 200, empty values filtered in JS.
 - No composite index needed (single-field query).
 
+### Guestbook list — a fixed-height scroll box (Session 37)
+
+The list is **not** paginated. All messages from the query (max 200) are rendered at once into a
+fixed-height box; the "Xem thêm lời chúc ↓" button and the whole `showN` / `initial` /
+`data-miu-wishes-more` machinery were **deleted**. The idea was ported from the old vs-template-5
+site on branch `master` (`#guestbook-list { max-height:500px; overflow-y:auto }` +
+`::-webkit-scrollbar{width:4px}`); only the scroll behaviour and the date stamp were copied — the
+item styling stayed gray `#707070`.
+
+- Geometry is **not** set in CSS. The list is a flex child (`flex:1 1 auto; min-height:0`) of
+  `.miu-wishes-inner` inside `element_wishes_6hr88wywupk` (727.23px tall), so the box simply fills
+  whatever height is left: measured **300.5px on screen at a 575px viewport** (canvas ~336px).
+  Do not add `max-height` — to make it taller you must grow the section, and the next node starts at
+  `top:8590.31` (162px of headroom).
+- **`overflow` lives in the node's inline `style`** (`overflow-y:auto; overflow-x:hidden`), not in
+  the stylesheet: a longhand in a stylesheet loses to the shorthand already inline. `overflow-x:hidden`
+  plus `word-break:break-word` on `.miu-wishes-comment` is what keeps one unbreakable 220-char
+  message from producing a horizontal scrollbar.
+- **Scrollbar styling is two-track, and the `@supports` guard is mandatory.** Chrome ≥121 supports
+  `scrollbar-color`; if `scrollbar-width`/`scrollbar-color` are written unconditionally, Chrome
+  **discards the whole `::-webkit-scrollbar` block** and uses `thin` (~11px), losing the 4px that
+  was chosen. `@supports not selector(::-webkit-scrollbar)` is true only on Firefox, so WebKit
+  engines keep the exact 4px and Firefox gets a `thin` standard bar.
+- **Traps when verifying the 4px:** Windows 11 uses overlay scrollbars, so
+  `listEl.clientWidth - listEl.offsetWidth` is **0 even for an unstyled `overflow-y:scroll` div** —
+  that assertion cannot pass on this machine and would fail for any implementation. Assert the
+  CSSOM rules instead (`doortest\wishes.js` W8a–W8c). And the live collection holds too few messages
+  to overflow, so `wishes.js` injects 60 synthetic items, measures, then restores `innerHTML`.
+- Item markup is `<.miu-wishes-item><.miu-wishes-head><.miu-wishes-name><.miu-wishes-date>` —
+  `.miu-wishes-head` is `display:flex; align-items:baseline`. Because the two font sizes differ
+  (20px name / 15px date) their **box tops differ by 5px on purpose**; a correct assertion tests
+  vertical *overlap*, not equal tops. The date is preformatted once per snapshot into `items[].at`
+  by `fmtDate()` (port of the old site's `formatGuestDate`, `dd/MM/yyyy HH:mm`, local time).
+- `.miu-wishes-head` / `.miu-wishes-date` are **new classes** — a re-export from `wedding2.html`
+  loses them. `data-initial-limit="3"` and `data-loadmore-text` are still on the section but no
+  script reads them.
+- The old site's guestbook (collection **`guests`**, fields `name`/`message`, italic Cormorant, date
+  on every item) is **still on branch `master` only** — not reachable from this site and not merged.
+  To show those messages too you would need a second query and a field rename, then merge both
+  sources by `createdAt`.
+
 ## Editing Content
 
 The HTML is a huge single-line canvas (the body is minified). Edit with regex anchored on
@@ -189,25 +230,61 @@ Google Fonts link is kept only as a safety fallback for these families.
 
 ## Assets
 
-- Images: `assets/uploads/*.webp` (20 photos) — referenced as `assets/uploads/...` (local paths for
-  GitHub Pages). Session 25 flattened the old `assets/uploads/6a2a56e562badd7da97313bb/` subfolder away;
-  that id was the **miu export's invitation id** (still visible once on the canvas as
-  `data-invitation-id`, read by nothing) and is no longer part of any path.
-- Music: `assets/audio/ordinary.m4a`. **Session 33: starts on `miu:opening:closed`** — i.e. only
+**Session 38 — 32 asset (33 chỗ tham chiếu) đã chuyển sang Firebase Storage. File local vẫn
+còn nguyên trên đĩa.** Mục tiêu: đổi ảnh trên bucket là thiệp tự đổi, **không cần deploy lại**.
+
+- **URL dạng**: `https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/<object>?alt=media&token=<download-token>`
+  với object path **URL-encode** (`uploads%2Fgallery-01.webp`). Dùng `?alt=media` + token.
+- **Phạm vi đã đổi**: 20 ảnh `uploads/`, 11 file `elements/`, 1 audio `audio/ordinary.m4a`, và 3
+  `<link>` favicon/apple-touch-icon → **tổng 33 chỗ `src`/`href`** (riêng `ribbon-05.webp` dùng 2 lần).
+  Thêm **2 `<meta>`** `og:image` + `twitter:image` cũng trỏ Firebase (trước đây là URL tuyệt đối
+  `https://vunhungwedding.online/assets/uploads/couple-main.webp`).
+- **Còn local**: toàn bộ 14 font trong `assets/fonts/`. `assets.js` A6 khẳng định 14 `@font-face`
+  local và **0** font remote — font không được chuyển sang Firebase.
+- **⚠ Điểm yếu duy nhất: download token.** Xoay/regenerate token trong Firebase console sẽ làm
+  hỏng **cả 33 chỗ cùng lúc**. Nếu phải xoay token, sửa lại toàn bộ map trong `doortest\assets.js`.
+- **Thứ tự thay thế là bắt buộc** (xem `s38-assets.js`): `og:image`/`twitter:image` **phải** được
+  thay **trước** các `src="assets/uploads/…"`. Nếu ngược lại, thay chuỗi
+  `assets/uploads/couple-main.webp` sẽ biến 2 dòng meta thành
+  `https://vunhungwedding.online/https://firebasestorage…`. `assets.js` A3a chốt lại điều này.
+- **Không xoá file local.** `assets/uploads/`, `assets/elements/`, `assets/audio/`,
+  `assets/favicon.*`, `assets/apple-touch-icon.png` vẫn commit trong repo như **bản dự phòng /
+  fallback thủ công** — nếu mạng lỗi thì chỉ cần đổi `src` về đường dẫn cũ.
+- **Dung lượng**: ảnh tăng 4.8 MB → **8.5 MB** (bản Firebase là bản full-resolution, phần lớn
+  4160×6240 vào ô ~288px ⇒ oversampling ~14×). Đã giảm nhẹ nhờ 29/30 ảnh có `loading="lazy"`,
+  nên chỉ ảnh đang xem mới tải.
+- **5 ảnh đổi tỉ lệ** khi up lại (đã đo bằng `shoot38.js`, so cả trước/sau):
+  `gallery-09` 1.316→0.667, `gallery-10` 1.392→0.667, `gallery-15` 1.778→1.500,
+  `gallery-16` 1.778→1.500 — **cả 4 đều khớp ô hơn bản local**.
+  `gallery-12` từng là vấn đề (bản cũ 4160×6240 = dọc 0.667 vào ô ngang 1.654 ⇒ crop ~60%), nhưng
+  **đã được up lại thành 6240×4160 (1.500)** nên nay **khớp đúng bản local**, không còn crop lệch.
+- `assets/uploads/gallery-15.webp` thực tế là **JPEG** dù đuôi `.webp` (đã có từ trước, không đổi).
+- Mọi hình học canvas / animation / audio timing **không đổi** (`assets.js` A7a: canvas vẫn 9250px).
+
+- Images: `assets/uploads/*.webp` (20 photos) — file local còn nguyên nhưng **không còn được tham
+  chiếu** từ Session 38; `index.html` trỏ thẳng Firebase. Session 25 đã flatten thư mục con cũ
+  `assets/uploads/6a2a56e562badd7da97313bb/`; id đó là invitation id của miu export (vẫn còn 1 lần
+  trên canvas dưới dạng `data-invitation-id`, không script nào đọc).
+- Music: `assets/audio/ordinary.m4a`, **Session 38: `src` trỏ Firebase** (`audio%2Forinary.m4a`,
+  2.46 MB, byte-identical bản local). **Session 33: starts on `miu:opening:closed`** — i.e. only
   once the door has finished sliding (4500 = `--door-duration` 4s + `--door-delay` 500ms +
   `--door-stagger` 0ms, + the script's 320ms pad ⇒ **4820ms after `close()`**). Before this it
   fired on the very first gesture, so the music started while the door was still moving. That
   matches the melipage reference, which gates its audio on `closed` too.
-- Decorations: `assets/elements/` (9 files, downloaded from miuwedding.com + melipage.com — no remote dependency).
+  `preload="metadata"` còn nguyên ⇒ Chrome **cố ý hủy** range request sau khi đủ metadata
+  (`net::ERR_ABORTED`), nên `assets.js` A5b phải bỏ qua lỗi đó cho audio.
+- Decorations: `assets/elements/` (9 files) — local còn nguyên, 8 file **đã trỏ Firebase**;
+  `ribbon-01.png` không được tham chiếu (asset dư) nên giữ local.
 - Favicon: `assets/favicon.svg` + `assets/favicon.png` + `assets/apple-touch-icon.png`
-  (red `#7f0505` square with 囍; linked in `<head>`).
+  (red `#7f0505` square with 囍). **Lưu ý đường dẫn lệch**: local nằm ở `assets/`, trên Firebase nằm
+  ở `elements/`.
 
 ### Image files (renamed to readable names)
 
-Photos use readable names so swapping images later is unambiguous. `couple-main.webp` is also the
-OG/Twitter share image — both `<meta>` tags point at the **absolute** URL
-`https://vunhungwedding.online/assets/uploads/couple-main.webp`, so they must be updated by hand if
-the photo ever moves.
+Tên file local giữ nguyên để đổi ảnh sau này không nhầm. **Session 38: `couple-main.webp` là
+og:image/twitter:image, nhưng cả 2 `<meta>` giờ trỏ URL Firebase tuyệt đối**
+`https://firebasestorage.googleapis.com/v0/b/vu-nhung-wedding.firebasestorage.app/o/uploads%2Fcouple-main.webp?alt=media&token=523941c0-3c7d-4c45-b6f7-9906c406f55d`
+— nên up ảnh mới lên bucket là preview Facebook/Zalo đổi ngay, không cần deploy.
 
 | File | Role |
 |------|------|
@@ -216,6 +293,9 @@ the photo ever moves.
 | `gallery-01.webp` … `gallery-16.webp` | Ảnh trong album (tile), theo thứ tự vị trí trên canvas |
 | `portrait.webp` | Ảnh chân dung to |
 | `final.webp` | Ảnh đôi cuối trang |
+
+> Đây là **tên local**. Trong `index.html` các ảnh này được tham chiếu bằng object path
+> `uploads/<tên>`, không phải đường dẫn `assets/`.
 
 ### Decorative elements (localized from miuwedding.com)
 
