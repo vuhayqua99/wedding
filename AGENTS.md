@@ -315,15 +315,18 @@ còn nguyên trên đĩa.** Mục tiêu: đổi ảnh trên bucket là thiệp t
 - **Không xoá file local.** `assets/uploads/`, `assets/elements/`, `assets/audio/`,
   `assets/favicon.*`, `assets/apple-touch-icon.png` vẫn commit trong repo như **bản dự phòng /
   fallback thủ công** — nếu mạng lỗi thì chỉ cần đổi `src` về đường dẫn cũ.
-- **Dung lượng**: ảnh tăng 4.8 MB → **8.5 MB** (bản Firebase là bản full-resolution, phần lớn
-  4160×6240 vào ô ~288px ⇒ oversampling ~14×). Đã giảm nhẹ nhờ 29/30 ảnh có `loading="lazy"`,
-  nên chỉ ảnh đang xem mới tải.
+- **Dung lượng (Session 41 đã sửa lại con số này)**: Session 38 up bản gốc full-resolution nên
+  ảnh nhảy 4.8 MB → 8.5 MB (4160×6240 vào ô ~288px ⇒ oversampling ~14×). **Session 41 đã hạ cỡ
+  26 ảnh còn 2.194 KB** — xem mục riêng bên dưới. 29/30 ảnh có `loading="lazy"` vẫn giữ nguyên.
 - **5 ảnh đổi tỉ lệ** khi up lại (đã đo bằng `shoot38.js`, so cả trước/sau):
   `gallery-09` 1.316→0.667, `gallery-10` 1.392→0.667, `gallery-15` 1.778→1.500,
   `gallery-16` 1.778→1.500 — **cả 4 đều khớp ô hơn bản local**.
   `gallery-12` từng là vấn đề (bản cũ 4160×6240 = dọc 0.667 vào ô ngang 1.654 ⇒ crop ~60%), nhưng
   **đã được up lại thành 6240×4160 (1.500)** nên nay **khớp đúng bản local**, không còn crop lệch.
-- `assets/uploads/gallery-15.webp` thực tế là **JPEG** dù đuôi `.webp` (đã có từ trước, không đổi).
+- `gallery-15.webp` **từng là JPEG** dù đuôi `.webp`, và Session 38 đã gán nhầm
+  `contentType: image/webp` cho nó ⇒ Chrome từ chối giải mã. **Session 41 đã sửa**: tải lại bằng
+  `canvas.toBlob('image/webp')` nên nay là WebP thật, `contentType` đúng. Đừng gán
+  `contentType` bằng tay — luôn đặt theo dạng file bạn thực sự ghi.
 - Session 38 **không** đổi hình học canvas: `assets.js` A7a chứng minh canvas vẫn 9250px sau khi
   đổi 33 `src`. (**Session 39** mới hạ canvas → 9106px, xem mục riêng.)
 
@@ -344,6 +347,47 @@ còn nguyên trên đĩa.** Mục tiêu: đổi ảnh trên bucket là thiệp t
 - Favicon: `assets/favicon.svg` + `assets/favicon.png` + `assets/apple-touch-icon.png`
   (red `#7f0505` square with 囍). **Lưu ý đường dẫn lệch**: local nằm ở `assets/`, trên Firebase nằm
   ở `elements/`.
+
+### Session 41: hạ kích thước 26 ảnh — dung lượng tệp KHÔNG phải thước đo
+
+Session 38 up **bản gốc full-resolution** (tối đa 4160×6240 = 26MP) vào ô chỉ ~288px. Hậu quả
+đo được trên cùng máy: 32 ảnh **6.225ms** giải mã, **1.910MB** bộ đệm pixel. Session 41 hạ
+cỡ lại, giữ nguyên tỉ lệ **của bản Firebase** (bản local lệch tỉ lệ ở `gallery-09/10/15/16`).
+
+**Nguyên tắc:** `RAM = rộng × cao × 4 byte` (RGBA). Dung lượng tệp nén gần như vô nghĩa ở đây —
+`gallery-16.webp` 1.115KB nhưng 96MB RAM, `couple-main.webp` 241KB nhưng 99MB RAM. WebP nén
+rất gọn nên **pixel mới quyết định bộ nhớ**.
+
+| nhóm | cap | ghi chú |
+|---|---|---|
+| `couple-main` / `couple-photo` / `portrait` / `final` | **1365px** | đủ DSF2, phóng ~1.21× ở DSF3 |
+| `gallery-01..16` | **896px** q0.85 | **1:1 ở DSF3**, không ô nào bị phóng to |
+| `ribbon-02/05/06`, `floral-pattern` | **600px** | |
+| avatar nền CSS `img-content-4-1/4-3` | **288px** | hiển thị 80×80 |
+| 7 ảnh nhỏ + `ribbon-01` | giữ nguyên | |
+
+Kết quả: **6.225→608ms (−90,2%)**, **1.910→104MB (−94,6%)**, **10.726→2.194KB (−79,6%)**.
+
+**Ba bẫy khi làm lại việc này:**
+
+1. **Ghi đè phải giữ `downloadToken`, và `index.html` không được đụng tới.** Ghi lại
+   `metadata.firebaseStorage.downloadTokens = [token cũ]` rồi xác minh bằng cách `fetch` lại
+   **34 URL cũ** (`s41-verify-urls.js`) — 0/34 chết ⇒ mọi URL trong `index.html` giữ nguyên.
+2. **`bucket.getMetadata()` KHÔNG trả `firebaseStorage.downloadTokens`** (GCS không expose ở
+   shape đó) — đừng lấy token từ bucket. Token phải lấy từ `manifest.json` (trích từ
+   `index.html`) và **tự xác minh qua HTTP**.
+3. **Đừng đặt `contentType` bằng tay** — đặt theo định dạng bạn thực sự ghi. Session 38 gán
+   `image/webp` cho `gallery-15` vốn là JPEG ⇒ Chrome từ chối giải mã.
+
+**Chốt bằng assertion** (`doortest\assets.js` A2c–A2i): rộng ≤ 1400, cao ≤ 2100, 4 ảnh
+full-width **đúng 1365**, 16 ô album **đúng 896**, tổng RAM ≤ 160MB, 16 ô album **không bị
+phóng to** ở DSF3.
+- *Chiều cao phải để 2100, không phải 1400*: `portrait`/`couple-main` là 1365×**2048** (tỉ lệ
+  0.667), hiển thị ở ô 576×883 nên DSF2 cần 1152×1766 — 2048 là **đúng**.
+- *Phóng to ≤1,35× là chấp nhận được* (4 ảnh full-width 1,21× ở DSF3 — hậu quả nhỏ của việc hạ
+  cỡ), nhưng **16 ô album thì bất biến: không được phóng to**.
+- 2 avatar là `background-image` trong CSS `.cf-choice-avatar`, **không phải `<img>`** nên
+  không xuất hiện trong mảng `decoded` — A2h phải đo riêng.
 
 ### Image files (renamed to readable names)
 

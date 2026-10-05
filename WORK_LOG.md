@@ -2002,3 +2002,101 @@ nam trong `style="..."` inline, khong co trong `<style>`, khong co `@font-face` 
 - **Chua push** (user khong yeu cau).
 - 16 stack `Lora, Georgia, ...` khong dung: Lora da host local va day du tieng Viet.
 - Khong tai them font moi; Georgia co san tren ca Windows va macOS.
+
+## Session 41 - ha kich thuoc 26 anh tren Firebase (chua push)
+
+Van `index.html`: **khong sua mot dong nao**. Toan bo thay doi nam tren **bucket** va o 24 file
+fallback local trong `assets/`.
+
+### Van de
+Session 38 chuyen 32 asset len Firebase thi lay **ban goc full-resolution**. Anh cuoi tinh duoc
+`4160x6240 = 26MP`, dung 1`img` trong canvas rong **575px**. Ket qua do la 30 anh tren man
+giai ma mat **9.176ms CPU** va chiem **1.910MB** bo dem pixel - chinh la "load anh bi giat".
+
+**Dung luong tep KHONG phai thuoc do dung.** Hai anh nho nhat cach nhau 4,5 lan nhung RAM
+tuong duong: `gallery-16.webp` 1.115KB → 96MB RAM, `couple-main.webp` 241KB → 99MB RAM. WebP nen
+rat gon nen **pixel moi quyet dinh bo dem**. Ba lien he chinh:
+
+```
+RAM (MB) = chieu rong x chieu cao x 4 byte      (RGBA)
+giam chieu rong, giu tien le, thi giam RAM theo duong thang
+```
+
+### Kich thuoc chot (giu nguyen tien le cua ban Firebase)
+| nhom | cap | ghi chu |
+|---|---|---|
+| `couple-main` / `couple-photo` / `portrait` / `final` | **1365px** | 4 anh full-width; dat 1365 la dat cho DSF2 |
+| `gallery-01..16` | **896px**, WebP q0.85 | **doi 720 → 896** sau khi do |
+| trang tri vuot 600px (`ribbon-02/05/06`, `floral-pattern`) | **600px** | |
+| avatar nen CSS `img-content-4-1/4-3` | **288px** | hien thi 80x80 trong `.cf-choice-avatar` |
+| 7 anh nho + `ribbon-01` | giu nguyen | da nho hon cap |
+
+**720px bi loai bang chung, khong phai do doi cam tinh.** O 720px, 6/16 o album bi browser
+**phong to** tren man DSF3. O 896px khong con o nao. 896 la cap nho nhat ma tat ca 16 o du 1:1
+o Retina. Phong to thi ton CPU it hon ha cap tu 26MP xuong 288px, nen cap 1365 (chi dung cho DSF2)
+la canh chap nhan duoc.
+
+### Ket qua (do bang chung tren cung may, cung mot luc)
+| | truoc | sau | giam |
+|---|---|---|---|
+| gia ma 32 anh | 6.225ms | **608ms** | **−90,2%** |
+| bo dem pixel | 1.910MB | **104MB** | **−94,6%** |
+| dung luong 32 anh | 10.726KB | **2.194KB** | **−79,6%** |
+
+Chay bang `createImageBitmap` tren data-URI (khong keo thoi gian mang vao). 608ms la con so
+**chua** tinh thoi gian tai va giai ma WebP tren mang that.
+
+### Token: giu nguyen, `index.html` khong can sua
+Ghi de **cung object path** va gan lai `metadata.firebaseStorage.downloadTokens = [token cu]` cho
+ tung anh. Ket qua: **0/34 URL chet** trong 34 chuoi da ghi trong `index.html` - ca `<img>`,
+ca `<link>` icon, ca 2 `<meta> og/twitter`, ca 2 avatar trong CSS. Toan bo URL cu giu nguyen
+chinh ta, **khong doi token, khong doi URL**. `index.html` giong het `HEAD`.
+
+> Bai hoc de cho sau: `getMetadata()` **khong** tra `firebaseStorage.downloadTokens` (GCS khong
+> expose o shape do). Phai giu token tu `manifest.json` (trich tu `index.html`) va xac minh
+> bang cach `fetch` lai URL cu - khong duoc tin metadata.
+
+### Bonus: `gallery-15.webp` duoi mo hieu
+`gallery-15.webp` **thuc te la JPEG** duoi duoi `.webp` (ton tai tu truoc Session 38). Session 38
+da gan `contentType: image/webp` cho no nen Chrome tu choi khong giai ma (bi sai MIME). Session 41
+tai lai bang `canvas.toBlob('image/webp')` nen **no la WebP that** va `contentType` dung.
+
+### Assertion moi (`doortest\assets.js`, 28 → 35)
+| | kiem tra |
+|---|---|
+| **A2c** | moi anh ≤ 1400px **rong** va ≤ 2100px **cao** |
+| **A2d** | 4 anh full-width rong **dung 1365px** |
+| **A2e** | 16 o album rong **dung 896px** |
+| **A2f** | tong RAM giai ma ≤ 160MB (truoc Session 41 la 1.910MB) |
+| **A2g** | khong anh nao bi phong to **qua 1,35x** o DSF3 |
+| **A2h** | 2 avatar nen CSS ≤ 400px rong |
+| **A2i** | 16 o album **dung 1:1** o DSF3, khong phong to |
+
+> **A2c phai tach hai chieu.** Lần viet dau dat ngan 1400 cho `ca hai chieu` va FAIL ngay:
+> `portrait` va `couple-main` la **1365x2048** (tien le 0.667 cua buc 4160x6240), hien thi o o
+> 576x883 nen DSF2 can 1152x1766 - chieu cao 2048 la **dung**. Chieu cao phai de len 2100.
+>
+> **A2g va A2i tach hai muc do khac nhau.** 4 anh full-width bi phong to ~1,21x o DSF3 (1365
+> so voi 1659 can co) - chuyen phong thuong, khong phai loi. Con 16 o album la **batt bien**:
+> khong duoc phong to o Retina. Viet A2g that "khong phong to gi" se FAIL ngay tren spec hop le.
+>
+> **A2h phai do rieng** vi 2 avatar la `background-image` trong CSS `.cf-choice-avatar`, khong
+> phai `<img>` nen khong xuat hien trong mang `decoded` cua A2a-A2g.
+
+### Ket qua kiem thu
+`assets` 35/35 · `wishes` 20/20 · `s29` 35/35 · `reveal` 37/37 · `music` 17/17.
+
+> 2 lan chay lai, ca hai deu la **flaky co san da ghi o Session 39**: `reveal` **K1** va
+> `music` **C6** (cung loai `music` **B3**). Khong sua code site vi chung - chay lai la het.
+
+### 23 object chet tren bucket (khong dung, de nguyên)
+Bucket con **23 object** sot tu site cu `vs-template-5` va `music/wedding-song.mp3`, tong **~32MB**,
+khong duoc `index.html` tham chieu: 9 file >2,9MB (`header-background` 4.485KB,
+`img-content-3-1` 4.075KB, `music/wedding-song.mp3` 4.200KB...) + 5 object thu muc rong.
+Khong xoa trong phien nay - xoa khong hoan tac duoc, va 32MB tinh ra ~2,6USD/thang.
+
+### Deferred
+- **Chua push** (user khong yeu cau).
+- **Xoa `serviceAccountKey.json`** o `%LOCALAPPDATA%\Temp\opencode\s41\` sau khi xong - key do
+  co toan quyen len `vu-nhung-wedding`, khong duoc commit (no nam ngoai repo).
+- 4 anh full-width chi du DSF2; ai muon dung DSF3 thi nang cap 1365 → 1659 (them ~120KB).
