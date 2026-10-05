@@ -1846,3 +1846,94 @@ Do bang `shoot38.js` (truoc = ban backup, sau = ban moi), so ratio anh voi ratio
   `loading="lazy"` nen chi anh dang xem moi tai.
 - Offline / mang yeu -> mat het anh (font van local nen text khong vo). Phat trien `file://` can
   mang.
+---
+
+## Session 39 - don 2 khoang trang, canvas 9250 -> 9106
+
+Muc tieu: **2 khoang trong lon** user bao: tu `ribbon-06` den `portrait`, va tu danh sach
+guestbook den `Countdown`.
+
+### Files edited
+- `index.html`: 7 node doi `top:` + section wishes doi `height` + canvas 9106 o 5 noi.
+  5 insertions, 5 deletions (chi thay chuoi so).
+- `AGENTS.md`: them muc Session 39; cap nhat so lieu canvas / section wishes / guestbook list.
+- `doortest/assets.js`: A7a doi ky vong 9250 -> 9106; **them A7b/A7c/A7d** (3 assertion moi).
+- `doortest/wishes.js`: **them W15-W18** (4 assertion moi) do 2 khoang dem + tail + chong lan.
+
+### Files created (ngoai repo)
+- (khong co file moi)
+
+### Do duoc - ca 2 khoang deu la **khoang dem that tren canvas**
+Khong phai anh hut chieu cao: `element_image_dwzcrmtditb` (`portrait`) la `<img object-fit:cover>`
+phu kin o576x882, va section wishes + `.miu-stage` cung nen `#ffffff` nen keo dai section xuong
+cung khong lap duoc vung A (vung A nam ** tren** portrait, cach section 890px).
+
+| Khoang | Truoc | Sau | Do tu -> den |
+|--------|-------|-----|-------------|
+| A | 194.22px | **50.01px** | day `element_image_pnlipbo7xgj` (ribbon-06) -> dinh `element_image_dwzcrmtditb` |
+| B | 162.69px | **50.00px** | day `element_wishes_6hr88wywupk` -> dinh `element_text_11ngbd3gw1m` |
+| dem day | 3.96px | **4.18px** | day `element_image_zsbn2r9wt93` -> canvas |
+| canvas | 9250px | **9106px** | -144px (-1.56%) |
+
+Ghi chu do lai: khoang A phai do tu **day ribbon-06** (6611.49) chứ khong phai tu text
+"Khuyen khich trang phuc" (6579.83) - text nay nam **chon** len ribbon-06. Neu do tu text se ra
+225.9px va lech 32px so voi thuc te.
+
+### Cach thuc hien - thay chuoi so, KHONG serialize lai `style`
+7 node dich len deu **-144.21783px**: `element_image_dwzcrmtditb`, `element_wishes_6hr88wywupk`,
+`element_text_11ngbd3gw1m`, `element_countdown_yzo2869hvwa`, `element_text_l9r743dwg3w`,
+`element_image_zsbn2r9wt93`, `element_text_izp2uxfcr1s`. Roi
+`element_wishes_6hr88wywupk` `height` `727.2297651502821` -> `839.92188` (+112.69px).
+
+**Moi node dich cung mot do lech** nen quan he chong lan giu nguyen: `element_text_izp2uxfcr1s`
+("Thank you") van nam tren `element_image_zsbn2r9wt93` (user da xac nhan dung thiet ke). Khong co
+node nao chong lan: wishes.bottom 8396.09 < countdown.top 8446.09.
+
+### Vi sao khong giu canvas 9250px
+Tong 2 khoang la 356.91px; dung ~113px lam dem con ~244px phai di dau do. Section chi dai them duoc
+`162.69 - 50 = 112.69px` truoc khi de len Countdown, nen **144.22px cua vung A khong the doi vao
+section**. Giu canvas => hoac 148.18px trang duoi anh cuoi, hoac phai tang chieu cao anh (cover =>
+crop nhieu hon). User chon **ha canvas**.
+
+### Trap gap (da gap trong luc lam)
+- **4/7 node co `top` nhieu chu so hon**: `8590.307075` chu khong phai `8590.30708`. Lấy chuoi goc
+  tu file; tu lam tron se khong khop. Da xac minh **duy nhat 1 lan toan file** cho tung chuoi.
+- Regex dot node phai **quote-aware**: quet bang `([^>]*)` se cat sai the `<img>` va bo so mat
+  39/103 node, du trong so do sai. Phai scan toi `>` bo qua dau `"`.
+- **PowerShell `[regex]::Escape(x).Matches(...)` khong ton tai** (`Escape` tra ve String, khong
+  phai Regex) - phai `[regex]::Matches($hay, [regex]::Escape($x))` moi chay duoc.
+- Bang tinh dua tren hashtable trong PowerShell lam **7 node cung hien mot delta** va bo qua `$A+$B`.
+  Phai tinh moi bien mot.
+- **Khong duoc serialize lai attribute `style`.** 7 node nay deu la dang bi re-serialize
+  (`--miu-node-rotate: 0deg; ` co space). Serialize lai se nuot mat `opacity:0` o cuoi va node
+  **ngung reveal im lang**. Sau thay doi kiem tra lai: **81/81** node van co `opacity:0` cuoi,
+  **0** `animation:` bi bake.
+- `element_countdown_yzo2869hvwa` **khong** co `data-anim-preset` (node runtime cua engine
+  countdown) - khong "sua" no cho giong cac node khac.
+
+### Ket qua do - hoi quy day du
+- `assets.js`: **26/26** (23 cu + A7b/A7c/A7d moi).
+- `wishes.js`: **20/20** (16 cu+ W15-W18 moi). Khung list **client 431 / scroll 521**
+  (truoc client ~300) - danh sach loi chuc cao hon ~131px, van cuon duoc.
+- `reveal.js`: **37/37** (mot lan 36/37 - xem flaky), `s29.js`: **35/35** (mot lan 34/35 do
+  timeout deep-link, chay lai 3/3 pass).
+- `music.js`: **16/17** (xem flaky).
+- Layout that (doc tu source): node co top **103/103**, content bottom **9101.82**,
+  gap A 50.01, gap B 50.00, dem day 4.18, khong con chuoi `9250` nao.
+
+### Hai assertion co san la FLAKY - da chay baseline 3 lan de chung minh
+Khong do thay doi nay:
+- `reveal.js` **K1** fail 1/3 lan ** tren `index.html` o HEAD, khong thay doi gi**
+  (lan fail, node hero duoc `IntersectionObserver` bat truoc thoi diem do).
+- `music.js` **B3** (`ct > 0.4` sau sleep 900ms) fail 1/3 lan tren HEAD, `currentTime=0.28`
+  - audio da chay nhung chua du 0.4s.
+- `s29.js` deep-link `closed SAU animationend` fail 1/4 lan (`closed=0ms`, overlay con mo) -
+  deep-link auto-close bi tre; chay lai 3/3 pass.
+Chay lai la het. **Dung sua code site vi chung.**
+
+### Deferred
+- **Chua push** (user khong yeu cau).
+- `reveal.js` A1 doc `81` - dung, khong can sua. `s29.js` / `music.js` khong reference canvas nen
+  khong can sua.
+- Neu muon danh sach loi chuc cao hon nua: **khong con headroom** - section chi duoc +112.69px
+  truoc khi de len Countdown; phai lay khoang dem ra khoi canvas height.

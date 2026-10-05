@@ -40,10 +40,14 @@ site on branch `master` (`#guestbook-list { max-height:500px; overflow-y:auto }`
 item styling stayed gray `#707070`.
 
 - Geometry is **not** set in CSS. The list is a flex child (`flex:1 1 auto; min-height:0`) of
-  `.miu-wishes-inner` inside `element_wishes_6hr88wywupk` (727.23px tall), so the box simply fills
-  whatever height is left: measured **300.5px on screen at a 575px viewport** (canvas ~336px).
-  Do not add `max-height` — to make it taller you must grow the section, and the next node starts at
-  `top:8590.31` (162px of headroom).
+  `.miu-wishes-inner` inside `element_wishes_6hr88wywupk` (**839.92px** tall since Session 39,
+  was 727.23px), so the box simply fills whatever height is left: measured **431px on screen at a
+  575px viewport** (canvas ~336px; was 300.5px before Session 39).
+  Do not add `max-height` — to make it taller you must grow the section, and the next node
+  (`element_text_11ngbd3gw1m`, "Countdown") now starts at `top:8446.09`, i.e. **50px** of headroom
+  (was 162px). That headroom is now nearly spent: growing the section again will push into the
+  countdown, so any future change here has to take the gap out of the canvas height instead.
+  `wishes.js` W16 pins the 50px gap and W17 pins the bottom tail, so a regression fails loudly.
 - **`overflow` lives in the node's inline `style`** (`overflow-y:auto; overflow-x:hidden`), not in
   the stylesheet: a longhand in a stylesheet loses to the shorthand already inline. `overflow-x:hidden`
   plus `word-break:break-word` on `.miu-wishes-comment` is what keeps one unbreakable 220-char
@@ -162,13 +166,59 @@ canvas height 9330 → 9250). What matters if you touch this area again:
   it, change `width` and re-centre `left`/`top` — do not touch `height` (that is the stroke
   thickness). Current: `left:179.08px; top:5114.42px; width:213.15px; height:51.81836px` →
   covers y 5033.8 → 5246.9, with the same 34.4px head / 70px tail overhang as before.
-- Canvas height is written in **5 places** and must stay in sync: the CSS `--ch:9250px` + `--sh:9250px`
-  (line ~107), the inline `--sh: 9250px` on `.miu-stage`, `height: 9250px` on `.miu-canvas`, and
-  `var baseH = 9250;` in the resize script. `baseH` is a *floor* — the script computes
+- Canvas height is written in **5 places** and must stay in sync: the CSS `--ch:9106px` + `--sh:9106px`
+  (line ~107), the inline `--sh: 9106px` on `.miu-stage`, `height: 9106px` on `.miu-canvas`, and
+  `var baseH = 9106;` in the resize script. `baseH` is a *floor* — the script computes
   `max(baseH, canvas.scrollHeight)`, so if you shrink the layout, lower it too or the page keeps a
-  dead 1000px of scroll. Content bottom is 9246px, leaving the same 4px bottom margin as before.
+  dead 1000px of scroll. Content bottom is 9101.82px, leaving a 4.18px bottom margin
+  (Session 39: was 9250 / 9246 / 3.96px). `assets.js` A7a–A7d now assert all of this, including
+  `A7d` which greps the raw source so no `9250` can survive anywhere.
 - `applyMasterData` iterates `i < d.timeline.length`, **not** a hardcoded count — add/remove timeline
   rows freely in `WEDDING_MASTER`, and keep `MASTER_TEXT_NODES.tlTime` / `.tlLabel` the same length.
+
+### Session 39: dồn 2 khoảng trắng, canvas 9250 → 9106
+
+Bạn báo 2 khoảng trắng lớn. Cả hai đều là **khoảng đệm thật trên canvas**, không phải ảnh hụt
+chiều cao: `element_image_dwzcrmtditb` (`portrait`) là `<img object-fit:cover>` phủ kín ô
+576×882, và section wishes + `.miu-stage` cùng nền `#ffffff` nên kéo dài section xuống cũng không
+lấp được vùng A (vùng A nằm **trên** portrait, cách section 890px).
+
+| Khoảng | Trước | Sau | Đo từ → đến |
+|---|---|---|---|
+| A | 194.22px | **50.01px** | đáy `element_image_pnlipbo7xgj` (ribbon-06) → đỉnh `element_image_dwzcrmtditb` |
+| B | 162.69px | **50.00px** | đáy `element_wishes_6hr88wywupk` → đỉnh `element_text_11ngbd3gw1m` |
+| đệm đáy | 3.96px | **4.18px** | đáy `element_image_zsbn2r9wt93` → canvas |
+| canvas | 9250px | **9106px** | −144px (−1.56%) |
+
+**Cách thực hiện — thay chuỗi số, không serialize lại `style`.** 7 node dịch lên đều **−144.21783px**
+(`element_image_dwzcrmtditb`, `element_wishes_6hr88wywupk`, `element_text_11ngbd3gw1m`,
+`element_countdown_yzo2869hvwa`, `element_text_l9r743dwg3w`, `element_image_zsbn2r9wt93`,
+`element_text_izp2uxfcr1s`), rồi `element_wishes_6hr88wywupk` `height` `727.2297651502821` →
+`839.92188` (+112.69px) để lấp phần thừa. **Mọi node dịch cùng một độ lệnh**, nên quan hệ chồng
+lấn giữ nguyên — `element_text_izp2uxfcr1s` ("Thank you") vẫn nằm trên `element_image_zsbn2r9wt93`
+(bạn đã xác nhận đúng thiết kế; `wishes.js` W18 chốt lại).
+
+**Vì sao không giữ canvas 9250px.** Tổng 2 khoảng là 356.91px; dùng ~113px làm đệm còn ~244px
+phải đi đâu đó. Section chỉ dài thêm được `162.69 − 50 = 112.69px` trước khi đè lên Countdown, nên
+**144.22px của vùng A không thể đổ vào section**. Giữ canvas ⇒ hoặc 148.18px trắng dưới ảnh cuối,
+hoặc phải tăng chiều cao ảnh (cover ⇒ crop nhiều hơn). Bạn chọn **hạ canvas** để không có trang
+trắng nào.
+
+**Bẫy khi sửa vùng này:**
+- **4 node trong 7 node có `top` nhiều chữ số hơn** (`8590.307075` chứ không phải `8590.30708`) — lấy
+  chuỗi gốc từ file, đừng tự làm tròn. Mỗi chuỗi đã xác minh **duy nhất 1 lần toàn file**.
+- **Không được serialize lại attribute `style`.** 7 node này đều là dạng bị re-serialize
+  (`--miu-node-rotate: 0deg; ` có space). Serialize lại sẽ nuốt mất `opacity:0` ở cuối và node
+  **ngừng reveal im lặng**. Sau thay đổi: 81/81 node vẫn có `opacity:0` cuối, 0 `animation:` bị bake.
+- `element_countdown_yzo2869hvwa` **không** có `data-anim-preset` (node runtime của engine
+  countdown) — đừng "sửa" nó cho giống các node khác.
+- `wishes.js` W15–W18 và `assets.js` A7a–A7d chốt toàn bộ số liệu trên, kể cả tail ≤ 8px.
+- **Hai assertion có sẵn là flaky, đừng quy cho thay đổi này:** `reveal.js` **K1** ("below-the-fold
+  hero node is not started by the early gate") và `music.js` **B3** (`ct > 0.4` sau sleep 900ms).
+  Cả hai fail khoảng 1/3 lần **trên `index.html` ở HEAD, không có thay đổi nào** — đã chạy baseline
+  3 lần để xác nhận. `K1` là race giữa `IntersectionObserver` và thời điểm đo; `B3` chỉ là audio
+  chưa kịp chạy đủ 0.4s. Chạy lại là hết, đừng sửa code site vì chúng. `s29.js` deep-link
+  `closed SAU animationend` cũng flake 1/4 lần (auto-close bị trễ) — chạy lại 3/3 pass.
 
 ### `404.html` = thin redirect (Session 21)
 
@@ -259,7 +309,8 @@ còn nguyên trên đĩa.** Mục tiêu: đổi ảnh trên bucket là thiệp t
   `gallery-12` từng là vấn đề (bản cũ 4160×6240 = dọc 0.667 vào ô ngang 1.654 ⇒ crop ~60%), nhưng
   **đã được up lại thành 6240×4160 (1.500)** nên nay **khớp đúng bản local**, không còn crop lệch.
 - `assets/uploads/gallery-15.webp` thực tế là **JPEG** dù đuôi `.webp` (đã có từ trước, không đổi).
-- Mọi hình học canvas / animation / audio timing **không đổi** (`assets.js` A7a: canvas vẫn 9250px).
+- Session 38 **không** đổi hình học canvas: `assets.js` A7a chứng minh canvas vẫn 9250px sau khi
+  đổi 33 `src`. (**Session 39** mới hạ canvas → 9106px, xem mục riêng.)
 
 - Images: `assets/uploads/*.webp` (20 photos) — file local còn nguyên nhưng **không còn được tham
   chiếu** từ Session 38; `index.html` trỏ thẳng Firebase. Session 25 đã flatten thư mục con cũ
