@@ -1937,3 +1937,68 @@ Chay lai la het. **Dung sua code site vi chung.**
   khong can sua.
 - Neu muon danh sach loi chuc cao hon nua: **khong con headroom** - section chi duoc +112.69px
   truoc khi de len Countdown; phai lay khoang dem ra khoi canvas height.
+
+## Session 40 - bo font `Tinos`, giu Georgia (chua push)
+
+### Van de
+User bao: tren web, chu "tốt" trong `.miu-wishes-subtitle` hien thi ra **"tố t"**.
+Thiet bi cua user: **Windows + Chrome**.
+
+### Chan doan - **file khong sai**
+- Text trong `index.html` va tren server deu dung: `tốt đẹp` = `U+0074 U+1ED1 U+0074 U+0020
+  U+0111 U+1EB9 U+0070`, **precomposed NFC, khong co combining mark** nao.
+- Server tra `Content-Type: text/html; charset=utf-8`, byte tren server dung y het local.
+- Headless Chrome: `miss: []`, moi ky tu Viet deu co glyph o Georgia / Times New Roman / Lora.
+  => **Khong tai lap duoc loi**, va **khong assertion nao cu trong doortest bat duoc** -
+  day la loi *chi xay ra tren may khach*.
+
+### Nghi van: `Tinos`
+`Tinos` xuat hien **7 lan** lam font dau tien cua inline `style="..."`, va no:
+1. **khong** co `@font-face` nao trong `index.html`,
+2. **khong** nam trong Google Fonts `<link>` (`css2?family=Inter…&family=Playfair+Display…`),
+3. **khong** phai font he thong mac dinh cua Windows/macOS (no den tu ChromeOS/Croscore).
+
+Tren may khong cai Tinos, no rơi ve Georgia va hien thi dung (phan lon khach). Tren may **co** cai
+Tinos, cac glyph Viet precomposed co the resolve ve **glyph rong** thay vi fallback sang Georgia -
+dung trieu chung "tố t". Day la ca loi chi xay ra tren may co font do.
+
+### Sua
+Mot lan thay chuoi trong `index.html`: `Tinos, Georgia, ` -> `Georgia, ` — **dung 7 cho**, toan bo
+nam trong `style="..."` inline, khong co trong `<style>`, khong co `@font-face` nao can go.
+- 2 node -> `Georgia, 'Times New Roman', serif`: `.miu-wishes-subtitle`, `element_text_op9qsvyro76`
+- 5 node -> `Georgia, &quot;Times New Roman&quot;, serif`: `element_text_wk2sh3dr2dg`,
+  `element_text_d7sj8uh0hat`, `element_text_8msobku17kp`, `element_text_6eo3no117kp`,
+  `element_text_ibb4e9e17kp`
+
+**Ngoai `.miu-wishes-subtitle`, 6 node kia cung dang loi tren may user** (ke ca ngay am lich tren ca
+2 the su kien va dong "CHÚNG GIA TRƯỜNG THÀNH HÔN") - sua chung la xong ca.
+
+### Vi sao an toan
+- **Khong dung noi dung text** -> ne cai bay `wk2sh3dr2dg` / `d7sj8uh0dat` (xem phan hien khac).
+- **Khong serialize lai `style`** - chi xoa 18 ky tu tien to, nen `opacity:0` cuoi style cua node
+  animated van song (bai Session 31/32).
+- **He qua nhin thay gan nhu bang khong**: khach khong cai Tinos von da thay Georgia; khach co cai
+  Tinos gio cung thay Georgia -> ca trang thong nhat.
+- Khong tang `@font-face` cho Tinos: muc tieu la **thoi phu thuoc** font khong cai duoc.
+
+### Kiem chung
+- `Tinos` con **0** lan; so `Georgia,` tang tu 48 -> **55** (dung +7).
+- 7/7 node resolve ve `Georgia, "Times New Roman", serif` va **0 node thieu glyph** (pixel-diff
+  tung ky tu so voi PUA `\uE0FF`).
+- **Khong doi hinh hoc**: canvas `9106`, 81/81 node animated con `opacity:0` cuoi, `0` `animation:`
+  bi bake, khong con `9250`.
+- Test: `assets.js` **28/28**, `wishes.js` **20/20**, `s29.js` **35/35**, `reveal.js` **37/37**,
+  `music.js` **17/17**.
+
+### Assertion moi (`doortest\assets.js`, canh A6)
+- **A6e**: `index.html` chua 0 lan `Tinos`.
+- **A6f**: **bat bien** - moi `font-family` dau tien phai thuoc {9 family local `@font-face`}
+  ∪ {Inter, Playfair Display qua Google Fonts} ∪ {system/generic}. A6f co rang: bom font chua host
+  vao vi tri dau thi FAIL (dan ten font), bom font da co `@font-face` thi pass.
+  - *Bay con 1 rang rat quan trong khi viet assertion nay*: `&quot;` chua dau `;` nen **phai decode
+    entity truoc khi tach** `font-family`; decode sau se doc nham phan fallback la font dau tien.
+
+### Deferred
+- **Chua push** (user khong yeu cau).
+- 16 stack `Lora, Georgia, ...` khong dung: Lora da host local va day du tieng Viet.
+- Khong tai them font moi; Georgia co san tren ca Windows va macOS.

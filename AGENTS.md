@@ -143,7 +143,9 @@ The HTML is a huge single-line canvas (the body is minified). Edit with regex an
   Tiệc Cưới + Lễ Vu Quy (rows 1–2, so card 2 == row 1). A test asserting the row index of card 2
   must branch on the guest: **groom → row 3, bride → row 1**.
 - Editing the canvas: replace node text by anchoring on `data-node-id`, not by regexing the text —
-  `wk2sh3dr2dg` and `d7sj8uh0hat` currently hold identical lunar text.
+  `wk2sh3dr2dg` and `d7sj8uh0hat` are **near-identical** lunar lines differing only in the day
+  (`Nhằm ngày 20…` vs `NhẰm ngày 21…`), so a loose regex can silently rewrite the wrong one.
+  (They were *identical* in an earlier session; Session 40 verified they are not any more.)
 
 ### Session 23: bỏ dòng Đón khách
 
@@ -277,6 +279,19 @@ as `400 700` (Dancing Script) and `300 700` / `400 700` (Cormorant roman / itali
 variable-font axes of the files; nothing in the overlay needs more than 500.
 
 Google Fonts link is kept only as a safety fallback for these families.
+
+**Session 40: `Tinos` đã bị xoá khỏi mọi font-stack — đừng thêm lại.** Nó từng là font đầu tiên của
+**7 inline style** (`.miu-wishes-subtitle` + 6 node export), nhưng **không có `@font-face`**, **không**
+có trong Google Fonts `<link>`, và **không** phải font hệ thống mặc định của Windows/macOS (nó đến từ
+ChromeOS/Croscore). Khách không cài Tinos thì rơi về Georgia và thấy bình thường; khách **có** cài
+thì các glyph Việt precomposed có thể resolve về **glyph rỗng** thay vì fallback → cụm
+`"tốt đẹp"` hiện ra thành `"tố t"`. Lỗi **chỉ xảy ra trên máy khách**, nên **không assertion nào
+trong `doortest` bắt được**; phải kiểm bằng tay trên máy có Tinos.
+
+Nếu cần font serif cho vùng này thì dùng `Georgia, 'Times New Roman', serif` — Georgia có đủ
+tiếng Việt và có sẵn trên cả Windows lẫn macOS. **Bất biến (chốt bằng `assets.js` A6f):** font đầu
+tiên của mọi `font-stack` phải thuộc {9 family local `@font-face`} ∪ {Inter, Playfair Display qua
+Google Fonts} ∪ {system/generic}. Thêm một font không host ⇒ test fail ngay.
 
 ## Assets
 
