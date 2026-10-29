@@ -41,13 +41,19 @@ item styling stayed gray `#707070`.
 
 - Geometry is **not** set in CSS. The list is a flex child (`flex:1 1 auto; min-height:0`) of
   `.miu-wishes-inner` inside `element_wishes_6hr88wywupk` (**839.92px** tall since Session 39,
-  was 727.23px), so the box simply fills whatever height is left: measured **431px on screen at a
-  575px viewport** (canvas ~336px; was 300.5px before Session 39).
-  Do not add `max-height` — to make it taller you must grow the section, and the next node
-  (`element_text_11ngbd3gw1m`, "Countdown") now starts at `top:8446.09`, i.e. **50px** of headroom
-  (was 162px). That headroom is now nearly spent: growing the section again will push into the
-  countdown, so any future change here has to take the gap out of the canvas height instead.
-  `wishes.js` W16 pins the 50px gap and W17 pins the bottom tail, so a regression fails loudly.
+  was 727.23px), so the box simply fills whatever height is left: measured **397px on screen at a
+  575px viewport** (Session 68; was 431px before the form counters) (canvas ~336px; was 300.5px
+  before Session 39).
+  Do not add `max-height` — to make it taller you must grow the section. Since Session 50 the section
+  is followed by the "Quà mừng cưới" button (`element_button_qamq1`, `top:8476.09`, **80px** below
+  the section) and then Countdown (`element_text_11ngbd3gw1m`, `top:8620.09`, **80px** below the
+  button); section bottom → Countdown is now **224px**. `wishes.js` W16 pins that **212..236px**
+  range and W17 pins the bottom tail, so a regression fails loudly.
+- **Form limits (Session 68):** name is capped at **50** chars and message at **300** via
+  `maxlength`; `.miu-wishes-counter` shows `0/50` / `0/300`, updates on every `input`, turns red
+  (`data-near="1"`) inside the last 10 chars, and resets to zero after a successful submit. The
+  submit handler also rejects over-limit values as a defensive check. The counters make the form
+  ~34px taller, so the list height above is now 397px, not 431px.
 - **`overflow` lives in the node's inline `style`** (`overflow-y:auto; overflow-x:hidden`), not in
   the stylesheet: a longhand in a stylesheet loses to the shorthand already inline. `overflow-x:hidden`
   plus `word-break:break-word` on `.miu-wishes-comment` is what keeps one unbreakable 220-char
@@ -110,19 +116,20 @@ The HTML is a huge single-line canvas (the body is minified). Edit with regex an
 - Timeline: **3 rows** since Session 23 (the "Đón khách" row was deleted — see "Session 23: bỏ dòng Đón khách").
   labels `arvqe7k0yci`/`v1e58wj2ye8`/`lx3ongb4qe7`; times
   `5zugc3by51l`/`ei8ualj2ye8`/`6nc0vdb4qe6`.
-  The order is **plain chronological**: Lễ Vu Quy 09:30 28.11 → Tiệc cưới → Lễ Thành Hôn.
-  Row side pattern is right–left–right (row 1 = `element_shape_3fnx89oxlmx`, row 2 = `z1g5m6ho2j3`,
-  row 3 = `28qg0f8o9yh`). Static default text = **Groom + Evening**
-  (09:30 28.11 / 17:00 28.11 / 11:30 29.11).
+  The order is **plain chronological per group** (Session 62): evening = Tiệc 17:00 28.11 → Lễ Vu Quy
+  08:00 29.11 → Lễ Thành Hôn 11:00 29.11; morning = Lễ Vu Quy 08:00 29.11 → Tiệc 09:00 29.11 →
+  Lễ Thành Hôn 11:00 29.11. Row side pattern is right–left–right (row 1 =
+  `element_shape_3fnx89oxlmx`, row 2 = `z1g5m6ho2j3`, row 3 = `28qg0f8o9yh`).
+  Static default text = **Groom + Evening** (17:00 28.11 / 08:00 29.11 / 11:00 29.11).
 - Event card dates: runtime master data rewrites day/month/year + lunar + title:
   card1 `njqb10iackg`/`h8uc8oajpky`/`jdrtqz9csn8`/`wk2sh3dr2dg` + title `0iedk0b1132`;
   card2 `rqma35y0hat`/`vncalha0hau`/`h8ut0rd0hau`/`d7sj8uh0hat` + title `mb26vvt0hat`.
   Both `title` and `address` are written with **`innerHTML`** (they contain `<br>`); everything else
   uses `textContent`. Card titles are uppercase in the data because the node also has
   `text-transform: uppercase`.
-- Countdown: `data-target` static default `2026-11-28T17:00:00` (Session 22, = Groom + Evening);
-  runtime overwritten per group (evening `2026-11-28T17:00:00`, morning `2026-11-29T09:00:00`;
-  engine re-reads on each tick).
+- Countdown: `data-target` static default `2026-11-29T11:00:00` (= Lễ Thành Hôn, Session 62);
+  runtime overwritten for **all four** routes to the same `2026-11-29T11:00:00`
+  (engine re-reads on each tick).
 
 ## Path routing / master data (Session 20, reworked in Session 21)
 
@@ -132,16 +139,21 @@ The HTML is a huge single-line canvas (the body is minified). Edit with regex an
   `history.replaceState(null, '', '/groom/evening' | '/groom/morning' | '/bride/evening' | '/bride/morning')`.
 - Master data lives in `WEDDING_MASTER[guest][group]` (timeline 3 mốc, 2 event cards, countdown target).
   Session 22 extended the card schema to `title / day / month / year / lunar / venueName / address /
-  mapUrl`, added a `MAPS` constant (3 short `?api=1&query=lat,lng` links), a `VENUE_*` constant per
-  venue, and a `card(title, day, lunar, venue)` helper so each of the 8 cards is a single line.
+  mapUrl`, added a `MAPS` constant (`linhTram` + `nhaGai`, both short `?api=1&query=lat,lng` links),
+  a `VENUE_*` constant per venue, and a `card(title, day, lunar, venue)` helper so each of the 8 cards
+  is a single line.
   Overlay step 1 stores `window.cfGuest`; step 2 group click calls `cfApply(cfGuest, group)` then `close()`.
 - **Venues ARE now touched by the master data** (Session 22) — `MASTER_CARD_NODES` carries
   `venueName` + `address` and `MASTER_MAP_NODES` carries the two map-button node ids.
-  Families and the `src=` of timeline ribbon icons are still NOT touched (unchanged per design).
+  Families and the `src=` of timeline ribbon icons are **set at runtime by `applyMasterData`** (Session 64): ribbon-02 = Tiệc cưới, ribbon-03 = Lễ Vu Quy, ribbon-04 = Lễ Thành Hôn; mapping follows the label per row and per group.
+- **Session 63:** both groom cards (Tiệc cưới + Lễ Thành Hôn) now use `VENUE_LINH_TRAM` /
+  `MAPS.linhTram`; `MAPS.nhaTrai` and `VENUE_NHA_TRAI` were deleted. Bride cards still use the
+  nhà gái venue (`VENUE_NHA_GAI` / `MAPS.nhaGai`).
 - **Which card is which is part of the design, not a data quirk**: groom combos show
-  Tiệc Cưới + Lễ Thành Hôn (timeline rows 1–2, so card 2 == row 3), bride combos show
-  Tiệc Cưới + Lễ Vu Quy (rows 1–2, so card 2 == row 1). A test asserting the row index of card 2
-  must branch on the guest: **groom → row 3, bride → row 1**.
+  Tiệc Cưới + Lễ Thành Hôn; bride combos show Tiệc Cưới + Lễ Vu Quy. Since Session 62 the
+  timeline is chronological per group, so the row index of each event changes: **evening** →
+  Tiệc row 1, Vu Quy row 2, Thành Hôn row 3; **morning** → Vu Quy row 1, Tiệc row 2, Thành Hôn row 3.
+  A test asserting the row index must branch on **guest + group**, not on the guest alone.
 - Editing the canvas: replace node text by anchoring on `data-node-id`, not by regexing the text —
   `wk2sh3dr2dg` and `d7sj8uh0hat` are **near-identical** lunar lines differing only in the day
   (`Nhằm ngày 20…` vs `NhẰm ngày 21…`), so a loose regex can silently rewrite the wrong one.
@@ -152,7 +164,8 @@ The HTML is a huge single-line canvas (the body is minified). Edit with regex an
 The "Đón khách" timeline row was removed entirely (4 canvas nodes deleted, 20 nodes shifted up,
 canvas height 9330 → 9250). What matters if you touch this area again:
 
-- **Node ids are unique (106 of them) but the canvas source order is NOT visual order.** The miu
+- **Node ids are unique (110 element nodes now: 104 canvas + 6 gift-modal template; 106 at Session 23)
+  but the canvas source order is NOT visual order.** The miu
   export interleaves sections (e.g. the whole `element_wishes_6hr88wywupk` block sits between
   timeline rows 1 and 2 in the file). Never assume
   "next node in the file = next row on screen" — resolve positions from the `top:` in the `style`
@@ -168,17 +181,21 @@ canvas height 9330 → 9250). What matters if you touch this area again:
   it, change `width` and re-centre `left`/`top` — do not touch `height` (that is the stroke
   thickness). Current: `left:179.08px; top:5114.42px; width:213.15px; height:51.81836px` →
   covers y 5033.8 → 5246.9, with the same 34.4px head / 70px tail overhang as before.
-- Canvas height is written in **5 places** and must stay in sync: the CSS `--ch:9106px` + `--sh:9106px`
-  (line ~107), the inline `--sh: 9106px` on `.miu-stage`, `height: 9106px` on `.miu-canvas`, and
-  `var baseH = 9106;` in the resize script. `baseH` is a *floor* — the script computes
+- Canvas height is written in **5 places** and must stay in sync: the CSS `--ch:9280px` + `--sh:9280px`
+  (line ~117), the inline `--sh: 9280px` on `.miu-stage`, `height: 9280px` on `.miu-canvas`, and
+  `var baseH = 9280;` in the resize script. `baseH` is a *floor* — the script computes
   `max(baseH, canvas.scrollHeight)`, so if you shrink the layout, lower it too or the page keeps a
-  dead 1000px of scroll. Content bottom is 9101.82px, leaving a 4.18px bottom margin
-  (Session 39: was 9250 / 9246 / 3.96px). `assets.js` A7a–A7d now assert all of this, including
-  `A7d` which greps the raw source so no `9250` can survive anywhere.
+  dead 1000px of scroll. Content bottom is 9275.82px, leaving a 4.18px bottom margin
+  (Session 50: 9280 / 9275.82 / 4.18px; Session 39 was 9106 / 9101.82 / 4.18px; Session 23 was
+  9250 / 9246 / 3.96px). `assets.js` A7a–A7d now assert all of this, including `A7d` which greps the
+  raw source so no stale height can survive anywhere.
 - `applyMasterData` iterates `i < d.timeline.length`, **not** a hardcoded count — add/remove timeline
   rows freely in `WEDDING_MASTER`, and keep `MASTER_TEXT_NODES.tlTime` / `.tlLabel` the same length.
 
 ### Session 39: dồn 2 khoảng trắng, canvas 9250 → 9106
+
+> **Historical note:** the numbers below are Session 39's state. Sessions 49–50 later added the gift
+> button and raised the canvas to **9280px**; see "Canvas height" above for current values.
 
 Bạn báo 2 khoảng trắng lớn. Cả hai đều là **khoảng đệm thật trên canvas**, không phải ảnh hụt
 chiều cao: `element_image_dwzcrmtditb` (`portrait`) là `<img object-fit:cover>` phủ kín ô
@@ -211,7 +228,8 @@ trắng nào.
   chuỗi gốc từ file, đừng tự làm tròn. Mỗi chuỗi đã xác minh **duy nhất 1 lần toàn file**.
 - **Không được serialize lại attribute `style`.** 7 node này đều là dạng bị re-serialize
   (`--miu-node-rotate: 0deg; ` có space). Serialize lại sẽ nuốt mất `opacity:0` ở cuối và node
-  **ngừng reveal im lặng**. Sau thay đổi: 81/81 node vẫn có `opacity:0` cuối, 0 `animation:` bị bake.
+  **ngừng reveal im lặng**. Sau thay đổi: 81/81 node vẫn có `opacity:0` cuối, 0 `animation:` bị bake
+  (lúc đó; hiện tại là **82/82**).
 - `element_countdown_yzo2869hvwa` **không** có `data-anim-preset` (node runtime của engine
   countdown) — đừng "sửa" nó cho giống các node khác.
 - `wishes.js` W15–W18 và `assets.js` A7a–A7d chốt toàn bộ số liệu trên, kể cả tail ≤ 8px.
@@ -275,8 +293,9 @@ Session 24 added the last three families **only for the opening card** (the open
 melipage reference's typography). They are served as woff2 with explicit `unicode-range` per subset:
 Vietnamese files carry the diacritics (Trọng Vũ / Hồng Nhung / Trân trọng kính mời), Latin files carry
 `&` and ASCII — **the Latin subset is required**, dropping it breaks the ampersand. Weights are declared
-as `400 700` (Dancing Script) and `300 700` / `400 700` (Cormorant roman / italic) to match the
-variable-font axes of the files; nothing in the overlay needs more than 500.
+as `400 700` (Dancing Script) and **500** / **400** (Cormorant roman / italic). **Session 69** replaced
+the four Cormorant files with Google Fonts v21 static weights because the old Vietnamese subset lacked
+`ọ` (U+1ECD) and `ờ` (U+1EDD), so those two glyphs fell back to Lora inside “Trân trọng kính mời”.
 
 Google Fonts link is kept only as a safety fallback for these families.
 
@@ -294,6 +313,36 @@ tiên của mọi `font-stack` phải thuộc {9 family local `@font-face`} ∪ 
 Google Fonts} ∪ {system/generic}. Thêm một font không host ⇒ test fail ngay.
 
 ## Assets
+
+### Quy tắc thay ảnh Firebase (bắt buộc — mọi agent)
+
+Áp dụng mỗi khi thêm/thay một ảnh trong `uploads/` được `index.html` tham chiếu.
+
+**Thứ tự bắt buộc — resize trước, nén sau:**
+1. Giảm kích thước về đúng bảng dưới. Bước này quyết định ~95% chi phí giải mã/RAM.
+2. Chỉ sau đó mới encode WebP **q80–85**.
+
+| Vị trí ảnh | Rộng tối đa | Cao | Số ảnh |
+|---|---|---|---|
+| `couple-main`, `portrait` | 1365px | 2048 (dọc) | 2 |
+| `couple-photo`, `final` | 1365px | 910 (dọc) | 2 |
+| `gallery-*` (dọc) | 896px | 1344 | 12 |
+| `gallery-*` (ngang) | 896px | 597 | 4 |
+
+Quy tắc một dòng: **cạnh dài ≤ 2048px là đủ cho mọi ảnh trên thiệp** — đây là trần cứng, không
+thay thế bảng trên.
+
+**Ba điều kiện bắt buộc khi thay ảnh:**
+1. Giữ đúng tên file (`gallery-07.webp` → vẫn `gallery-07.webp`); đổi tên là hỏng URL trong `index.html`.
+2. Giữ đúng chiều: trong 16 ảnh album, `gallery-04`, `12`, `15`, `16` là **ngang**; 12 ảnh còn lại là
+   **dọc**. Đổi chiều ⇒ `object-fit: cover` crop mất phần lớn ảnh.
+3. Không cần giữ đúng tỉ lệ thập phân — chỉ cần đúng chiều và framing tương tự.
+
+**Chiều chuẩn là chiều trên Firebase, không phải bản local.** Theo ghi chú Session 41,
+`gallery-09/10` trên Firebase đã thành dọc dù bản local là ngang.
+
+**An toàn khi upload:** giữ `downloadToken` cũ; **không sửa `index.html`**; đặt `contentType` đúng
+định dạng thực ghi; fetch lại toàn bộ URL cũ để chắc còn HTTP 200; giữ file local làm fallback.
 
 **Session 38 — 32 asset (33 chỗ tham chiếu) đã chuyển sang Firebase Storage. File local vẫn
 còn nguyên trên đĩa.** Mục tiêu: đổi ảnh trên bucket là thiệp tự đổi, **không cần deploy lại**.
@@ -328,7 +377,7 @@ còn nguyên trên đĩa.** Mục tiêu: đổi ảnh trên bucket là thiệp t
   `canvas.toBlob('image/webp')` nên nay là WebP thật, `contentType` đúng. Đừng gán
   `contentType` bằng tay — luôn đặt theo dạng file bạn thực sự ghi.
 - Session 38 **không** đổi hình học canvas: `assets.js` A7a chứng minh canvas vẫn 9250px sau khi
-  đổi 33 `src`. (**Session 39** mới hạ canvas → 9106px, xem mục riêng.)
+  đổi 33 `src`. (**Session 39** hạ canvas → 9106px; **Sessions 49–50** sau đó nâng lên **9280px**.)
 
 - Images: `assets/uploads/*.webp` (20 photos) — file local còn nguyên nhưng **không còn được tham
   chiếu** từ Session 38; `index.html` trỏ thẳng Firebase. Session 25 đã flatten thư mục con cũ
@@ -349,6 +398,8 @@ còn nguyên trên đĩa.** Mục tiêu: đổi ảnh trên bucket là thiệp t
   ở `elements/`.
 
 ### Session 41: hạ kích thước 26 ảnh — dung lượng tệp KHÔNG phải thước đo
+
+> Quy tắc bắt buộc hiện hành nằm ở đầu mục Assets; bảng dưới đây là bản ghi lịch sử của Session 41.
 
 Session 38 up **bản gốc full-resolution** (tối đa 4160×6240 = 26MP) vào ô chỉ ~288px. Hậu quả
 đo được trên cùng máy: 32 ảnh **6.225ms** giải mã, **1.910MB** bộ đệm pixel. Session 41 hạ
@@ -421,9 +472,9 @@ og:image/twitter:image, nhưng cả 2 `<meta>` giờ trỏ URL Firebase tuyệt 
 ## Scroll reveal system (miu engine) — already installed, do not rebuild
 
 - Animated nodes carry `data-anim-preset` + `data-anim-duration` / `-delay` / `-easing` / `-loop` /
-  `-distance` (81 nodes). Preset resolves as `'miu-' + preset` against the 58 `@keyframes miu-*`
+  `-distance` (82 nodes). Preset resolves as `'miu-' + preset` against the 58 `@keyframes miu-*`
   already in the file. Easing is `cubic-bezier(0.2, 0.8, 0.2, 1)` everywhere; duration `3000`
-  (75 nodes), `2400` (2 — the hero couple names, Session 35) or `2000` (4); distance `200` (32) or
+  (76 nodes), `2400` (2 — the hero couple names, Session 35) or `2000` (4); distance `200` (32) or
   `150` (1), keyframe default `12px`.
   `isInfinitePreset` forces `infinite` for `rotate`/`spin`/`flicker`/`pulse`/`wiggle`/`heartBeat`/
   `swayBottom` regardless of `data-anim-loop`.
@@ -435,7 +486,7 @@ og:image/twitter:image, nhưng cả 2 `<meta>` giờ trỏ URL Firebase tuyệt 
 - **A node without `opacity:0` does not animate correctly.** `applyAnim` writes
   `el.style.opacity='1'` and then `animation: … both`, so the *backwards* fill re-hides the node at
   the trigger instant. An unhidden node is therefore **visible from page load → snaps invisible →
-  fades in** (a flicker, not a reveal). All 81 nodes need `opacity:0` as the **last** `opacity`
+  fades in** (a flicker, not a reveal). All 82 nodes need `opacity:0` as the **last** `opacity`
   declaration in their inline `style`.
 - **Trap: the canvas carries two different `style` serialisations**, and the second is the warning sign.
 
@@ -453,7 +504,7 @@ og:image/twitter:image, nhưng cả 2 `<meta>` giờ trỏ URL Firebase tuyệt 
   The very same 41 nodes were the ones carrying a baked `animation:` (see the next trap) — one
   broken export, two symptoms.
   Audit: count `[data-anim-preset]` nodes whose *last* `opacity` declaration is `0` — must be
-  **81/81** (the reference export is 85/85).
+  **82/82** (the reference export is 85/85).
 - **Trap (Session 32): the export bakes `animation:` into 41 inline `style` attributes.** This is
   the second half of the "two serialisations" problem above, and it is *worse* than the lost
   `opacity:0`. Those 41 nodes carried a literal
@@ -648,10 +699,10 @@ og:image/twitter:image, nhưng cả 2 `<meta>` giờ trỏ URL Firebase tuyệt 
   node's `style` or to the observer.** It is the only test that would have caught the baked
   `animation:` trap. What it does: at `load`, with the overlay still up, assert **0** nodes have a
   running `CSSAnimation` (this is the assertion that fails if anyone re-bakes one); ~40ms after
-  `willClose` assert the two reveal populations are still apart (78 anonymous nodes at
+  `willClose` assert the two reveal populations are still apart (79 anonymous nodes at
   `opacity 0`, the 3 hero nodes already animating — Session 36); after the deep link closes,
-  assert every off-screen node has `getAnimations().length === 0` **and** `opacity 0` (76 nodes
-  qualify); walk the canvas in ~40 jumps and assert all 81 end with exactly one animation whose
+  assert every off-screen node has `getAnimations().length === 0` **and** `opacity 0` (77 nodes
+  qualify); walk the canvas in ~40 jumps and assert all 82 end with exactly one animation whose
   `animationName` is `miu-<preset>`, `--miu-anim-distance` matches `data-anim-distance`, and
   `startTime` falls inside that node's own window (hero: `[willClose, closed)`, the rest
   `≥ closed`); measure the reveal latency with one clean jump per node; in a **640×360
