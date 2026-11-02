@@ -786,6 +786,32 @@ og:image/twitter:image, nhưng cả 2 `<meta>` giờ trỏ URL Firebase tuyệt 
     gap. Also do not assert the final gap is 575 px: both leaves end *outside* the door, so it is 614 px.
     Use `shoot29.js` + a clipped screenshot for a visual record (`s29-0000-dong.png`, `s29-0700…4500-swing.png`).
 
+## DevTools deterrent (Session 70)
+
+This is a **client-side deterrent only, not security**. It cannot stop the browser menu
+(*More tools → Developer tools*), remote debugging, an already-open DevTools, `view-source:` or
+extensions; the HTML, Firebase config and every Storage URL are public anyway. **Do not add
+detection** (`outerWidth - innerWidth`, `debugger` timing, redirect/overlay): it false-positives on
+guests who zoom or snap windows, and a lockout on an invitation is worse than a curious guest.
+
+- One IIFE `<script data-miu-devtools="1">` sits immediately before `</body></html>` in **all five
+  pages**: `index.html` + `bride|groom/{evening,morning}/index.html`. The four route copies are
+  near-duplicates with their own `<base href="/">` and meta, so **edit all five together** (there is
+  no build/sync script). Marker count must be **1 per file**.
+- Blocks `F12`, `Ctrl/Cmd+Shift+I/J/C/K`, `Ctrl/Cmd+U`, and `Cmd+Option+I/J/C/U`. It matches on
+  `e.code` (`KeyI`, `F12`, …) because on macOS `e.key` for Option combos is a dead-key character
+  (`ˆ`, `ç`, `¨`). It uses capture + `preventDefault()` + `stopImmediatePropagation()`.
+- `contextmenu` is blocked everywhere **except** `input` / `textarea` / `select` /
+  `contenteditable`, so right-click paste still works in the guestbook.
+- **Bypass:** any URL whose query contains `dev=1`, or any `file://` page. Local HTTP
+  (`http://localhost:8080/`) is **not** bypassed, so the block is testable there. Guests never see
+  the flag; future maintainers keep DevTools.
+- Encoding: `index.html` is UTF-8 **with BOM**, the four route copies are UTF-8 **without BOM**.
+- Regression checks after touching this: marker count 5, shortcuts blocked on local HTTP, `?dev=1`
+  restores them, guestbook right-click paste still works, `Escape`/arrows still close/navigate the
+  album lightbox, and the reveal invariants (82/82 trailing `opacity:0`, 0 baked `animation:`,
+  canvas `9280` ×5) are unchanged.
+
 ## Deployment
 
 - GitHub Pages: **Source = `master-wedding2`** (change the branch in Settings → Pages).

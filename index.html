@@ -2746,4 +2746,39 @@ var start = function(){
 </script>
   
 
+<script data-miu-devtools="1">
+(function(){
+  try {
+    var q = String(location.search || '');
+    if (q.indexOf('dev=1') !== -1) return;
+    if (location.protocol === 'file:') return;
+    var isField = function(t){
+      try {
+        if (!t) return false;
+        var tag = String(t.tagName || '').toLowerCase();
+        return tag === 'input' || tag === 'textarea' || tag === 'select' || t.isContentEditable === true;
+      } catch(e) { return false; }
+    };
+    var isKey = function(code, ch){ return code === 'Key' + ch; };
+    document.addEventListener('contextmenu', function(e){
+      try { if (isField(e.target)) return; e.preventDefault(); } catch(_e) {}
+    }, true);
+    document.addEventListener('keydown', function(e){
+      try {
+        var code = String(e.code || '');
+        var key = String(e.key || '').toLowerCase();
+        var mod = e.ctrlKey || e.metaKey;
+        var hit =
+          code === 'F12' || key === 'f12' ||
+          (mod && e.shiftKey && (isKey(code,'I') || isKey(code,'J') || isKey(code,'C') || isKey(code,'K'))) ||
+          (mod && !e.shiftKey && !e.altKey && isKey(code,'U')) ||
+          (e.metaKey && e.altKey && (isKey(code,'I') || isKey(code,'J') || isKey(code,'C') || isKey(code,'U')));
+        if (!hit) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      } catch(_e) {}
+    }, true);
+  } catch(_e) {}
+})();
+</script>
 </body></html>
