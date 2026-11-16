@@ -112,7 +112,7 @@ The HTML is a huge single-line canvas (the body is minified). Edit with regex an
   both with the short `?api=1&query=lat,lng` form.
 - Families: `element_text_wb0vq032wwe` (Ông Nguyễn Trọng Văn), `element_text_pewt62d2wwe`
   (Bà Nguyễn Thị Thu), `element_text_mqnvp852wwe` (Ông Đỗ Đức Hạnh), `element_text_82vv7as2wwf`
-  (Bà Nguyễn Thị Len).
+  (Bà Nguyễn Thị Hồng Len).
 - Timeline: **3 rows** since Session 23 (the "Đón khách" row was deleted — see "Session 23: bỏ dòng Đón khách").
   labels `arvqe7k0yci`/`v1e58wj2ye8`/`lx3ongb4qe7`; times
   `5zugc3by51l`/`ei8ualj2ye8`/`6nc0vdb4qe6`.
