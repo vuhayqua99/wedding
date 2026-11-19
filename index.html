@@ -2205,7 +2205,7 @@ var start = function(){
       return wrap;
     };
 
-    var state = { open: false, albumId: '', idx: 0, imgs: [], preloaded: {} };
+    var state = { open: false, albumId: '', idx: 0, imgs: [], preloaded: {}, closeTimer: null, prevHtmlOverflow: '', prevBodyOverflow: '' };
 
     var preloadAll = function(albumId, imgs){
       try {
@@ -2246,12 +2246,31 @@ var start = function(){
       var imgs = [];
       try {
         var nodes = document.querySelectorAll('[data-miu-album-item="1"][data-miu-album-id="' + albumId.replace(/"/g,'\"') + '"]');
+        var ordered = [];
         for (var i=0;i<nodes.length;i++) {
           var s = nodes[i].getAttribute('data-src') || '';
-          if (s) imgs.push(s);
+          if (!s) continue;
+          var raw = nodes[i].getAttribute('data-idx');
+          var order = (raw === null || raw === '') ? i : Number(raw);
+          if (!isFinite(order)) order = i;
+          ordered.push({ order: order, src: s });
         }
+        ordered.sort(function(a,b){ return a.order - b.order; });
+        for (var j=0;j<ordered.length;j++) imgs.push(ordered[j].src);
       } catch(e) {}
       if (!imgs.length) return;
+      try {
+        var hadPendingClose = false;
+        if (state.closeTimer) { clearTimeout(state.closeTimer); state.closeTimer = null; hadPendingClose = true; }
+        if (!state.open && !hadPendingClose) {
+          state.prevHtmlOverflow = document.documentElement.style.overflow || '';
+          state.prevBodyOverflow = document.body.style.overflow || '';
+        }
+        if (!state.open) {
+          document.documentElement.style.overflow = 'hidden';
+          document.body.style.overflow = 'hidden';
+        }
+      } catch(_e) {}
       preloadAll(albumId, imgs);
       state.open = true;
       state.albumId = albumId;
@@ -2273,6 +2292,15 @@ var start = function(){
       } catch(_e) {}
     };
 
+    var restoreScroll = function(){
+      try {
+        document.documentElement.style.overflow = state.prevHtmlOverflow || '';
+        document.body.style.overflow = state.prevBodyOverflow || '';
+      } catch(_e) {}
+      state.prevHtmlOverflow = '';
+      state.prevBodyOverflow = '';
+    };
+
     var close = function(){
       var modal = document.getElementById(modalId);
       if (!modal) return;
@@ -2281,13 +2309,17 @@ var start = function(){
         modal.style.opacity = '0';
         var panel = modal.querySelector('[data-miualbum-panel="1"]');
         if (panel) { panel.style.transform = 'scale(0.985)'; panel.style.opacity = '0.98'; }
-        setTimeout(function(){
+        if (state.closeTimer) { clearTimeout(state.closeTimer); state.closeTimer = null; }
+        state.closeTimer = setTimeout(function(){
+          state.closeTimer = null;
           try { modal.style.display = 'none'; } catch(_e) {}
           try { modal.setAttribute('aria-hidden','true'); } catch(_e) {}
+          restoreScroll();
         }, 180);
       } catch(_e) {
         modal.style.display = 'none';
         modal.setAttribute('aria-hidden','true');
+        restoreScroll();
       }
     };
 
@@ -2425,6 +2457,9 @@ var start = function(){
     document.addEventListener('keydown', function(e){
       try {
         if (!state.open) return;
+        if (e.key === 'Escape' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          try { e.preventDefault(); } catch(_e) {}
+        }
         if (e.key === 'Escape') close();
         if (e.key === 'ArrowLeft') step(-1);
         if (e.key === 'ArrowRight') step(1);
@@ -2493,6 +2528,42 @@ var start = function(){
           })(s, aid);
         } catch(_e) {}
       }
+    } catch(_e) {}
+  } catch(e) {}
+})();
+</script>
+<script data-miu-gallery-viewer="1">
+(function(){
+  try {
+    var tiles = document.querySelectorAll('.miu-canvas img[src*="gallery-"], .miu-canvas img[src*="couple-main.webp"], .miu-canvas img[src*="couple-photo.webp"], .miu-canvas img[src*="portrait.webp"], .miu-canvas img[src*="final.webp"]');
+    var rows = [];
+    for (var i=0;i<tiles.length;i++) {
+      try {
+        var img = tiles[i];
+        var src = img.getAttribute('src') || '';
+        if (!src) continue;
+        var host = img.closest ? img.closest('[data-node-id]') : null;
+        if (!host) continue;
+        rows.push({ host: host, src: src, top: parseFloat(host.style.top) || 0, left: parseFloat(host.style.left) || 0 });
+      } catch(_e) {}
+    }
+    rows.sort(function(a,b){
+      if (a.top !== b.top) return a.top - b.top;
+      return a.left - b.left;
+    });
+    for (var j=0;j<rows.length;j++) {
+      try {
+        rows[j].host.setAttribute('data-miu-album-item', '1');
+        rows[j].host.setAttribute('data-miu-album-id', 'gallery');
+        rows[j].host.setAttribute('data-idx', String(j));
+        rows[j].host.setAttribute('data-src', rows[j].src);
+      } catch(_e) {}
+    }
+    try {
+      var st = document.createElement('style');
+      st.setAttribute('data-miu-gallery-viewer-style', '1');
+      st.textContent = '[data-miu-album-item="1"]{cursor:zoom-in;-webkit-tap-highlight-color:transparent;}';
+      document.head.appendChild(st);
     } catch(_e) {}
   } catch(e) {}
 })();
